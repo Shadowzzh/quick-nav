@@ -10,9 +10,16 @@ export class Tree<Data extends any = any> {
   /** 节点的深度 */
   private depth: number = 0
 
+  private uniqueId: string
+
   constructor(options?: { data?: Data }) {
     this.data = options?.data
     this.root = this
+    this.uniqueId = Math.random().toString() + this.depth
+  }
+
+  get getUniqueId() {
+    return this.uniqueId
   }
 
   get getParent() {
