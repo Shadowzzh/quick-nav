@@ -1,5 +1,6 @@
 import { extractContent, generatorTitleTree } from './analysis'
 import { renderTree } from './render'
+
 console.time()
 ;(() => {
   const content = extractContent()
