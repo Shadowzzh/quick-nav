@@ -1,2 +1,7 @@
+
+
+English · [简体中文](./docs/README.zh-CN.md)
+
 # quick-nav
-一个浏览器插件。自动生成页面内容大纲（TOC），用户可点击大纲中的条目，快速定位到页面内的相应部分。
+
+A browser plug-in automatically generates a page content outline (TOC), and users can click on an entry in the outline to quickly navigate to the appropriate section of the page
