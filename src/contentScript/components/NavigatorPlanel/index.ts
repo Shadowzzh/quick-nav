@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { customElement } from 'lit/decorators.js'
-import { WCIcon } from '../Icons'
+import '../Icons'
+import '../Button'
 
 @customElement('navigator-panel')
 export class NavigatorPanel extends LitElement {
@@ -26,21 +27,27 @@ export class NavigatorPanel extends LitElement {
       }
 
       :host .header {
-        padding-top: 5px;
-        padding-bottom: 10px;
         display: flex;
         justify-content: space-between;
         align-items: center;
         user-select: none;
       }
 
+      /* 拖动icon */
       :host .header .header_drag {
         color: #999;
-        cursor: pointer;
+        transition: background-color 0.3s var(--animation-ease-out-quart);
+      }
+      :host .header .header_drag:hover {
+        background-color: #f5f5f5;
       }
 
       :host .header .header_drag:active {
+        background-color: #ebebeb;
         cursor: grab;
+      }
+      :host .header .header_drag wc-icon {
+        transform: translate(-2px, -2px);
       }
 
       :host .content {
@@ -110,11 +117,11 @@ export class NavigatorPanel extends LitElement {
   }
 
   render() {
-    return html`<div>
+    return html`<div class="waves-effect">
       <div class="header">
-        <div class="header_drag" @mousedown=${this.onDragMouseDown}>
-          ${new WCIcon({ name: 'drag', size: 20 })}
-        </div>
+        <wc-button class="header_drag" @mousedown=${this.onDragMouseDown}>
+          <wc-icon name="drag" size="16"></wc-icon>
+        </wc-button>
         <div>Navigator</div>
       </div>
       <div class="content">${this.children}</div>

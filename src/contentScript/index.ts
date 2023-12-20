@@ -1,5 +1,7 @@
 import { extractContent, generatorTitleTree } from './analysis'
 import { renderTree } from './render'
+import './styles/mixins'
+import './styles/waves.js'
 
 console.time()
 ;(() => {
