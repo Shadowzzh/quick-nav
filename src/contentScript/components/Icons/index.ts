@@ -16,10 +16,10 @@ interface IconOptions {
   color?: string
 }
 
-@customElement('wc-icon')
 /**
  * 图标组件
  */
+@customElement('wc-icon')
 export class WCIcon extends LitElement {
   static styles = [
     css`
@@ -35,24 +35,19 @@ export class WCIcon extends LitElement {
   ]
 
   @property({ type: String })
-  name: IconOptions['name']
+  name: IconOptions['name'] = 'drag'
 
   @property({ type: Number })
-  size: number | undefined
+  size: number | undefined = 24
 
   @property({ type: String })
   color: string | undefined
 
   @property({ type: Array })
-  styles: Readonly<StyleInfo>
+  styles: Readonly<StyleInfo> = {}
 
-  constructor(option: IconOptions) {
+  constructor() {
     super()
-    this.name = option.name
-    this.size = option.size ?? 24
-    this.color = option.color
-
-    this.styles = { height: `${this.size}px`, width: `${this.size}px`, color: `${this.color}` }
   }
 
   /** 根据 name 属性获取对应的 iconOptions */
@@ -64,6 +59,8 @@ export class WCIcon extends LitElement {
   }
 
   render() {
+    this.styles = { height: `${this.size}px`, width: `${this.size}px`, color: `${this.color}` }
+
     return html`<div style=${styleMap(this.styles)}>${this.getIconByName(this.name).svg}</div>`
   }
 }
