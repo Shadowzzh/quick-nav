@@ -1,11 +1,7 @@
+import { $ } from '../../utils'
 import { Tree } from '../../utils/models/Tree'
 import { CONTENT_TAG_WEIGHT, TITLE_TAG_WEIGHT } from '../constant'
 import type { TitleTree, TitleTreeData } from '../interface'
-
-const $: (query: string, target?: Element) => Element[] = (query: string, target = document.body) =>
-  Array.from(target.querySelectorAll(query))
-
-console.time()
 
 /**
  * 追溯并返回指定元素的祖先元素列表。
