@@ -10,9 +10,10 @@ export class NavigatorPanel extends LitElement {
   static styles = [
     css`
       :host {
+        width: 300px;
+        height: 400px;
         z-index: 9999999;
         display: block;
-        width: 300px;
         position: fixed;
         font-size: 13px;
         background-color: #fff;
@@ -24,8 +25,12 @@ export class NavigatorPanel extends LitElement {
         border: 1px solid rgb(235, 238, 245);
       }
 
-      navigator-panel {
-        background-color: red;
+      :host .quick-nav {
+        height: 100%;
+      }
+
+      :host * {
+        box-sizing: border-box;
       }
 
       :host .header {
@@ -55,6 +60,9 @@ export class NavigatorPanel extends LitElement {
       :host .content {
         padding: 0 10px;
         padding-bottom: 5px;
+        height: calc(100% - 32px);
+
+        overflow: auto;
       }
     `,
   ]
@@ -83,7 +91,7 @@ export class NavigatorPanel extends LitElement {
   }
 
   render() {
-    return html`<div class="waves-effect">
+    return html`<div class="waves-effect quick-nav">
       <div class="header">
         <wc-button class="header_drag" @mousedown=${this.movementController.dragMouseDown}>
           <wc-icon name="drag" size="16"></wc-icon>
