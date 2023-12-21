@@ -111,9 +111,6 @@ export class ResizeController implements ReactiveController {
     this._onDragMouseDown = onDragMouseDown
 
     handler.addEventListener('mousedown', onDragMouseDown)
-    handler.addEventListener('mouseup', () => {
-      handler.removeEventListener('mousedown', onDragMouseDown)
-    })
 
     return handler
   }
@@ -121,7 +118,6 @@ export class ResizeController implements ReactiveController {
   /** 根据方向设置样式 */
   setStyleByDirection(handler: HTMLElement, direction: Direction) {
     handler.style.position = 'absolute'
-    handler.style.backgroundColor = 'red'
     handler.style.zIndex = '1'
     handler.style.display = 'block'
     handler.style.userSelect = 'none'
