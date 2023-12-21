@@ -25,7 +25,6 @@ export const cssRule = (function () {
       if (caSheet.insertRule) {
         caSheet.insertRule(`${name}{${content}}`, rulesLen)
       }
-      console.log(caSheet, caRules)
     },
 
     /**
