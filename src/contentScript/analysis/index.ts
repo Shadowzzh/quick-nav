@@ -35,6 +35,11 @@ function traceAncestor(
   return ancestor
 }
 
+/** 判断元素是否为空 */
+function elementIsEmpty(element: HTMLElement) {
+  return element.innerText.trim() === '' || element.innerText === undefined
+}
+
 /** 获取 element 标签对应的权重 */
 function getWeightByElement(tag: Element | undefined) {
   if (!tag) return -1
@@ -71,38 +76,6 @@ export function extractContent() {
 
   return article
 }
-export function generatorTitleTree1(content: Element) {
-  const titleTags = Object.keys(TITLE_TAG_WEIGHT)
-  const titlesOfTag = $(titleTags.join(','), content) as HTMLElement[]
-
-  if (titlesOfTag.length === 0) {
-    return null // 或其他合适的处理
-  }
-
-  // 预先计算所有标题的权重
-  const titleWeights = new Map<HTMLElement, number>()
-  titlesOfTag.forEach((title) => {
-    titleWeights.set(title, getWeightByElement(title))
-  })
-
-  const rootTree = new Tree<TitleTreeData>()
-  let preTree = new Tree({ data: { element: titlesOfTag[0] } })
-  rootTree.appendChild(preTree)
-
-  for (let i = 1; i < titlesOfTag.length; i++) {
-    const title = titlesOfTag[i]
-    const weight = titleWeights.get(title)
-    const currentTree = new Tree<TitleTreeData>({ data: { element: title } })
-
-    // ...[现有的循环逻辑]...
-
-    preTree = currentTree
-  }
-
-  // ...[现有的输出和返回逻辑]...
-
-  return rootTree
-}
 
 /**
  * 根据文章内容生成标题 Tree
@@ -127,12 +100,17 @@ export function generatorTitleTree(content: Element) {
   const rootTree = new Tree<TitleTreeData>()
   /** 前一个标题的 Tree */
   let preTree: TitleTree = new Tree({ data: { element: titlesOfTag[0] } })
+  if (elementIsEmpty(preTree.getData!.element)) return
+
   rootTree.appendChild(preTree)
 
   for (let i = 1; i < titlesOfTag.length; i++) {
     const title = titlesOfTag[i]
     const weight = titleWeights.get(title)!
     const preTitle = preTree.getData!.element
+
+    // 如果标题没有内容，则跳过
+    if (elementIsEmpty(title)) continue
 
     const currentTree = new Tree<TitleTreeData>({ data: { element: title } })
 
@@ -159,6 +137,8 @@ export function generatorTitleTree(content: Element) {
 
     preTree = currentTree
   }
+
+  if (rootTree.getChildren.length === 0) return undefined
 
   return rootTree
 }
