@@ -67,17 +67,6 @@ export class NavigatorPanel extends LitElement {
     `,
   ]
 
-  /** 容器的偏移量 */
-  private _offset: { top: number; left: number } = { top: 0, left: 0 }
-
-  set offset(offset: { top: number; left: number }) {
-    this._offset = offset
-  }
-
-  get offset() {
-    return this._offset
-  }
-
   private movementController = new MovementController(this, {
     target: this,
   })

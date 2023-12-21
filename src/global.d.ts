@@ -12,4 +12,13 @@ declare global {
     'wc-icon': WCIcon
     'wc-button': WCButton
   }
+
+  /** 深度值 */
+  type PathValue<O, Keys extends Array<keyof any>> = Keys extends [infer K, ...infer Rest]
+    ? K extends keyof O
+      ? Rest extends Array<keyof any>
+        ? PathValue<O[K], Rest>
+        : never
+      : never
+    : O
 }

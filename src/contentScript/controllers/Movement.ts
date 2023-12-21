@@ -1,4 +1,5 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
+import { QN } from '../interface'
 
 interface MovementControllerOptions {
   target: HTMLElement
@@ -11,9 +12,9 @@ export class MovementController implements ReactiveController {
   target: HTMLElement
 
   /** 容器的偏移量 */
-  private _offset: { top: number; left: number } = { top: 0, left: 0 }
+  private _offset: QN.Position = { top: 0, left: 0 }
 
-  set offset(offset: { top: number; left: number }) {
+  set offset(offset: QN.Position) {
     this._offset = offset
   }
 
@@ -45,7 +46,7 @@ export class MovementController implements ReactiveController {
   }
 
   /** 设置容器的位置 */
-  setContainerPosition(position?: { top: number; left: number }) {
+  setContainerPosition(position?: QN.Position) {
     // 如果传入了位置，则设置位置
     if (position) {
       this.target.style.transform = `translate(${position.left}px, ${position.top}px)`
