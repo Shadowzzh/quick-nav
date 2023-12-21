@@ -51,7 +51,7 @@ export class ResizeController implements ReactiveController {
     // 移除鼠标移动事件
     this._mouseMove && window.removeEventListener('mousemove', this._mouseMove)
     this._handler.forEach((handler) => {
-      handler.removeEventListener('mousedown', this._onDragMouseDown)
+      this._onDragMouseDown && handler.removeEventListener('mousedown', this._onDragMouseDown)
     })
   }
 
