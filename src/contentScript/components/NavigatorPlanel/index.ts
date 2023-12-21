@@ -1,6 +1,7 @@
 import { LitElement, html, css } from 'lit'
 import { customElement } from 'lit/decorators.js'
 import { MovementController } from '../../controllers/Movement'
+import { ResizeController } from '../../controllers/Resize'
 import '../Icons'
 import '../Button'
 
@@ -71,6 +72,10 @@ export class NavigatorPanel extends LitElement {
 
   private movementController = new MovementController(this, {
     target: this,
+  })
+  private resizeController = new ResizeController(this, {
+    target: this,
+    direction: ['left', 'bottom', 'left-bottom'],
   })
 
   constructor() {
