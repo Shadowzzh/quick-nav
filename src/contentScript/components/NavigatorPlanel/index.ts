@@ -1,9 +1,11 @@
-import { LitElement, html, css } from 'lit'
-import { customElement } from 'lit/decorators.js'
+import { LitElement, html, css, PropertyValues } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 import { MovementController } from '../../controllers/Movement'
 import { ResizeController } from '../../controllers/Resize'
 import '../Icons'
 import '../Button'
+import { syncStorage } from '../../../utils/storage'
+import { QN } from '../../interface'
 
 @customElement('navigator-panel')
 export class NavigatorPanel extends LitElement {
@@ -66,7 +68,6 @@ export class NavigatorPanel extends LitElement {
       }
     `,
   ]
-
   private movementController = new MovementController(this, {
     target: this,
   })
@@ -75,11 +76,41 @@ export class NavigatorPanel extends LitElement {
     direction: ['left', 'bottom', 'left-bottom'],
   })
 
+  /** 是否显示组件 */
+  isDisplayed: boolean = false
+
   constructor() {
     super()
+    this.style.visibility = 'hidden'
+  }
+
+  connectedCallback() {
+    super.connectedCallback()
+    this.initial()
+  }
+
+  async initial() {
+    const { position } = (await syncStorage.get('navigatorPanel')) ?? {}
+
+    if (position) {
+      this.initialContainerPosition({ position })
+    }
+
+    this.style.visibility = 'visible'
+  }
+
+  async initialContainerPosition(props: { position: QN.Position }) {
+    // 设存储监听
+    this.movementController.onMoveEnd(async ({ position }) => {
+      await syncStorage.set(['navigatorPanel', 'position'], position)
+    })
+
+    // 设置缓存中的位置
+    this.movementController.setPosition(props.position)
   }
 
   render() {
+    console.log(this.children)
     return html`<div class="waves-effect quick-nav">
       <div class="header">
         <wc-button class="header_drag" @mousedown=${this.movementController.dragMouseDown}>

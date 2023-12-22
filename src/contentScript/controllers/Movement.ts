@@ -3,6 +3,7 @@ import { QN } from '../interface'
 
 interface MovementControllerOptions {
   target: HTMLElement
+  position?: QN.Position
 }
 
 /** 元素移动功能 */
@@ -25,11 +26,17 @@ export class MovementController implements ReactiveController {
   /** 被监听的内部函数 */
   private _mouseMove: null | ((e: MouseEvent) => void) = null
 
+  /** 移动结束后触发的回调列表 */
+  private mouseEndCallbackTasks: ((props: { position: QN.Position }) => void)[] = []
+
   constructor(host: ReactiveControllerHost, options: MovementControllerOptions) {
     ;(this.host = host).addController(this)
+    this.dragMouseDown = this.dragMouseDown.bind(this)
     this.target = options.target
 
-    this.dragMouseDown = this.dragMouseDown.bind(this)
+    if (options.position) {
+      this.setContainerPosition(options.position)
+    }
   }
 
   hostConnected() {}
@@ -40,13 +47,13 @@ export class MovementController implements ReactiveController {
   }
 
   /** 获取容器的位置 */
-  getContainerRect() {
+  private getContainerRect() {
     const containerRect = this.target.getBoundingClientRect()
     if (containerRect) return containerRect
   }
 
   /** 设置容器的位置 */
-  setContainerPosition(position: QN.Position) {
+  private setContainerPosition(position: QN.Position) {
     // 容器位置 = 位置 + 偏移量
     const { left: offsetLeft, top: offsetTop } = this.offset
     const left = position.left + offsetLeft
@@ -54,6 +61,17 @@ export class MovementController implements ReactiveController {
 
     this.target.style.transform = `translate(${left}px, ${top}px)`
     return { top, left }
+  }
+
+  /** 提供给外部使用的 setContainerPosition */
+  setPosition(position: QN.Position) {
+    const offset = this.setContainerPosition(position)
+    this.offset = offset
+  }
+
+  /** 移动结束后触发回调 */
+  onMoveEnd(callback: (props: { position: QN.Position }) => void) {
+    this.mouseEndCallbackTasks.push(callback)
   }
 
   /** 鼠标按下 Drag 元素后，可进行拖动容器 */
@@ -79,6 +97,9 @@ export class MovementController implements ReactiveController {
     window.addEventListener('mousemove', mouseMove)
     window.addEventListener('mouseup', () => {
       window.removeEventListener('mousemove', mouseMove)
+      this.mouseEndCallbackTasks.forEach((task) => {
+        task({ position: offset })
+      })
       // 设置偏移量
       this.offset = offset
     })
