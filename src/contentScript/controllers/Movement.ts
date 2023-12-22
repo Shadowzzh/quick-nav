@@ -46,34 +46,31 @@ export class MovementController implements ReactiveController {
   }
 
   /** 设置容器的位置 */
-  setContainerPosition(position?: QN.Position) {
-    // 如果传入了位置，则设置位置
-    if (position) {
-      this.target.style.transform = `translate(${position.left}px, ${position.top}px)`
-      this.offset = position
-      return
-    }
+  setContainerPosition(position: QN.Position) {
+    // 容器位置 = 位置 + 偏移量
+    const { left: offsetLeft, top: offsetTop } = this.offset
+    const left = position.left + offsetLeft
+    const top = position.top + offsetTop
 
-    // 如果没有传入位置，则获取容器的位置
-    const containerRect = this.getContainerRect()
-
-    if (!containerRect) return
-    this.target.style.transform = `translate(${containerRect.left}px, ${containerRect.top}px)`
-    this.offset = { left: containerRect.left, top: containerRect.top }
+    this.target.style.transform = `translate(${left}px, ${top}px)`
+    return { top, left }
   }
 
   /** 鼠标按下 Drag 元素后，可进行拖动容器 */
   dragMouseDown(downEvent: MouseEvent) {
     const { x: downX, y: downY } = downEvent
-    // 鼠标按下时。鼠标位置 - 容器已经偏移的位置 = 容器的原始位置
-    const originPosition = { x: downX - this.offset.left, y: downY - this.offset.top }
+
+    // 鼠标按下时容器的原始位置
+    const originPosition = { x: downX, y: downY }
+    // 容器的偏移量
+    let offset = { left: 0, top: 0 }
 
     /** 鼠标移动时，拖动容器 */
     const mouseMove = (e: MouseEvent) => {
       const { x: mouseX, y: mouseY } = e // 鼠标的位置离
       const moveX = mouseX - originPosition.x // 鼠标移动的距离 - X
       const moveY = mouseY - originPosition.y // 鼠标移动的距离 - Y
-      this.setContainerPosition({ left: moveX, top: moveY })
+      offset = this.setContainerPosition({ left: moveX, top: moveY })
     }
 
     this._mouseMove = mouseMove
@@ -82,6 +79,8 @@ export class MovementController implements ReactiveController {
     window.addEventListener('mousemove', mouseMove)
     window.addEventListener('mouseup', () => {
       window.removeEventListener('mousemove', mouseMove)
+      // 设置偏移量
+      this.offset = offset
     })
   }
 }
