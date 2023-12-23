@@ -1,9 +1,11 @@
-import { LitElement, html, css, PropertyValues } from 'lit'
-import { customElement, property } from 'lit/decorators.js'
+import { LitElement, html, css } from 'lit'
+import { customElement } from 'lit/decorators.js'
 import { MovementController } from '../../controllers/Movement'
 import { ResizeController } from '../../controllers/Resize'
 import '../Icons'
 import '../Button'
+import '../Scrollbar'
+
 import { syncStorage } from '../../../utils/storage'
 import { QN } from '../../interface'
 
@@ -60,11 +62,11 @@ export class NavigatorPanel extends LitElement {
       }
 
       :host .content {
-        padding: 0 10px;
+        padding-left: 10px;
         padding-bottom: 5px;
         height: calc(100% - 32px);
-
-        overflow: auto;
+        width: 100%;
+        /* position: relative; */
       }
     `,
   ]
@@ -110,7 +112,6 @@ export class NavigatorPanel extends LitElement {
   }
 
   render() {
-    console.log(this.children)
     return html`<div class="waves-effect quick-nav">
       <div class="header">
         <wc-button class="header_drag" @mousedown=${this.movementController.dragMouseDown}>
@@ -118,7 +119,9 @@ export class NavigatorPanel extends LitElement {
         </wc-button>
         <div>Navigator</div>
       </div>
-      <div class="content">${this.children}</div>
+      <div class="content">
+        <wc-scroll minScrollbarLength="1" suppressScrollX>${this.children}</wc-scroll>
+      </div>
     </div>`
   }
 }
