@@ -19,8 +19,12 @@ type Direction =
 export class ResizeController implements ReactiveController {
   host: ReactiveControllerHost
   target: HTMLElement
-
+  /** 改变元素大小的方向 */
   direction: Direction[] = []
+  /** 最小宽度 */
+  minWidth: number = 200
+  /** 最小高度 */
+  minHeight: number = 300
 
   /** 被监听的内部函数 */
   private _mouseMove: null | ((e: MouseEvent) => void) = null
@@ -56,42 +60,99 @@ export class ResizeController implements ReactiveController {
   }
 
   /** 鼠标按下 Drag 元素后，可进行拖动容器 */
-  onDragMouseDown(direction: Direction, downEvent: MouseEvent) {
+  private onDragMouseDown(direction: Direction, downEvent: MouseEvent) {
     const { x: downX, y: downY } = downEvent
     const containerRect = this.getContainerRect()
     if (!containerRect) return
 
+    // 获取当前容器的偏移量
+    const translate = this.target.style.transform
+    const match = translate.match(/translate\((.+)px,(.+)px\)/) ?? []
+    const offset = {
+      x: Number(match[1] ?? 0),
+      y: Number(match[2] ?? 0),
+    }
+
+    let raf: number | null = null
+
     /** 鼠标移动时，拖动容器 */
     const mouseMove = (e: MouseEvent) => {
-      const { x: mouseX, y: mouseY } = e // 鼠标的位置离
+      raf && cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const { x: mouseX, y: mouseY } = e // 鼠标的位置离
+        const diff = { x: downX - mouseX, y: downY - mouseY }
 
-      // 改变宽度
-      const resizeWidth = () => {
-        const resizeWidth = containerRect.width + (downX - mouseX)
-        this.target.style.width = `${resizeWidth}px`
-      }
+        const nextWidthDecrease = Math.max(containerRect.width + diff.x, this.minWidth)
+        const nextWidthIncrease = Math.max(containerRect.width - diff.x, this.minWidth)
 
-      // 改变高度
-      const resizeHeight = () => {
-        const resizeHeight = containerRect.height + (mouseY - downY)
-        this.target.style.height = `${resizeHeight}px`
-      }
+        const nextHeightDecrease = Math.max(containerRect.height - diff.y, this.minHeight)
+        const nextHeightIncrease = Math.max(containerRect.height + diff.y, this.minHeight)
 
-      switch (direction) {
-        case 'left':
-          resizeWidth()
-          break
+        const nextOffsetX = offset.x - (containerRect.width - nextWidthIncrease)
+        const nextOffsetY = offset.y + (containerRect.height - nextHeightIncrease)
 
-        case 'bottom':
-          resizeHeight()
-          break
-
-        case 'left-bottom': {
-          resizeWidth()
-          resizeHeight()
-          break
+        const moveTop = () => {
+          this.target.style.height = `${nextHeightIncrease}px`
+          this.target.style.transform = `translate(${offset.x}px, ${nextOffsetY}px)`
         }
-      }
+
+        const moveRight = () => {
+          this.target.style.width = `${nextWidthIncrease}px`
+          this.target.style.transform = `translate(${nextOffsetX}px, ${offset.y}px)`
+        }
+
+        const moveBottom = () => {
+          this.target.style.height = `${nextHeightDecrease}px`
+        }
+
+        const moveLeft = () => {
+          this.target.style.width = `${nextWidthDecrease}px`
+        }
+
+        const moveRightTop = () => {
+          this.target.style.width = `${nextWidthIncrease}px`
+          this.target.style.height = `${nextHeightIncrease}px`
+          this.target.style.transform = `translate(${nextOffsetX}px, ${nextOffsetY}px)`
+        }
+
+        switch (direction) {
+          case 'top': {
+            moveTop()
+            break
+          }
+          case 'right': {
+            moveRight()
+            break
+          }
+          case 'bottom': {
+            moveBottom()
+            break
+          }
+          case 'left': {
+            moveLeft()
+            break
+          }
+          case 'left-bottom': {
+            moveLeft()
+            moveBottom()
+            break
+          }
+          case 'left-top': {
+            moveLeft()
+            moveTop()
+            break
+          }
+          case 'right-bottom': {
+            moveRight()
+            moveBottom()
+            break
+          }
+          case 'right-top': {
+            moveRightTop()
+            break
+          }
+        }
+      })
     }
     this._mouseMove = mouseMove
 
@@ -103,9 +164,11 @@ export class ResizeController implements ReactiveController {
   }
 
   /** 创建大小改变的handler */
-  createSizeHandler(direction: Direction) {
+  private createSizeHandler(direction: Direction) {
     const handler = document.createElement('div')
-    this.setStyleByDirection(handler, direction)
+    const handlerFragment = document.createDocumentFragment().appendChild(handler)
+
+    this.setStyleByDirection(handlerFragment, direction)
 
     const onDragMouseDown = this.onDragMouseDown.bind(this, direction)
     this._onDragMouseDown = onDragMouseDown
@@ -116,39 +179,92 @@ export class ResizeController implements ReactiveController {
   }
 
   /** 根据方向设置样式 */
-  setStyleByDirection(handler: HTMLElement, direction: Direction) {
+  private setStyleByDirection(handler: HTMLElement, direction: Direction) {
     handler.style.position = 'absolute'
     handler.style.zIndex = '1'
     handler.style.display = 'block'
     handler.style.userSelect = 'none'
 
-    if (direction === 'left') {
-      handler.style.left = '0'
-      handler.style.top = '0'
-      handler.style.cursor = 'ew-resize'
-      handler.style.width = '6px'
-      handler.style.height = '100%'
-    }
+    switch (direction) {
+      case 'left': {
+        handler.style.left = '0'
+        handler.style.top = '0'
+        handler.style.cursor = 'ew-resize'
+        handler.style.width = '6px'
+        handler.style.height = '100%'
+        break
+      }
 
-    if (direction === 'bottom') {
-      handler.style.bottom = '0'
-      handler.style.width = '100%'
-      handler.style.cursor = 'ns-resize'
-      handler.style.height = '6px'
-      handler.style.left = '0'
-    }
+      case 'top': {
+        handler.style.top = '0'
+        handler.style.width = '100%'
+        handler.style.cursor = 'ns-resize'
+        handler.style.height = '6px'
+        handler.style.left = '0'
+        break
+      }
 
-    if (direction === 'left-bottom') {
-      handler.style.left = '0'
-      handler.style.bottom = '0'
-      handler.style.cursor = 'nesw-resize'
-      handler.style.width = '10px'
-      handler.style.height = '10px'
-      handler.style.zIndex = '2'
+      case 'bottom': {
+        handler.style.bottom = '0'
+        handler.style.width = '100%'
+        handler.style.cursor = 'ns-resize'
+        handler.style.height = '6px'
+        handler.style.left = '0'
+        break
+      }
+
+      case 'left-bottom': {
+        handler.style.left = '0'
+        handler.style.bottom = '0'
+        handler.style.cursor = 'nesw-resize'
+        handler.style.width = '10px'
+        handler.style.height = '10px'
+        handler.style.zIndex = '2'
+        break
+      }
+
+      case 'right': {
+        handler.style.right = '0'
+        handler.style.top = '0'
+        handler.style.cursor = 'ew-resize'
+        handler.style.width = '6px'
+        handler.style.height = '100%'
+        break
+      }
+
+      case 'right-bottom': {
+        handler.style.right = '0'
+        handler.style.bottom = '0'
+        handler.style.cursor = 'nwse-resize'
+        handler.style.width = '10px'
+        handler.style.height = '10px'
+        handler.style.zIndex = '2'
+        break
+      }
+
+      case 'right-top': {
+        handler.style.right = '0'
+        handler.style.top = '0'
+        handler.style.cursor = 'nesw-resize'
+        handler.style.width = '10px'
+        handler.style.height = '10px'
+        handler.style.zIndex = '2'
+        break
+      }
+
+      case 'left-top': {
+        handler.style.left = '0'
+        handler.style.top = '0'
+        handler.style.cursor = 'nwse-resize'
+        handler.style.width = '10px'
+        handler.style.height = '10px'
+        handler.style.zIndex = '2'
+        break
+      }
     }
   }
 
-  /** 获取容器的巨型信息 */
+  /** 获取容器的矩形信息 */
   getContainerRect() {
     const containerRect = this.target.getBoundingClientRect()
     if (containerRect) return containerRect

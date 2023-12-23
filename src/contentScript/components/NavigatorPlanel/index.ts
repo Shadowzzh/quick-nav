@@ -77,7 +77,7 @@ export class NavigatorPanel extends LitElement {
   })
   private resizeController = new ResizeController(this, {
     target: this,
-    direction: ['left', 'bottom', 'left-bottom'],
+    direction: ['left', 'left-bottom', 'bottom', 'right', 'top', 'right-top', 'right-bottom'],
   })
 
   /** 是否显示组件 */
