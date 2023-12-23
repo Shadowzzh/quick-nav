@@ -1,5 +1,6 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
+import { getOffsetByElement } from '../../utils'
 
 interface MovementControllerOptions {
   target: HTMLElement
@@ -63,6 +64,14 @@ export class MovementController implements ReactiveController {
     return { top, left }
   }
 
+  /** 更新偏移量 */
+  updateOffset() {
+    const originOffset = getOffsetByElement(this.target)
+    this.offset = { top: originOffset.y, left: originOffset.x }
+
+    return this.offset
+  }
+
   /** 提供给外部使用的 setContainerPosition */
   setPosition(position: QN.Position) {
     const offset = this.setContainerPosition(position)
@@ -93,15 +102,21 @@ export class MovementController implements ReactiveController {
 
     this._mouseMove = mouseMove
 
-    // 鼠标按下后，监听鼠标移动事件, 并在鼠标抬起后移除监听
-    window.addEventListener('mousemove', mouseMove)
-    window.addEventListener('mouseup', () => {
+    /** 鼠标抬起后， */
+    const mouseUp = () => {
       window.removeEventListener('mousemove', mouseMove)
+      window.removeEventListener('mouseup', mouseUp)
+
       this.mouseEndCallbackTasks.forEach((task) => {
         task({ position: offset })
       })
+
       // 设置偏移量
       this.offset = offset
-    })
+    }
+
+    // 鼠标按下后，监听鼠标移动事件, 并在鼠标抬起后移除监听
+    window.addEventListener('mousemove', mouseMove)
+    window.addEventListener('mouseup', mouseUp)
   }
 }

@@ -93,20 +93,38 @@ export class NavigatorPanel extends LitElement {
     this.initial()
   }
 
+  /** 初始化 */
   async initial() {
-    const { position } = (await syncStorage.get('navigatorPanel')) ?? {}
+    const { position, size } = (await syncStorage.get('navigatorPanel')) ?? {}
 
     if (position) {
       this.initialContainerPosition({ position })
     }
 
+    if (size) {
+      this.initialContainerSize({ size })
+    }
+
     this.style.visibility = 'visible'
   }
 
+  /** 初始化容器大小 */
+  async initialContainerSize(props: { size: QN.Size }) {
+    this.resizeController.onSizeEnd(({ size }) => {
+      const offset = this.movementController.updateOffset()
+      syncStorage.set(['navigatorPanel', 'size'], size)
+      syncStorage.set(['navigatorPanel', 'position'], offset)
+    })
+
+    // 设置缓存中的位置
+    this.resizeController.setSize(props.size)
+  }
+
+  /** 初始化容器位置 */
   async initialContainerPosition(props: { position: QN.Position }) {
     // 设存储监听
-    this.movementController.onMoveEnd(async ({ position }) => {
-      await syncStorage.set(['navigatorPanel', 'position'], position)
+    this.movementController.onMoveEnd(({ position }) => {
+      syncStorage.set(['navigatorPanel', 'position'], position)
     })
 
     // 设置缓存中的位置

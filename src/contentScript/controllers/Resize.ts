@@ -1,4 +1,6 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
+import { QN } from '../interface'
+import { getOffsetByElement } from '../../utils'
 
 interface ResizeControllerOptions {
   target: HTMLElement
@@ -32,6 +34,8 @@ export class ResizeController implements ReactiveController {
   private _onDragMouseDown: null | ((downEvent: MouseEvent) => void) = null
   /** 改变元素大小的 handler */
   private _handler: HTMLElement[] = []
+  /** 元素大小改变后触发的回调列表 */
+  private sizeEndCallbackTasks: ((props: { size: QN.Size; offset: QN.Position }) => void)[] = []
 
   constructor(host: ReactiveControllerHost, options: ResizeControllerOptions) {
     ;(this.host = host).addController(this)
@@ -66,17 +70,18 @@ export class ResizeController implements ReactiveController {
     if (!containerRect) return
 
     // 获取当前容器的偏移量
-    const translate = this.target.style.transform
-    const match = translate.match(/translate\((.+)px,(.+)px\)/) ?? []
-    const offset = {
-      x: Number(match[1] ?? 0),
-      y: Number(match[2] ?? 0),
-    }
+    const originOffset = getOffsetByElement(this.target)
 
+    // 保存当前帧的鼠标位置
+    const size = { width: containerRect.width, height: containerRect.height }
+    // 保存当前帧的偏移量
+    const offset = { x: originOffset.x, y: originOffset.y }
+
+    // 保存当前帧的 requestAnimationFrame
     let raf: number | null = null
 
     /** 鼠标移动时，拖动容器 */
-    const mouseMove = (e: MouseEvent) => {
+    const mouseMoveBySize = (e: MouseEvent) => {
       raf && cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
         const { x: mouseX, y: mouseY } = e // 鼠标的位置离
@@ -88,31 +93,45 @@ export class ResizeController implements ReactiveController {
         const nextHeightDecrease = Math.max(containerRect.height - diff.y, this.minHeight)
         const nextHeightIncrease = Math.max(containerRect.height + diff.y, this.minHeight)
 
-        const nextOffsetX = offset.x - (containerRect.width - nextWidthIncrease)
-        const nextOffsetY = offset.y + (containerRect.height - nextHeightIncrease)
+        const nextOffsetX = originOffset.x - (containerRect.width - nextWidthIncrease)
+        const nextOffsetY = originOffset.y + (containerRect.height - nextHeightIncrease)
+
+        offset.x = nextOffsetX
+        offset.y = nextOffsetY
 
         const moveTop = () => {
           this.target.style.height = `${nextHeightIncrease}px`
-          this.target.style.transform = `translate(${offset.x}px, ${nextOffsetY}px)`
+          this.target.style.transform = `translate(${originOffset.x}px, ${nextOffsetY}px)`
+
+          size.height = nextHeightIncrease
         }
 
         const moveRight = () => {
           this.target.style.width = `${nextWidthIncrease}px`
-          this.target.style.transform = `translate(${nextOffsetX}px, ${offset.y}px)`
+          this.target.style.transform = `translate(${nextOffsetX}px, ${originOffset.y}px)`
+
+          size.width = nextWidthIncrease
         }
 
         const moveBottom = () => {
           this.target.style.height = `${nextHeightDecrease}px`
+
+          size.height = nextHeightDecrease
         }
 
         const moveLeft = () => {
           this.target.style.width = `${nextWidthDecrease}px`
+
+          size.width = nextWidthDecrease
         }
 
         const moveRightTop = () => {
           this.target.style.width = `${nextWidthIncrease}px`
           this.target.style.height = `${nextHeightIncrease}px`
           this.target.style.transform = `translate(${nextOffsetX}px, ${nextOffsetY}px)`
+
+          size.width = nextWidthIncrease
+          size.height = nextHeightIncrease
         }
 
         switch (direction) {
@@ -154,13 +173,21 @@ export class ResizeController implements ReactiveController {
         }
       })
     }
-    this._mouseMove = mouseMove
+    this._mouseMove = mouseMoveBySize
+
+    /** 鼠标抬起后， */
+    const mouseUp = () => {
+      window.removeEventListener('mousemove', mouseMoveBySize)
+      window.removeEventListener('mouseup', mouseUp)
+
+      this.sizeEndCallbackTasks.forEach((task) => {
+        task({ size, offset: { left: offset.x, top: offset.y } })
+      })
+    }
 
     // 鼠标按下后，监听鼠标移动事件, 并在鼠标抬起后移除监听
-    window.addEventListener('mousemove', mouseMove)
-    window.addEventListener('mouseup', () => {
-      window.removeEventListener('mousemove', mouseMove)
-    })
+    window.addEventListener('mousemove', mouseMoveBySize)
+    window.addEventListener('mouseup', mouseUp)
   }
 
   /** 创建大小改变的handler */
@@ -262,6 +289,17 @@ export class ResizeController implements ReactiveController {
         break
       }
     }
+  }
+
+  /** 设置元素大小 */
+  setSize(size: QN.Size) {
+    this.target.style.width = `${size.width}px`
+    this.target.style.height = `${size.height}px`
+  }
+
+  /** 元素大小改变结束后触发的回调 */
+  onSizeEnd(callback: (props: { size: QN.Size; offset: QN.Position }) => void) {
+    this.sizeEndCallbackTasks.push(callback)
   }
 
   /** 获取容器的矩形信息 */
