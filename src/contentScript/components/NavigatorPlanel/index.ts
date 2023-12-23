@@ -77,7 +77,16 @@ export class NavigatorPanel extends LitElement {
   })
   private resizeController = new ResizeController(this, {
     target: this,
-    direction: ['left', 'left-bottom', 'bottom', 'right', 'top', 'right-top', 'right-bottom'],
+    direction: [
+      'left',
+      'left-bottom',
+      'bottom',
+      'left-top',
+      'right',
+      'top',
+      'right-top',
+      'right-bottom',
+    ],
   })
 
   /** 是否显示组件 */
@@ -97,38 +106,26 @@ export class NavigatorPanel extends LitElement {
   async initial() {
     const { position, size } = (await syncStorage.get('navigatorPanel')) ?? {}
 
+    // 设置容器位置
     if (position) {
-      this.initialContainerPosition({ position })
+      this.movementController.onMoveEnd(({ position }) => {
+        syncStorage.set(['navigatorPanel', 'position'], position)
+      })
+
+      this.movementController.setPosition(position)
     }
 
+    // 设置容器大小
     if (size) {
-      this.initialContainerSize({ size })
+      this.resizeController.onSizeEnd(({ size }) => {
+        // 因为 resizeController 会修改容器的位置，所以这里需要重新更新容器的offset属性
+        const offset = this.movementController.updateOffset()
+        syncStorage.set(['navigatorPanel'], { size, position: offset })
+      })
+      this.resizeController.setSize(size)
     }
 
     this.style.visibility = 'visible'
-  }
-
-  /** 初始化容器大小 */
-  async initialContainerSize(props: { size: QN.Size }) {
-    this.resizeController.onSizeEnd(({ size }) => {
-      const offset = this.movementController.updateOffset()
-      syncStorage.set(['navigatorPanel', 'size'], size)
-      syncStorage.set(['navigatorPanel', 'position'], offset)
-    })
-
-    // 设置缓存中的位置
-    this.resizeController.setSize(props.size)
-  }
-
-  /** 初始化容器位置 */
-  async initialContainerPosition(props: { position: QN.Position }) {
-    // 设存储监听
-    this.movementController.onMoveEnd(({ position }) => {
-      syncStorage.set(['navigatorPanel', 'position'], position)
-    })
-
-    // 设置缓存中的位置
-    this.movementController.setPosition(props.position)
   }
 
   render() {
