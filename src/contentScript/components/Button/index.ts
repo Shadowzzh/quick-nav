@@ -28,7 +28,6 @@ export class WCButton extends WCWaves {
 
   constructor(options: WCButtonOptions) {
     super()
-    console.log(this.size)
   }
 
   /** 根据 size 属性获取对应的数组 */
