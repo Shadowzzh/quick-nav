@@ -1,9 +1,7 @@
 [English](../README.md) · 简体中文
 
 <p align="center">
-  <a href="http://materializecss.com/">
     <img src="../public/img/logo-256.png" width="150">
-  </a>
 </p>
 
 <h3 align="center">Quick Nav</h3>
