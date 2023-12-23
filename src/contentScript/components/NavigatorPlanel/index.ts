@@ -16,6 +16,8 @@ export class NavigatorPanel extends LitElement {
       :host {
         width: 300px;
         height: 400px;
+        min-width: 200px;
+        min-height: 200px;
         z-index: 9999999;
         display: block;
         position: fixed;
