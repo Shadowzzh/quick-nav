@@ -11,4 +11,6 @@ export const DEFAULT_CONFIG = Object.freeze({
   PANEL_Y: 50,
   /** 面板位置 - X */
   PANEL_X: 50,
+  /** 面板最小边距 */
+  PANEL_MIN_MARGIN: 10,
 })

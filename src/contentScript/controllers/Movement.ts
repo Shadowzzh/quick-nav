@@ -1,6 +1,7 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
 import { getTanslateByElement } from '../../utils'
+import { DEFAULT_CONFIG } from '../../defaultConfig'
 
 interface MovementControllerOptions {
   target: HTMLElement
@@ -86,6 +87,10 @@ export class MovementController implements ReactiveController {
   /** 鼠标按下 Drag 元素后，可进行拖动容器 */
   dragMouseDown(downEvent: MouseEvent) {
     const { x: downX, y: downY } = downEvent
+    const containerRect = this.getContainerRect()
+
+    const mouseXInContainer = downX - containerRect!.left // 鼠标在容器内的位置 - X
+    const mouseYInContainer = downY - containerRect!.top // 鼠标在容器内的位置 - Y
 
     // 鼠标按下时容器的原始位置
     const originPosition = { x: downX, y: downY }
@@ -95,8 +100,27 @@ export class MovementController implements ReactiveController {
     /** 鼠标移动时，拖动容器 */
     const mouseMove = (e: MouseEvent) => {
       const { x: mouseX, y: mouseY } = e // 鼠标的位置离
-      const moveX = mouseX - originPosition.x // 鼠标移动的距离 - X
-      const moveY = mouseY - originPosition.y // 鼠标移动的距离 - Y
+
+      // 鼠标移动的最大距离 X
+      const limitX = Math.min(
+        Math.max(mouseX, mouseXInContainer + DEFAULT_CONFIG.PANEL_MIN_MARGIN),
+        window.innerWidth -
+          containerRect!.width +
+          mouseXInContainer -
+          DEFAULT_CONFIG.PANEL_MIN_MARGIN,
+      )
+      // 鼠标移动的最大距离 Y
+      const limitY = Math.min(
+        Math.max(mouseY, mouseYInContainer + DEFAULT_CONFIG.PANEL_MIN_MARGIN),
+        window.innerHeight -
+          containerRect!.height +
+          mouseYInContainer -
+          DEFAULT_CONFIG.PANEL_MIN_MARGIN,
+      )
+
+      const moveX = limitX - originPosition.x // 鼠标移动的距离 - X
+      const moveY = limitY - originPosition.y // 鼠标移动的距离 - Y
+
       offset = this.setContainerPosition({ x: moveX, y: moveY })
     }
 
