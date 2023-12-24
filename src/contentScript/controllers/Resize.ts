@@ -181,7 +181,7 @@ export class ResizeController implements ReactiveController {
       window.removeEventListener('mouseup', mouseUp)
 
       this.sizeEndCallbackTasks.forEach((task) => {
-        task({ size, offset: { left: offset.x, top: offset.y } })
+        task({ size, offset: { x: offset.x, y: offset.y } })
       })
     }
 

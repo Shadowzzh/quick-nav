@@ -6,8 +6,8 @@ export type TitleTree = Tree<TitleTreeData>
 
 namespace QN {
   export interface Position {
-    top: number
-    left: number
+    y: number
+    x: number
   }
 
   export interface Size {

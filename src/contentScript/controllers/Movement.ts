@@ -14,7 +14,7 @@ export class MovementController implements ReactiveController {
   target: HTMLElement
 
   /** 容器的偏移量 */
-  private _offset: QN.Position = { top: 0, left: 0 }
+  private _offset: QN.Position = { y: 0, x: 0 }
 
   set offset(offset: QN.Position) {
     this._offset = offset
@@ -56,18 +56,18 @@ export class MovementController implements ReactiveController {
   /** 设置容器的位置 */
   private setContainerPosition(position: QN.Position) {
     // 容器位置 = 位置 + 偏移量
-    const { left: offsetLeft, top: offsetTop } = this.offset
-    const left = position.left + offsetLeft
-    const top = position.top + offsetTop
+    const { x: offsetLeft, y: offsetTop } = this.offset
+    const x = position.x + offsetLeft
+    const y = position.y + offsetTop
 
-    this.target.style.transform = `translate(${left}px, ${top}px)`
-    return { top, left }
+    this.target.style.transform = `translate(${x}px, ${y}px)`
+    return { x, y }
   }
 
   /** 更新偏移量 */
   updateOffset() {
     const originOffset = getOffsetByElement(this.target)
-    this.offset = { top: originOffset.y, left: originOffset.x }
+    this.offset = { y: originOffset.y, x: originOffset.x }
 
     return this.offset
   }
@@ -90,14 +90,14 @@ export class MovementController implements ReactiveController {
     // 鼠标按下时容器的原始位置
     const originPosition = { x: downX, y: downY }
     // 容器的偏移量
-    let offset = { left: 0, top: 0 }
+    let offset = { x: 0, y: 0 }
 
     /** 鼠标移动时，拖动容器 */
     const mouseMove = (e: MouseEvent) => {
       const { x: mouseX, y: mouseY } = e // 鼠标的位置离
       const moveX = mouseX - originPosition.x // 鼠标移动的距离 - X
       const moveY = mouseY - originPosition.y // 鼠标移动的距离 - Y
-      offset = this.setContainerPosition({ left: moveX, top: moveY })
+      offset = this.setContainerPosition({ x: moveX, y: moveY })
     }
 
     this._mouseMove = mouseMove

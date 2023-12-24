@@ -106,6 +106,8 @@ export class NavigatorPanel extends LitElement {
   async initial() {
     const { position, size } = (await syncStorage.get('navigatorPanel')) ?? {}
 
+    // chrome.storage.sync.get((args) => console.log(args))
+
     // 设置容器位置
     if (position) {
       this.movementController.onMoveEnd(({ position }) => {
