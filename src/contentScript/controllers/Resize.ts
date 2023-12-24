@@ -1,6 +1,7 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
 import { getOffsetByElement } from '../../utils'
+import { DEFAULT_CONFIG } from '../../defaultConfig'
 
 interface ResizeControllerOptions {
   target: HTMLElement
@@ -24,9 +25,9 @@ export class ResizeController implements ReactiveController {
   /** 改变元素大小的方向 */
   direction: Direction[] = []
   /** 最小宽度 */
-  minWidth: number = 200
+  minWidth: number = DEFAULT_CONFIG.PANEL_MIN_WIDTH
   /** 最小高度 */
-  minHeight: number = 300
+  minHeight: number = DEFAULT_CONFIG.PANEL_MIN_HEIGHT
 
   /** 被监听的内部函数 */
   private _mouseMove: null | ((e: MouseEvent) => void) = null

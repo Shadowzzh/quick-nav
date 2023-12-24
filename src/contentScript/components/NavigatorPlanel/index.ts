@@ -8,16 +8,19 @@ import '../Scrollbar'
 
 import { syncStorage } from '../../../utils/storage'
 import { QN } from '../../interface'
+import { DEFAULT_CONFIG } from '../../../defaultConfig'
 
 @customElement('navigator-panel')
 export class NavigatorPanel extends LitElement {
   static styles = [
     css`
       :host {
-        width: 300px;
+        /* width: 300px;
         height: 400px;
         min-width: 200px;
-        min-height: 200px;
+        min-height: 200px; */
+        /* top: 0;
+        right: 0; */
         z-index: 9999999;
         display: block;
         position: fixed;
@@ -26,8 +29,6 @@ export class NavigatorPanel extends LitElement {
         box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
         overflow: hidden;
         border-radius: 6px;
-        top: 10vh;
-        right: 0;
         border: 1px solid rgb(235, 238, 245);
       }
 
@@ -103,37 +104,70 @@ export class NavigatorPanel extends LitElement {
   }
 
   /** 初始化 */
-  async initial() {
+  private async initial() {
     const { position, size } = (await syncStorage.get('navigatorPanel')) ?? {}
 
     // chrome.storage.sync.get((args) => console.log(args))
+    // chrome.storage.sync.clear()
 
-    // 设置容器位置
-    if (position) {
-      this.movementController.onMoveEnd(({ position }) => {
-        syncStorage.set(['navigatorPanel', 'position'], position)
-      })
+    /** 初始化容器信息 */
+    this.style.top = `${DEFAULT_CONFIG.PANEL_X}px`
+    this.style.right = `${DEFAULT_CONFIG.PANEL_Y}px`
+    this.style.minHeight = `${DEFAULT_CONFIG.PANEL_MIN_WIDTH}px`
+    this.style.minWidth = `${DEFAULT_CONFIG.PANEL_MIN_HEIGHT}px`
 
-      this.movementController.setPosition(position)
-    }
+    /** 设置容器位置 */
+    this.movementController.onMoveEnd(({ position }) => {
+      syncStorage.set(['navigatorPanel', 'position'], position)
+    })
+    this.movementController.setPosition(position ?? { x: 0, y: 0 })
 
-    // 设置容器大小
-    if (size) {
-      this.resizeController.onSizeEnd(({ size }) => {
-        // 因为 resizeController 会修改容器的位置，所以这里需要重新更新容器的offset属性
-        const offset = this.movementController.updateOffset()
-        syncStorage.set(['navigatorPanel'], { size, position: offset })
-      })
-      this.resizeController.setSize(size)
-    }
+    /** 设置容器大小 */
+    this.resizeController.onSizeEnd(({ size }) => {
+      // 因为 resizeController 会修改容器的位置，所以这里需要重新更新容器的offset属性
+      const offset = this.movementController.updateOffset()
+      syncStorage.set(['navigatorPanel'], { size, position: offset })
+    })
+    this.resizeController.setSize(
+      size ?? {
+        width: DEFAULT_CONFIG.PANEL_WIDTH,
+        height: DEFAULT_CONFIG.PANEL_HEIGHT,
+      },
+    )
 
     this.style.visibility = 'visible'
+  }
+
+  /** 双击 icon 后初始化容器矩形信息 */
+  private onDblClickMoveIcon() {
+    this.style.transition =
+      'transform 0.3s var(--animation-ease-out-quart), width 0.3s ease-out, height 0.3s ease-out'
+
+    const initialPosition = { x: 0, y: 0 }
+    const initialSize = {
+      width: DEFAULT_CONFIG.PANEL_WIDTH,
+      height: DEFAULT_CONFIG.PANEL_HEIGHT,
+    }
+
+    this.movementController.setPosition(initialPosition)
+    this.resizeController.setSize(initialSize)
+
+    syncStorage.set(['navigatorPanel'], { size: initialSize, position: initialPosition })
+
+    // TODO: 动画实现方式优化
+    setTimeout(() => {
+      this.style.transition = ''
+    }, 300)
   }
 
   render() {
     return html`<div class="waves-effect quick-nav">
       <div class="header">
-        <wc-button class="header_drag" @mousedown=${this.movementController.dragMouseDown}>
+        <wc-button
+          class="header_drag"
+          @mousedown=${this.movementController.dragMouseDown}
+          @dblclick=${this.onDblClickMoveIcon}
+        >
           <wc-icon name="drag" size="16"></wc-icon>
         </wc-button>
         <div>Navigator</div>
