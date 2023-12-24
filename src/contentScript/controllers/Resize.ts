@@ -1,6 +1,6 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
-import { getOffsetByElement } from '../../utils'
+import { getTanslateByElement } from '../../utils'
 import { DEFAULT_CONFIG } from '../../defaultConfig'
 
 interface ResizeControllerOptions {
@@ -71,7 +71,7 @@ export class ResizeController implements ReactiveController {
     if (!containerRect) return
 
     // 获取当前容器的偏移量
-    const originOffset = getOffsetByElement(this.target)
+    const originOffset = getTanslateByElement(this.target)
 
     // 保存当前帧的鼠标位置
     const size = { width: containerRect.width, height: containerRect.height }

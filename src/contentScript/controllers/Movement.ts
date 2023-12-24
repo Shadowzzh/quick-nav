@@ -1,6 +1,6 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
-import { getOffsetByElement } from '../../utils'
+import { getTanslateByElement } from '../../utils'
 
 interface MovementControllerOptions {
   target: HTMLElement
@@ -66,7 +66,7 @@ export class MovementController implements ReactiveController {
 
   /** 更新偏移量 */
   updateOffset() {
-    const originOffset = getOffsetByElement(this.target)
+    const originOffset = getTanslateByElement(this.target)
     this.offset = { y: originOffset.y, x: originOffset.x }
 
     return this.offset
