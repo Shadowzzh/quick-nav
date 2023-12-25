@@ -1,3 +1,4 @@
+import { DEFAULT_TREE_CONFIG } from '../../defaultConfig'
 import { $ } from '../../utils'
 import { Tree } from '../../utils/models/Tree'
 import { CONTENT_TAG_WEIGHT, TITLE_TAG_WEIGHT } from '../constant'
@@ -99,7 +100,7 @@ export function generatorTitleTree(content: Element) {
   /** 根节点 */
   const rootTree = new Tree<TitleTreeData>()
   /** 前一个标题的 Tree */
-  let preTree: TitleTree = new Tree({ data: { element: titlesOfTag[0] } })
+  let preTree: TitleTree = new Tree({ data: { ...DEFAULT_TREE_CONFIG, element: titlesOfTag[0] } })
   if (elementIsEmpty(preTree.data!.element)) return
 
   rootTree.appendChild(preTree)
@@ -112,7 +113,9 @@ export function generatorTitleTree(content: Element) {
     // 如果标题没有内容，则跳过
     if (elementIsEmpty(title)) continue
 
-    const currentTree = new Tree<TitleTreeData>({ data: { element: title } })
+    const currentTree = new Tree<TitleTreeData>({
+      data: { ...DEFAULT_TREE_CONFIG, element: title },
+    })
 
     // 如果当前标题的权重小于于前一个标题的权重, 则将当前标题添加到前一个标题的子节点中
     if (weight < titleWeights.get(preTitle)!) {

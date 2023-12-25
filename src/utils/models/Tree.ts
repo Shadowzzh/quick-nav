@@ -58,7 +58,9 @@ export class Tree<Data extends any = any> {
   }
 
   /** 遍历子节点 */
-  eachChild(callback: (child: Tree<Data>) => void) {
+  eachChild(callback: (child: Tree<Data>) => void, options?: { method: 'deep' | 'breadth' }) {
+    const method = options?.method ?? 'deep'
+
     const tasks: Tree<Data>[] = [] // 待处理的节点
     let current: Tree<Data> | undefined = undefined // 当前正在处理的节点
 
@@ -66,7 +68,12 @@ export class Tree<Data extends any = any> {
 
     while ((current = tasks.shift())) {
       callback(current)
-      tasks.push(...current._children)
+
+      if (method === 'deep') {
+        tasks.unshift(...current._children)
+      } else if (method === 'breadth') {
+        tasks.push(...current._children)
+      }
     }
   }
 

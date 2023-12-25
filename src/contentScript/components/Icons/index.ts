@@ -1,10 +1,12 @@
 import { LitElement, html, css, CSSResult, svg, TemplateResult } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { StyleInfo, styleMap } from 'lit/directives/style-map.js'
-import { dragSvg } from './svgs'
+import { dragSvg, arrowRightSvg, arrowDownSvg } from './svgs'
 
 const iconMap = {
   drag: { svg: dragSvg },
+  arrowRight: { svg: arrowRightSvg },
+  arrowDown: { svg: arrowDownSvg },
 }
 
 interface IconOptions {

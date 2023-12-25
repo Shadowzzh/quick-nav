@@ -1,6 +1,13 @@
 import type { Tree } from '../utils/models/Tree'
+import { WCTitleItem } from './components/TitleTree/TitleItem'
+import { WCTitleItemSimple } from './components/TitleTree/TitleItemSimple'
 
-export type TitleTreeData = { element: HTMLElement }
+export type TitleTreeData = {
+  element: HTMLElement
+  isShowChildren: boolean
+  isDisplay: boolean
+  TitleItem: undefined | WCTitleItem | WCTitleItemSimple
+}
 /** 标题 Tree */
 export type TitleTree = Tree<TitleTreeData>
 

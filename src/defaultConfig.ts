@@ -14,3 +14,8 @@ export const DEFAULT_CONFIG = Object.freeze({
   /** 面板最小边距 */
   PANEL_MIN_MARGIN: 10,
 })
+
+export const DEFAULT_TREE_CONFIG = Object.freeze({
+  isShowChildren: true,
+  isDisplay: true,
+})

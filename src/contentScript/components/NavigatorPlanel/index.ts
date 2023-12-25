@@ -19,7 +19,7 @@ export class NavigatorPanel extends LitElement {
         z-index: 9999999;
         display: block;
         position: fixed;
-        font-size: 13px;
+        font-size: 13.5px;
         background-color: #fff;
         box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
         overflow: hidden;
