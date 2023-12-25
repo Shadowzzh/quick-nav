@@ -15,12 +15,7 @@ export class NavigatorPanel extends LitElement {
   static styles = [
     css`
       :host {
-        /* width: 300px;
-        height: 400px;
-        min-width: 200px;
-        min-height: 200px; */
-        /* top: 0;
-        right: 0; */
+        box-sizing: border-box;
         z-index: 9999999;
         display: block;
         position: fixed;
@@ -29,10 +24,10 @@ export class NavigatorPanel extends LitElement {
         box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
         overflow: hidden;
         border-radius: 6px;
-        border: 1px solid rgb(235, 238, 245);
       }
 
       :host .quick-nav {
+        border: 1px solid rgb(235, 238, 245);
         height: 100%;
       }
 
@@ -69,7 +64,6 @@ export class NavigatorPanel extends LitElement {
         padding-bottom: 5px;
         height: calc(100% - 32px);
         width: 100%;
-        /* position: relative; */
       }
     `,
   ]

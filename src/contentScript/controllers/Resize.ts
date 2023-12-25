@@ -18,6 +18,7 @@ type Direction =
   | 'left-bottom'
   | 'right-bottom'
 
+// TODO 优化：如何使用Transform来修改元素大小，而不是使用width和height。
 /** 改变元素大小功能 */
 export class ResizeController implements ReactiveController {
   host: ReactiveControllerHost
@@ -73,6 +74,21 @@ export class ResizeController implements ReactiveController {
     // 获取当前容器的偏移量
     const originOffset = getTanslateByElement(this.target)
 
+    // 获取当前触发事件的元素
+    const target = downEvent.target as HTMLElement
+    const targetReact = target.getBoundingClientRect()
+
+    const mouseInTarget = {
+      // 鼠标左侧在目标元素内的距离
+      left: downX - targetReact.left,
+      // 鼠标右侧在目标元素内的距离
+      right: targetReact.left + targetReact.width - downX,
+      // 鼠标顶部在目标元素内的距离
+      top: downY - targetReact.top,
+      // 鼠标底部在目标元素内的距离
+      bottom: targetReact.top + targetReact.height - downY,
+    }
+
     // 保存当前帧的鼠标位置
     const size = { width: containerRect.width, height: containerRect.height }
     // 保存当前帧的偏移量
@@ -86,53 +102,85 @@ export class ResizeController implements ReactiveController {
       raf && cancelAnimationFrame(raf)
       raf = requestAnimationFrame(() => {
         const { x: mouseX, y: mouseY } = e // 鼠标的位置离
-        const diff = { x: downX - mouseX, y: downY - mouseY }
 
-        const nextWidthDecrease = Math.max(containerRect.width + diff.x, this.minWidth)
-        const nextWidthIncrease = Math.max(containerRect.width - diff.x, this.minWidth)
+        // 鼠标最右侧可移动最大距离限制
+        const limitMouseRight = Math.min(
+          mouseX,
+          window.innerWidth - (DEFAULT_CONFIG.PANEL_MIN_MARGIN + mouseInTarget.right),
+        )
+        // 鼠标最左侧可移动最大距离限制
+        const limitMouseLeft = Math.max(
+          mouseX,
+          DEFAULT_CONFIG.PANEL_MIN_MARGIN + mouseInTarget.left,
+        )
+        // 鼠标最顶部可移动最大距离限制
+        const limitMouseTop = Math.max(mouseY, DEFAULT_CONFIG.PANEL_MIN_MARGIN + mouseInTarget.top)
+        // 鼠标最底部可移动最大距离限制
+        const limitMouseBottom = Math.min(
+          mouseY,
+          window.innerHeight - (DEFAULT_CONFIG.PANEL_MIN_MARGIN + mouseInTarget.bottom),
+        )
 
-        const nextHeightDecrease = Math.max(containerRect.height - diff.y, this.minHeight)
-        const nextHeightIncrease = Math.max(containerRect.height + diff.y, this.minHeight)
+        // 下一个右侧宽度
+        const nextWidthByRight = Math.max(
+          containerRect.width + (limitMouseRight - downX),
+          this.minWidth,
+        )
+        // 下一个左侧宽度
+        const nextWidthByLeft = Math.max(
+          containerRect.width + (downX - limitMouseLeft),
+          this.minWidth,
+        )
+        // 下一个顶部高度
+        const nextHeightByTop = Math.max(
+          containerRect.height + (downY - limitMouseTop),
+          this.minHeight,
+        )
+        // 下一个底部高度
+        const nextHeightByBottom = Math.max(
+          containerRect.height + (limitMouseBottom - downY),
+          this.minHeight,
+        )
 
-        const nextOffsetX = originOffset.x - (containerRect.width - nextWidthIncrease)
-        const nextOffsetY = originOffset.y + (containerRect.height - nextHeightIncrease)
+        const nextOffsetX = originOffset.x + nextWidthByRight - containerRect.width
+        const nextOffsetY = originOffset.y + containerRect.height - nextHeightByTop
 
         offset.x = nextOffsetX
         offset.y = nextOffsetY
 
         const moveTop = () => {
-          this.target.style.height = `${nextHeightIncrease}px`
+          this.target.style.height = `${nextHeightByTop}px`
           this.target.style.transform = `translate(${originOffset.x}px, ${nextOffsetY}px)`
 
-          size.height = nextHeightIncrease
+          size.height = nextHeightByTop
         }
 
         const moveRight = () => {
-          this.target.style.width = `${nextWidthIncrease}px`
+          this.target.style.width = `${nextWidthByRight}px`
           this.target.style.transform = `translate(${nextOffsetX}px, ${originOffset.y}px)`
 
-          size.width = nextWidthIncrease
+          size.width = nextWidthByRight
         }
 
         const moveBottom = () => {
-          this.target.style.height = `${nextHeightDecrease}px`
+          this.target.style.height = `${nextHeightByBottom}px`
 
-          size.height = nextHeightDecrease
+          size.height = nextHeightByBottom
         }
 
         const moveLeft = () => {
-          this.target.style.width = `${nextWidthDecrease}px`
+          this.target.style.width = `${nextWidthByLeft}px`
 
-          size.width = nextWidthDecrease
+          size.width = nextWidthByLeft
         }
 
         const moveRightTop = () => {
-          this.target.style.width = `${nextWidthIncrease}px`
-          this.target.style.height = `${nextHeightIncrease}px`
+          this.target.style.width = `${nextWidthByRight}px`
+          this.target.style.height = `${nextHeightByTop}px`
           this.target.style.transform = `translate(${nextOffsetX}px, ${nextOffsetY}px)`
 
-          size.width = nextWidthIncrease
-          size.height = nextHeightIncrease
+          size.width = nextWidthByRight
+          size.height = nextHeightByTop
         }
 
         switch (direction) {
