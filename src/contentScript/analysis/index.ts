@@ -100,14 +100,14 @@ export function generatorTitleTree(content: Element) {
   const rootTree = new Tree<TitleTreeData>()
   /** 前一个标题的 Tree */
   let preTree: TitleTree = new Tree({ data: { element: titlesOfTag[0] } })
-  if (elementIsEmpty(preTree.getData!.element)) return
+  if (elementIsEmpty(preTree.data!.element)) return
 
   rootTree.appendChild(preTree)
 
   for (let i = 1; i < titlesOfTag.length; i++) {
     const title = titlesOfTag[i]
     const weight = titleWeights.get(title)!
-    const preTitle = preTree.getData!.element
+    const preTitle = preTree.data!.element
 
     // 如果标题没有内容，则跳过
     if (elementIsEmpty(title)) continue
@@ -120,15 +120,15 @@ export function generatorTitleTree(content: Element) {
     } else {
       let ancestor: TitleTree | undefined = preTree
 
-      while ((ancestor = ancestor?.getParent)) {
+      while ((ancestor = ancestor?.parent)) {
         // 根节点权重默认最大，所以不需要判断，直接添加到根节点中
         if (ancestor.isRoot()) {
-          ancestor.getRoot.appendChild(currentTree)
+          ancestor.root.appendChild(currentTree)
           break
         }
 
         // 向上查找第一个权重大于当前标题权重的标题，将当前标题添加到该标题的子节点中
-        if (weight < titleWeights.get(ancestor.getData!.element)!) {
+        if (weight < titleWeights.get(ancestor.data!.element)!) {
           ancestor.appendChild(currentTree)
           break
         }
@@ -138,7 +138,7 @@ export function generatorTitleTree(content: Element) {
     preTree = currentTree
   }
 
-  if (rootTree.getChildren.length === 0) return undefined
+  if (rootTree.children.length === 0) return undefined
 
   return rootTree
 }

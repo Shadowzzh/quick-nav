@@ -1,59 +1,59 @@
 export class Tree<Data extends any = any> {
   /** 节点附带的数据 */
-  private data: Data | undefined
+  private _data: Data | undefined
   /** 节点的子节点列表 */
-  private children: Tree<Data>[] = []
+  private _children: Tree<Data>[] = []
   /** 父节点 */
-  private parent: Tree<Data> | undefined = undefined
+  private _parent: Tree<Data> | undefined = undefined
   /** 根节点 */
-  private root: Tree<Data> | undefined = undefined
+  private _root: Tree<Data> | undefined = undefined
   /** 节点的深度 */
-  private depth: number = 0
+  private _depth: number = 0
 
-  private uniqueId: string
+  private _uniqueId: string
 
   constructor(options?: { data?: Data }) {
-    this.data = options?.data
-    this.root = this
-    this.uniqueId = Math.random().toString() + this.depth
+    this._data = options?.data
+    this._root = this
+    this._uniqueId = Math.random().toString() + this._depth
   }
 
-  get getUniqueId() {
-    return this.uniqueId
+  get uniqueId() {
+    return this._uniqueId
   }
 
-  get getParent() {
-    return this.parent
+  get parent() {
+    return this._parent
   }
 
-  get getRoot() {
-    return this.root
+  get root() {
+    return this._root
   }
 
-  get getDepth() {
-    return this.depth
+  get depth() {
+    return this._depth
   }
 
-  get getData() {
-    return this.data
+  get data() {
+    return this._data
   }
 
-  get getChildren() {
-    return this.children
+  get children() {
+    return this._children
   }
 
   /** 添加子节点 */
   appendChild(child: Tree<Data>) {
-    child.parent = this
-    child.root = this.root
-    child.depth = this.depth + 1
+    child._parent = this
+    child._root = this._root
+    child._depth = this._depth + 1
 
-    this.children.push(child)
+    this._children.push(child)
 
     // 更新子节点的根节点和深度
     this.eachChild((child) => {
-      child.root = this.root // 更新子节点的根节点
-      child.depth = child.parent!.depth + 1 // 更新子节点的深度
+      child._root = this._root // 更新子节点的根节点
+      child._depth = child._parent!._depth + 1 // 更新子节点的深度
     })
   }
 
@@ -62,16 +62,16 @@ export class Tree<Data extends any = any> {
     const tasks: Tree<Data>[] = [] // 待处理的节点
     let current: Tree<Data> | undefined = undefined // 当前正在处理的节点
 
-    tasks.push(...this.children) // 将当前节点的子节点添加到待处理的节点中
+    tasks.push(...this._children) // 将当前节点的子节点添加到待处理的节点中
 
     while ((current = tasks.shift())) {
       callback(current)
-      tasks.push(...current.children)
+      tasks.push(...current._children)
     }
   }
 
   /** 判断是否是根节点 */
-  isRoot(): this is { getRoot: Tree<Data> } {
-    return this === this.root
+  isRoot(): this is { root: Tree<Data> } {
+    return this === this._root
   }
 }

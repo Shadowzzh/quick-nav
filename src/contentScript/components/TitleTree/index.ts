@@ -1,10 +1,11 @@
 import { LitElement, html, css, render, TemplateResult } from 'lit'
 import { customElement, eventOptions, property } from 'lit/decorators.js'
 import { TitleTree } from '../../interface'
-import { PointerEvent } from 'react'
+
+import './TitleItem'
 
 export interface TitleTreeElementOptions {
-  treeData: TitleTree
+  rootTree: TitleTree
 }
 
 @customElement('title-tree')
@@ -13,29 +14,19 @@ export class TitleTreeComponent extends LitElement {
     css`
       :host {
       }
-
-      :host .item {
-        cursor: pointer;
-        color: #3b3b3b;
-        padding: 3px;
-      }
-
-      :host .item:hover {
-        background-color: #e6f7ff;
-      }
     `,
   ]
 
   static TreeMap: Map<string, TitleTree> = new Map()
 
   @property({ type: Object })
-  treeData: TitleTree
+  rootTree: TitleTree
 
   constructor(options: TitleTreeElementOptions) {
     super()
 
-    this.treeData = options.treeData
-    this.treeData.eachChild((child) => TitleTreeComponent.TreeMap.set(child.getUniqueId, child))
+    this.rootTree = options.rootTree
+    this.rootTree.eachChild((child) => TitleTreeComponent.TreeMap.set(child.uniqueId, child))
   }
 
   /**
@@ -43,31 +34,28 @@ export class TitleTreeComponent extends LitElement {
    * @param e
    * @returns
    */
-  onClick(e: PointerEvent<HTMLElement>) {
-    const target = e.target as HTMLElement
+  onClick(e: Event) {
+    const target = e.composedPath()[0] as HTMLElement
+    if (!target) return
 
-    if (target.className !== 'item') return
+    if (target.className !== 'title') return
     const uniqueId = target.getAttribute('unique')!
     const child = TitleTreeComponent.TreeMap.get(uniqueId)
 
-    const element = child?.getData?.element
+    const element = child?.data?.element
 
     element?.scrollIntoView()
   }
 
-  structure() {
-    const titleAll: TemplateResult[] = []
-    console.log(this.treeData)
-    this.treeData.eachChild((child) => {
-      const pair = child.getData?.element
-
-      titleAll.push(html` <div class="item" unique=${child.getUniqueId}>${pair?.innerText}</div> `)
-    })
-
-    return titleAll
+  renderTree(node: TitleTree): TemplateResult<1> {
+    return html`<wc-title-item .node=${node}>
+      ${node.children.map((child) => this.renderTree(child))}
+    </wc-title-item>`
   }
 
   render() {
-    return html`<div @click="${this.onClick}">${this.structure()}</div>`
+    return html`<div @click="${this.onClick}">
+      ${this.rootTree.children.map((node) => this.renderTree(node))}
+    </div>`
   }
 }
