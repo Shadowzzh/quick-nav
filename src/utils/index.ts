@@ -4,7 +4,7 @@ export const $: (query: string, target?: Element) => Element[] = (
 ) => Array.from(target.querySelectorAll(query))
 
 /** 获取元素的偏移量 - translate(x ,y) */
-export const getTanslateByElement = (el: HTMLElement) => {
+export const getTranslateByElement = (el: HTMLElement) => {
   const translate = el.style.transform
   const match = translate.match(/translate\((.+)px,(.+)px\)/) ?? []
   const originOffset = {

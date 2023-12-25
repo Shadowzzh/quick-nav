@@ -1,6 +1,6 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
-import { getTanslateByElement } from '../../utils'
+import { getTranslateByElement } from '../../utils'
 import { DEFAULT_CONFIG } from '../../defaultConfig'
 
 interface MovementControllerOptions {
@@ -67,7 +67,7 @@ export class MovementController implements ReactiveController {
 
   /** 更新偏移量 */
   updateOffset() {
-    const originOffset = getTanslateByElement(this.target)
+    const originOffset = getTranslateByElement(this.target)
     this.offset = { y: originOffset.y, x: originOffset.x }
 
     return this.offset

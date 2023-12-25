@@ -1,6 +1,6 @@
 import { ReactiveController, ReactiveControllerHost } from 'lit'
 import { QN } from '../interface'
-import { getTanslateByElement } from '../../utils'
+import { getTranslateByElement } from '../../utils'
 import { DEFAULT_CONFIG } from '../../defaultConfig'
 
 interface ResizeControllerOptions {
@@ -72,7 +72,7 @@ export class ResizeController implements ReactiveController {
     if (!containerRect) return
 
     // 获取当前容器的偏移量
-    const originOffset = getTanslateByElement(this.target)
+    const originOffset = getTranslateByElement(this.target)
 
     // 获取当前触发事件的元素
     const target = downEvent.target as HTMLElement
