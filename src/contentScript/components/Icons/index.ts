@@ -1,12 +1,14 @@
 import { LitElement, html, css, CSSResult, svg, TemplateResult } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { StyleInfo, styleMap } from 'lit/directives/style-map.js'
-import { dragSvg, arrowRightSvg, arrowDownSvg } from './svgs'
+import { dragSvg, arrowRightSvg, arrowDownSvg, allExpandSvg, allCollapseSvg } from './svgs'
 
 const iconMap = {
   drag: { svg: dragSvg },
   arrowRight: { svg: arrowRightSvg },
   arrowDown: { svg: arrowDownSvg },
+  allExpand: { svg: allExpandSvg },
+  allCollapse: { svg: allCollapseSvg },
 }
 
 interface IconOptions {
@@ -61,7 +63,8 @@ export class WCIcon extends LitElement {
   }
 
   render() {
-    this.styles = { height: `${this.size}px`, width: `${this.size}px`, color: `${this.color}` }
+    this.styles = { height: `${this.size}px`, width: `${this.size}px`, color: 'currentColor' }
+    this.color && (this.style.color = `${this.color}`)
 
     return html`<div style=${styleMap(this.styles)}>${this.getIconByName(this.name).svg}</div>`
   }

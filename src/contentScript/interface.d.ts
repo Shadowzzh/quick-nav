@@ -4,7 +4,6 @@ import { WCTitleItemSimple } from './components/TitleTree/TitleItemSimple'
 
 export type TitleTreeData = {
   element: HTMLElement
-  isShowChildren: boolean
   isDisplay: boolean
   TitleItem: undefined | WCTitleItem | WCTitleItemSimple
 }

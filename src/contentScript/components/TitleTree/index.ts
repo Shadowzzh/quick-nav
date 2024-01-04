@@ -22,13 +22,15 @@ export class TitleTreeComponent extends LitElement {
   static TreeMap: Map<string, TitleTree> = new Map()
 
   @property({ type: Object })
-  rootTree: TitleTree
+  rootTree: TitleTree | null = null
 
   constructor(options: TitleTreeElementOptions) {
     super()
+  }
 
-    this.rootTree = options.rootTree
-    this.rootTree.eachChild((child) => TitleTreeComponent.TreeMap.set(child.uniqueId, child))
+  connectedCallback() {
+    super.connectedCallback()
+    this.rootTree?.eachChild((child) => TitleTreeComponent.TreeMap.set(child.uniqueId, child))
   }
 
   /**
@@ -97,7 +99,7 @@ export class TitleTreeComponent extends LitElement {
 
   render() {
     return html`<div @click="${this.onClick}">
-      ${this.rootTree.children.map((node) => this.renderTree(node))}
+      ${this.rootTree?.children.map((node) => this.renderTree(node))}
     </div>`
   }
 }

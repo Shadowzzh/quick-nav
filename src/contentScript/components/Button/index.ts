@@ -16,6 +16,10 @@ export class WCButton extends WCWaves {
         border: none;
         cursor: pointer;
         background: none;
+        display: block;
+      }
+
+      :host .waves-effect {
         display: flex;
         justify-content: center;
         align-items: center;

@@ -88,7 +88,7 @@ export class WCTitleItem extends LitElement {
       return html`<div class="title_children">${this.children}</div>`
     }
 
-    console.log(Array.from(this.children))
+    // console.log(Array.from(this.children))
 
     return html`<div class="title">
       <div class="title_content" unique=${this.node.uniqueId}>

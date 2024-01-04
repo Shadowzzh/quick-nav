@@ -1,14 +1,12 @@
-import { LitElement, html, css } from 'lit'
-import { customElement } from 'lit/decorators.js'
+import { LitElement, html, css, TemplateResult } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 import { MovementController } from '../../controllers/Movement'
 import { ResizeController } from '../../controllers/Resize'
+import { syncStorage } from '../../../utils/storage'
+import { DEFAULT_CONFIG } from '../../../defaultConfig'
 import '../Icons'
 import '../Button'
 import '../Scrollbar'
-
-import { syncStorage } from '../../../utils/storage'
-import { QN } from '../../interface'
-import { DEFAULT_CONFIG } from '../../../defaultConfig'
 
 @customElement('navigator-panel')
 export class NavigatorPanel extends LitElement {
@@ -43,8 +41,14 @@ export class NavigatorPanel extends LitElement {
       }
 
       /* 拖动icon */
+      :host .header .header_icon {
+        color: red;
+      }
+      /* place */
+      :host .header .header_space {
+        flex: auto;
+      }
       :host .header .header_drag {
-        color: #999;
         transition: background-color 0.3s var(--animation-ease-out-quart);
       }
       :host .header .header_drag:hover {
@@ -67,6 +71,7 @@ export class NavigatorPanel extends LitElement {
       }
     `,
   ]
+
   private movementController = new MovementController(this, {
     target: this,
   })
@@ -84,8 +89,9 @@ export class NavigatorPanel extends LitElement {
     ],
   })
 
-  /** 是否显示组件 */
-  isDisplayed: boolean = false
+  /** 扩展的 Icon */
+  @property({ type: Array })
+  extraIcon: TemplateResult<1>[] | null = null
 
   constructor() {
     super()
@@ -162,9 +168,10 @@ export class NavigatorPanel extends LitElement {
           @mousedown=${this.movementController.dragMouseDown}
           @dblclick=${this.onDblClickMoveIcon}
         >
-          <wc-icon name="drag" size="16"></wc-icon>
+          <wc-icon class="header_icon" name="drag" size="16" color="#999"></wc-icon>
         </wc-button>
-        <div>Navigator</div>
+        <div class="header_space"></div>
+        ${this.extraIcon}
       </div>
       <div class="content">
         <wc-scroll minScrollbarLength="1" suppressScrollX>${this.children}</wc-scroll>

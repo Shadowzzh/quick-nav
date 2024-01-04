@@ -1,9 +1,10 @@
-import { html, css, LitElement } from 'lit'
+import { html, css, LitElement, PropertyValueMap } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { StyleInfo, styleMap } from 'lit/directives/style-map.js'
 import type { TitleTreeData } from '../../interface'
-import '../Icons'
 import { Tree } from '../../../utils/models/Tree'
+import { Ref, createRef, ref } from 'lit/directives/ref.js'
+import '../Icons'
 
 export interface WCTitleItemSimpleOptions {}
 
@@ -30,11 +31,6 @@ export class WCTitleItemSimple extends LitElement {
         flex: 1;
       }
 
-      :host .title_icon {
-        padding: 4px;
-        margin-right: -2px;
-        transition: transform 0.3s var(--animation-ease-out-quart);
-      }
       :host .title_icon:hover {
         user-select: none;
       }
@@ -49,6 +45,8 @@ export class WCTitleItemSimple extends LitElement {
 
   @property({ type: Object })
   node: Tree<TitleTreeData> | null = null
+
+  expandIconRef: Ref<HTMLElement> = createRef()
 
   constructor(options: WCTitleItemSimpleOptions) {
     super()
@@ -65,55 +63,10 @@ export class WCTitleItemSimple extends LitElement {
     }
   }
 
-  /** 点击展开按钮 */
-  WcIcon = (function () {
-    type EventMethod = 'enter' | 'leave' | null
-
-    let eventMethod: EventMethod = null
-    let target: HTMLElement | null = null
-
-    return function (
-      this: WCTitleItemSimple,
-      props: { style: StyleInfo; isChildren: boolean; isShowChildren: boolean },
-    ) {
-      if (props.isChildren === false) return null
-      const rotate = props.isShowChildren ? `rotate(0deg)` : `rotate(90deg)`
-
-      // TODO 因为展示没有找多 CSS:hover 和 js一起使用的方法，所以使用 js 来实现 hover
-      const setTransform = () => {
-        if (!target) return
-        if (eventMethod === 'enter') {
-          target.style.transform = `scale(1.6) ${rotate}`
-        } else {
-          target.style.transform = `scale(1) ${rotate}`
-        }
-      }
-
-      // TODO 优化 多个 ICON 事件被监听，或许可以通过事件委托来解决。 事件监听未被移除
-      function mouseEnterAndLeave(e: Event, method: EventMethod) {
-        target = e.target as HTMLElement
-        eventMethod = method
-        setTransform()
-      }
-
-      setTransform()
-
-      return html`<wc-icon
-        @mouseenter=${(e: Event) => mouseEnterAndLeave(e, 'enter')}
-        @mouseleave=${(e: Event) => mouseEnterAndLeave(e, 'leave')}
-        class="title_icon"
-        name="arrowRight"
-        unique=${this.node!.uniqueId}
-        size="16"
-        style=${styleMap(props?.style ?? {})}
-      ></wc-icon>`
-    }
-  })()
-
   render() {
     if (!this.node?.data?.element) return
     const { isDisplay, element } = this.node.data
-    const isShowChildren = this.node?.children.some((child) => child.data?.isDisplay)
+    const isShowChildren = this.node?.children.every((child) => child.data?.isDisplay === true)
 
     const style: StyleInfo = {
       opacity: this.opacity,
@@ -121,17 +74,92 @@ export class WCTitleItemSimple extends LitElement {
     const styleContent: StyleInfo = {
       marginLeft: `${(this.node.depth - 1) * 18}px`,
     }
-    const styleIcon: StyleInfo = {}
 
     const isChildren = this.node.children.length > 0
 
+    if (isChildren) {
+      styleContent.paddingLeft = 0
+    }
+
     if (isDisplay === false) return null
+
+    const WCExpandIconElement = isChildren
+      ? html`<wc-expand-icon
+          .isExpand=${isShowChildren}
+          .uniqueId=${this.node.uniqueId}
+        ></wc-expand-icon>`
+      : null
 
     return html`<div class="title">
       <div class="title_content" unique=${this.node.uniqueId} style=${styleMap(styleContent)}>
-        ${this.WcIcon({ style: styleIcon, isShowChildren, isChildren })}
+        ${WCExpandIconElement}
         <div class="title_text" style=${styleMap(style)}>${element.innerText}</div>
       </div>
     </div> `
+  }
+}
+
+type EventMethod = 'enter' | 'leave' | null
+@customElement('wc-expand-icon')
+class WCExpandIcon extends LitElement {
+  static styles = css`
+    :host {
+      padding: 4px;
+      margin-right: -2px;
+      user-select: none;
+      transition: transform 0.3s var(--animation-ease-out-quart);
+    }
+  `
+
+  eventMethod: EventMethod = null
+  @property({ type: Boolean })
+  isExpand: boolean = true
+
+  @property({ type: String })
+  uniqueId: String = ''
+
+  styleInfo: StyleInfo = {}
+
+  constructor() {
+    super()
+  }
+
+  connectedCallback(): void {
+    super.connectedCallback()
+    this.setTransform()
+  }
+
+  protected updated(_changedProperties: PropertyValueMap<WCExpandIcon>): void {
+    if (_changedProperties.has('isExpand')) {
+      this.setTransform()
+    }
+  }
+
+  setTransform() {
+    const rotate = this.isExpand ? `rotate(90deg)` : `rotate(0deg)`
+
+    if (this.eventMethod === 'enter') {
+      this.style.transform = `scale(1.6) ${rotate}`
+    } else {
+      this.style.transform = `scale(1) ${rotate}`
+    }
+  }
+
+  // TODO 优化 多个 ICON 事件被监听，或许可以通过事件委托来解决。 事件监听未被移除
+  mouseEnterAndLeave(e: Event, method: EventMethod) {
+    this.eventMethod = method
+    this.setTransform()
+  }
+
+  render() {
+    return html`<wc-icon
+      @mouseenter=${(e: Event) => this.mouseEnterAndLeave(e, 'enter')}
+      @mouseleave=${(e: Event) => this.mouseEnterAndLeave(e, 'leave')}
+      class="title_icon"
+      name="arrowRight"
+      unique=${this.uniqueId}
+      size="16"
+      style=${styleMap(this.styleInfo)}
+    ></wc-icon>`
   }
 }

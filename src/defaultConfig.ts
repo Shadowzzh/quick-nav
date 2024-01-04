@@ -16,6 +16,5 @@ export const DEFAULT_CONFIG = Object.freeze({
 })
 
 export const DEFAULT_TREE_CONFIG = Object.freeze({
-  isShowChildren: true,
   isDisplay: true,
 })
