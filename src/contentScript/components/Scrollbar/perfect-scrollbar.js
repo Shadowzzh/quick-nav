@@ -114,12 +114,12 @@ var EventElement = function EventElement(element) {
 
 var prototypeAccessors = { isEmpty: { configurable: true } }
 
-EventElement.prototype.bind = function bind(eventName, handler) {
+EventElement.prototype.bind = function bind(eventName, handler, options = false) {
   if (typeof this.handlers[eventName] === 'undefined') {
     this.handlers[eventName] = []
   }
   this.handlers[eventName].push(handler)
-  this.element.addEventListener(eventName, handler, false)
+  this.element.addEventListener(eventName, handler, options)
 }
 
 EventElement.prototype.unbind = function unbind(eventName, target) {
@@ -165,8 +165,8 @@ EventManager.prototype.eventElement = function eventElement(element) {
   return ee
 }
 
-EventManager.prototype.bind = function bind(element, eventName, handler) {
-  this.eventElement(element).bind(eventName, handler)
+EventManager.prototype.bind = function bind(element, eventName, handler, options) {
+  this.eventElement(element).bind(eventName, handler, options)
 }
 
 EventManager.prototype.unbind = function unbind(element, eventName, handler) {
@@ -567,9 +567,14 @@ function bindMouseScrollHandler(i, ref) {
   i.event.bind(i[scrollbarY], 'mousedown', function (e) {
     bindMoves(e)
   })
-  i.event.bind(i[scrollbarY], 'touchstart', function (e) {
-    bindMoves(e, true)
-  })
+  i.event.bind(
+    i[scrollbarY],
+    'touchstart',
+    function (e) {
+      bindMoves(e, true)
+    },
+    { passive: false },
+  )
 }
 
 function keyboard(i) {
@@ -863,9 +868,9 @@ function wheel(i) {
   }
 
   if (typeof window.onwheel !== 'undefined') {
-    i.event.bind(element, 'wheel', mousewheelHandler)
+    i.event.bind(element, 'wheel', mousewheelHandler, { passive: false })
   } else if (typeof window.onmousewheel !== 'undefined') {
-    i.event.bind(element, 'mousewheel', mousewheelHandler)
+    i.event.bind(element, 'mousewheel', mousewheelHandler, { passive: false })
   }
 }
 
@@ -1065,16 +1070,16 @@ function touch(i) {
   }
 
   if (env.supportsTouch) {
-    i.event.bind(element, 'touchstart', touchStart)
+    i.event.bind(element, 'touchstart', touchStart, { passive: false })
     i.event.bind(element, 'touchmove', touchMove)
     i.event.bind(element, 'touchend', touchEnd)
   } else if (env.supportsIePointer) {
     if (window.PointerEvent) {
-      i.event.bind(element, 'pointerdown', touchStart)
+      i.event.bind(element, 'pointerdown', touchStart, { passive: false })
       i.event.bind(element, 'pointermove', touchMove)
       i.event.bind(element, 'pointerup', touchEnd)
     } else if (window.MSPointerEvent) {
-      i.event.bind(element, 'MSPointerDown', touchStart)
+      i.event.bind(element, 'MSPointerDown', touchStart, { passive: false })
       i.event.bind(element, 'MSPointerMove', touchMove)
       i.event.bind(element, 'MSPointerUp', touchEnd)
     }
