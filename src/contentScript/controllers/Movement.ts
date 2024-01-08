@@ -96,6 +96,7 @@ export class MovementController implements ReactiveController {
     const originPosition = { x: downX, y: downY }
     // 容器的偏移量
     let offset = { x: 0, y: 0 }
+    let preOffset: undefined | QN.Position = undefined
 
     /** 鼠标移动时，拖动容器 */
     const mouseMove = (e: MouseEvent) => {
@@ -122,6 +123,7 @@ export class MovementController implements ReactiveController {
       const moveY = limitY - originPosition.y // 鼠标移动的距离 - Y
 
       offset = this.setContainerPosition({ x: moveX, y: moveY })
+      preOffset = offset
     }
 
     this._mouseMove = mouseMove
@@ -135,8 +137,10 @@ export class MovementController implements ReactiveController {
         task({ position: offset })
       })
 
-      // 设置偏移量
-      this.offset = offset
+      if (preOffset) {
+        // 设置偏移量
+        this.offset = offset
+      }
     }
 
     // 鼠标按下后，监听鼠标移动事件, 并在鼠标抬起后移除监听
