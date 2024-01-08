@@ -6,6 +6,7 @@ import '../components/NavigatorPlanel'
 import { TitleTree, TitleTreeData } from '../interface'
 import { scrollSmoothTo } from '../../utils'
 import { TitleTreeComponent } from '../components/TitleTree'
+import { getScrollElement } from '../analysis'
 
 interface WCPageOptions {}
 
@@ -57,7 +58,10 @@ export class WCPage extends LitElement {
 
   /** 点击树的 item */
   onClickTreeItem(params: Parameters<Exclude<TitleTreeComponent['onClickItem'], undefined>>[0]) {
-    scrollSmoothTo({ target: params.target })
+    const container = getScrollElement(params.target)
+    console.log(container)
+
+    scrollSmoothTo({ target: params.target, container })
   }
 
   render() {

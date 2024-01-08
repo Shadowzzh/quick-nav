@@ -12,28 +12,47 @@ import type { TitleTree, TitleTreeData } from '../interface'
  * @param callback -（可选）一个回调函数，将在遍历每个祖先元素时调用。提供了两个参数：
  *    - ancestor: 当前正在处理的祖先元素。
  *    - depth: 当前祖先元素的深度，从 0 开始计数。
+ *    - return 是否结束“追溯”
  *
  * @returns 一个包含从起始元素向上的祖先元素的数组，数组中的第一个元素是最近的祖先，依次向上。
  */
 function traceAncestor(
-  element: Element,
+  element: HTMLElement,
   tier: number,
-  callback?: (ancestor: Element, depth: number) => void,
+  callback?: (ancestor: HTMLElement, depth: number) => boolean | void,
 ) {
-  let current: Element | null = element
+  let current: HTMLElement | null = element
   let depth = 0
 
   const ancestor = []
 
   // 循环直到达到指定层级或没有更多祖先元素
   while (tier-- > 0 && current !== null) {
-    callback?.(current, depth++)
     ancestor.push(current)
+
+    const done = callback?.(current, depth++)
+    if (done === true) return ancestor
 
     current = current.parentElement
   }
 
   return ancestor
+}
+
+/** 否是是一个 Scroll HTMLElement */
+export function isSafeScrollElement(element: HTMLElement) {
+  return (
+    ['auto', 'scroll'].includes(window.getComputedStyle(element).overflowY) &&
+    element.clientHeight + 1 < element.scrollHeight
+  )
+}
+
+export function getScrollElement(element: HTMLElement) {
+  const ancestors = traceAncestor(element, Number.MAX_SAFE_INTEGER, (ancestor) => {
+    return isSafeScrollElement(ancestor)
+  })
+
+  return ancestors[ancestors.length - 1]
 }
 
 /** 判断元素是否为空 */
@@ -42,7 +61,7 @@ function elementIsEmpty(element: HTMLElement) {
 }
 
 /** 获取 element 标签对应的权重 */
-function getWeightByElement(tag: Element | undefined) {
+function getWeightByElement(tag: HTMLElement | undefined) {
   if (!tag) return -1
   const tagName = tag.tagName.toLowerCase() as keyof typeof TITLE_TAG_WEIGHT
   return TITLE_TAG_WEIGHT[tagName]
@@ -51,7 +70,7 @@ function getWeightByElement(tag: Element | undefined) {
 /** 提取文章内容 */
 export function extractContent() {
   /** 元素 => 权重的映射 */
-  const contentWeight = new Map<Element, number>()
+  const contentWeight = new Map<HTMLElement, number>()
   const contentTags = Object.keys(CONTENT_TAG_WEIGHT)
 
   contentTags.forEach((tag) => {
@@ -82,7 +101,7 @@ export function extractContent() {
  * 根据文章内容生成标题 Tree
  * 把所有的标题根据权重生成一标题树，树的根节点是权重最大的标题
  */
-export function generatorTitleTree(content: Element) {
+export function generatorTitleTree(content: HTMLElement) {
   const titleTags = Object.keys(TITLE_TAG_WEIGHT)
   /** 文章中所有的标题元素 */
   const titlesOfTag = $(titleTags.join(','), content) as HTMLElement[]
