@@ -1,6 +1,5 @@
 import { LitElement, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { StyleInfo, styleMap } from 'lit/directives/style-map.js'
 import '../components/TitleTree'
 import '../components/NavigatorPlanel'
 
@@ -26,7 +25,7 @@ export class WCPage extends LitElement {
   @property({ type: Boolean })
   isAllDisplay: boolean = true
 
-  constructor(props: { rootTree: TitleTree }) {
+  constructor(props: { rootTree: TitleTree; content: Element }) {
     super()
     this.rootTree = props.rootTree
   }

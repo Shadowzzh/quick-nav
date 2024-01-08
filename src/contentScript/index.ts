@@ -15,6 +15,6 @@ console.time()
   console.log(content, TitleTree)
   if (!TitleTree) return
 
-  renderTree(TitleTree)
+  renderTree(TitleTree, content)
 })()
 console.timeEnd()
