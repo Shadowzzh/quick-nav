@@ -25,6 +25,17 @@ export class MovementController implements ReactiveController {
     return this._offset
   }
 
+  /** 是否锁定 */
+  private _locked: boolean = false
+
+  set locked(value: boolean) {
+    this._locked = value
+  }
+
+  get locked() {
+    return this._locked
+  }
+
   /** 被监听的内部函数 */
   private _mouseMove: null | ((e: MouseEvent) => void) = null
 
@@ -56,6 +67,9 @@ export class MovementController implements ReactiveController {
 
   /** 设置容器的位置 */
   private setContainerPosition(position: QN.Position) {
+    // console.log(position)
+    if (this.locked) return this.offset
+
     // 容器位置 = 位置 + 偏移量
     const { x: offsetLeft, y: offsetTop } = this.offset
     const x = position.x + offsetLeft
@@ -75,6 +89,8 @@ export class MovementController implements ReactiveController {
 
   /** 提供给外部使用的 setContainerPosition */
   setPosition(position: QN.Position) {
+    if (this.locked) return
+
     const offset = this.setContainerPosition(position)
     this.offset = offset
   }
@@ -86,6 +102,8 @@ export class MovementController implements ReactiveController {
 
   /** 鼠标按下 Drag 元素后，可进行拖动容器 */
   dragMouseDown(downEvent: MouseEvent) {
+    if (this.locked) return
+
     const { x: downX, y: downY } = downEvent
     const containerRect = this.getContainerRect()
 
