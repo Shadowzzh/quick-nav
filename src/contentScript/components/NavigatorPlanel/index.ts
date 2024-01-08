@@ -87,9 +87,6 @@ export class NavigatorPanel extends LitElement {
       'right-top',
       'right-bottom',
     ],
-    onDblClick: () => {
-      this.initializationPosition()
-    },
   })
 
   /** 扩展的 Icon */
@@ -166,7 +163,12 @@ export class NavigatorPanel extends LitElement {
   render() {
     return html`<div class="waves-effect quick-nav">
       <div class="header">
-        <wc-button class="header_drag" @mousedown=${this.movementController.dragMouseDown}>
+        <wc-button
+          class="header_drag"
+          @mousedown=${this.movementController.dragMouseDown}
+          @dblclick=${this.initializationPosition}
+        >
+          >
           <wc-icon class="header_icon" name="drag" size="16" color="#999"></wc-icon>
         </wc-button>
         <div class="header_space"></div>
