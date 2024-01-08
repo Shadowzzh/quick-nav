@@ -5,6 +5,7 @@ import { TitleTree, TitleTreeData } from '../../interface'
 import './TitleItem'
 import './TitleItemSimple'
 import { Tree } from '../../../utils/models/Tree'
+import { scrollSmoothTo } from '../../../utils'
 
 export interface TitleTreeElementOptions {
   rootTree: TitleTree
@@ -74,7 +75,12 @@ export class TitleTreeComponent extends LitElement {
         const child = TitleTreeComponent.TreeMap.get(uniqueId)
 
         const element = child?.data?.element
-        element?.scrollIntoView()
+        if (element) {
+          scrollSmoothTo({
+            target: element,
+          })
+        }
+
         break
       }
     }

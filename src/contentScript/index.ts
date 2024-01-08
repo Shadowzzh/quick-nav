@@ -12,7 +12,7 @@ console.time()
   }
 
   const TitleTree = generatorTitleTree(content)
-  console.log(TitleTree)
+  console.log(content, TitleTree)
   if (!TitleTree) return
 
   renderTree(TitleTree)
