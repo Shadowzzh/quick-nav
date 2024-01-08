@@ -25,6 +25,9 @@ export class TitleTreeComponent extends LitElement {
   @property({ type: Object })
   rootTree: TitleTree | null = null
 
+  /** 点击 item 触发 */
+  onClickItem: ((params: { target: HTMLElement }) => void) | undefined = undefined
+
   constructor(options: TitleTreeElementOptions) {
     super()
   }
@@ -38,7 +41,7 @@ export class TitleTreeComponent extends LitElement {
    * 点击展开按钮
    * @param props
    */
-  onClickExpand(props: { tree: TitleTree }) {
+  private onClickExpand(props: { tree: TitleTree }) {
     if (!props.tree.data) return
 
     props.tree.data.TitleItem?.requestUpdate()
@@ -54,12 +57,15 @@ export class TitleTreeComponent extends LitElement {
    * @param e
    * @returns
    */
-  onClick(e: Event) {
+  private onClick(e: Event) {
     let target: HTMLElement | undefined = undefined
     let ancientTargets = e.composedPath().slice() as HTMLElement[]
 
     while ((target = ancientTargets.shift())) {
-      const className = target.className
+      const className = target.className as 'title_icon' | 'title_content'
+
+      switch (className) {
+      }
 
       if (className === 'title_icon') {
         const uniqueId = target.getAttribute('unique')
@@ -75,11 +81,9 @@ export class TitleTreeComponent extends LitElement {
         const child = TitleTreeComponent.TreeMap.get(uniqueId)
 
         const element = child?.data?.element
-        if (element) {
-          scrollSmoothTo({
-            target: element,
-          })
-        }
+        if (!element) return
+
+        this.onClickItem?.({ target: element })
 
         break
       }
@@ -87,7 +91,7 @@ export class TitleTreeComponent extends LitElement {
     if (!target) return
   }
 
-  renderTree(node: Tree<TitleTreeData>): any {
+  private renderTree(node: Tree<TitleTreeData>): any {
     // return html`<wc-title-item .node=${node}>
     //   ${node.children.map((child) => {
     //     return this.renderTree(child)
