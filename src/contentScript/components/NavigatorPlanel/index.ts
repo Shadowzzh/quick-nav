@@ -168,7 +168,6 @@ export class NavigatorPanel extends LitElement {
           @mousedown=${this.movementController.dragMouseDown}
           @dblclick=${this.initializationPosition}
         >
-          >
           <wc-icon class="header_icon" name="drag" size="16" color="#999"></wc-icon>
         </wc-button>
         <div class="header_space"></div>
