@@ -6,6 +6,7 @@ import { DEFAULT_CONFIG } from '../../defaultConfig'
 interface ResizeControllerOptions {
   target: HTMLElement
   direction: Direction[]
+  onDblClick?: (direction: Direction, downEvent: MouseEvent) => void
 }
 
 type Direction =
@@ -29,11 +30,14 @@ export class ResizeController implements ReactiveController {
   minWidth: number = DEFAULT_CONFIG.PANEL_MIN_WIDTH
   /** 最小高度 */
   minHeight: number = DEFAULT_CONFIG.PANEL_MIN_HEIGHT
+  onDblClick: ResizeControllerOptions['onDblClick'] = undefined
 
   /** 被监听的内部函数 */
   private _mouseMove: null | ((e: MouseEvent) => void) = null
   /** 鼠标按下 Drag 元素后，可进行拖动容器 */
-  private _onDragMouseDown: null | ((downEvent: MouseEvent) => void) = null
+  private _onDragMouseDown: undefined | ((downEvent: MouseEvent) => void) = undefined
+  private _onDblClick: undefined | ((downEvent: MouseEvent) => void) = undefined
+
   /** 改变元素大小的 handler */
   private _handler: HTMLElement[] = []
   /** 元素大小改变后触发的回调列表 */
@@ -43,6 +47,7 @@ export class ResizeController implements ReactiveController {
     ;(this.host = host).addController(this)
     this.target = options.target
     this.direction = options.direction
+    this.onDblClick = options.onDblClick
   }
 
   hostConnected() {
@@ -62,6 +67,7 @@ export class ResizeController implements ReactiveController {
     this._mouseMove && window.removeEventListener('mousemove', this._mouseMove)
     this._handler.forEach((handler) => {
       this._onDragMouseDown && handler.removeEventListener('mousedown', this._onDragMouseDown)
+      this._onDblClick && handler.removeEventListener('dblclick', this._onDblClick)
     })
   }
 
@@ -239,6 +245,10 @@ export class ResizeController implements ReactiveController {
     window.addEventListener('mouseup', mouseUp)
   }
 
+  private onDblClickHandle(direction: Direction, downEvent: MouseEvent) {
+    this.onDblClick?.(direction, downEvent)
+  }
+
   /** 创建大小改变的handler */
   private createSizeHandler(direction: Direction) {
     const handler = document.createElement('div')
@@ -249,7 +259,11 @@ export class ResizeController implements ReactiveController {
     const onDragMouseDown = this.onDragMouseDown.bind(this, direction)
     this._onDragMouseDown = onDragMouseDown
 
+    const onDblClickHandle = this.onDblClickHandle.bind(this, direction)
+    this._onDblClick = onDblClickHandle
+
     handler.addEventListener('mousedown', onDragMouseDown)
+    handler.addEventListener('dblclick', onDblClickHandle)
 
     return handler
   }
