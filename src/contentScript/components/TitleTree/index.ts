@@ -1,4 +1,4 @@
-import { LitElement, html, css, render, TemplateResult } from 'lit'
+import { LitElement, html, css, render, TemplateResult, PropertyValueMap } from 'lit'
 import { customElement, eventOptions, property } from 'lit/decorators.js'
 import { TitleTree, TitleTreeData } from '../../interface'
 
@@ -36,7 +36,6 @@ export class TitleTreeComponent extends LitElement {
 
   connectedCallback() {
     super.connectedCallback()
-    this.rootTree?.eachChild((child) => TitleTreeComponent.TreeMap.set(child.uniqueId, child))
   }
 
   /**

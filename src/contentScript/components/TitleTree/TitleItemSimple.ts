@@ -19,8 +19,11 @@ export class WCTitleItemSimple extends LitElement {
         display: block;
         box-sizing: border-box;
         margin-right: 12px;
+        margin-bottom: 1px;
       }
       :host .title {
+        transition: 0.3s background-color var(--animation-ease-out-quart);
+        border-radius: 4px;
       }
 
       :host .title_content {
@@ -120,10 +123,12 @@ export class WCTitleItemSimple extends LitElement {
 
   render() {
     if (!this.node?.data?.element) return
-    const { isDisplay, element } = this.node.data
+    const { isDisplay, element, isActive } = this.node.data
     const isShowChildren = this.node?.children.every((child) => child.data?.isDisplay === true)
 
     const isChildren = this.node.children.length > 0
+
+    const titleStyle: StyleInfo = {}
 
     const textStyle: StyleInfo = {
       opacity: this.opacity,
@@ -133,7 +138,7 @@ export class WCTitleItemSimple extends LitElement {
       marginLeft: `${(this.node.depth - 1) * 18}px`,
     }
 
-    const backgroundStyle: StyleInfo = {
+    let backgroundStyle: StyleInfo = {
       transformOrigin: this.backgroundOrigin,
       opacity: this.atInside ? 1 : 0,
     }
@@ -144,6 +149,13 @@ export class WCTitleItemSimple extends LitElement {
 
     if (isDisplay === false) return null
 
+    if (isActive === true) {
+      backgroundStyle = {
+        transform: `none !important`,
+      }
+      titleStyle.backgroundColor = `var(--theme-primary-2)`
+    }
+
     const WCExpandIconElement = isChildren
       ? html`<wc-expand-icon
           .isExpand=${isShowChildren}
@@ -153,12 +165,18 @@ export class WCTitleItemSimple extends LitElement {
 
     return html`<div
       class="title"
+      style=${styleMap(titleStyle)}
       @mouseenter=${(e: MouseEvent) => {
-        this.calcOrigin(e)
+        if (this.node?.data?.isActive === false) {
+          this.calcOrigin(e)
+        }
         this.atInside = true
       }}
       @mouseleave=${(e: MouseEvent) => {
-        this.calcOrigin(e)
+        if (this.node?.data?.isActive === false) {
+          this.calcOrigin(e)
+        }
+
         this.atInside = false
       }}
     >

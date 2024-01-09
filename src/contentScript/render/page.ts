@@ -1,11 +1,12 @@
 import type { WCNavigatorPanel } from '../components/NavigatorPanel'
-import { LitElement, html, css } from 'lit'
+import { LitElement, html, css, PropertyValueMap } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { TitleTree, TitleTreeData } from '../interface'
 import { scrollSmoothTo } from '../../utils'
 import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
+import { Tree } from '../../utils/models/Tree'
 import '../components/TitleTree'
 import '../components/NavigatorPanel'
 
@@ -29,12 +30,70 @@ export class WCPage extends LitElement {
   @property({ type: Boolean })
   isAllDisplay: boolean = true
 
+  observerList: IntersectionObserver[] = []
+
   navigatorPanelRef: Ref<WCNavigatorPanel> = createRef()
 
   constructor(props: { rootTree: TitleTree; content: Element }) {
     super()
     this.rootTree = props.rootTree
   }
+
+  disconnectedCallback(): void {
+    this.observerList.forEach((observer) => {
+      observer.disconnect()
+    })
+  }
+
+  protected firstUpdated(
+    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>,
+  ): void {
+    this.rootTree?.eachChild((child) => {
+      TitleTreeComponent.TreeMap.set(child.uniqueId, child)
+
+      const observerInstance = this.observerNodeElement(child)
+      observerInstance && this.observerList.push(observerInstance)
+    })
+  }
+
+  /** 观测每一个 node 的 element */
+  observerNodeElement = (function () {
+    /** 上一个被触发的 node */
+    let preNode: Tree<TitleTreeData> | undefined = undefined
+
+    return function (node: Tree<TitleTreeData>) {
+      const element = node.data?.element
+      if (!element) return
+
+      const observer = new IntersectionObserver(
+        function (entries) {
+          const firstEntries = entries[0]
+
+          // 跳过从下面进入视图中的元素
+          if (firstEntries.boundingClientRect.top >= firstEntries.boundingClientRect.height) return
+
+          // 清空上个node的状态
+          if (preNode) {
+            preNode.data!.isActive = false
+            preNode.data!.TitleItem?.requestUpdate()
+          }
+
+          node.data!.isActive = true
+          node.data!.TitleItem?.requestUpdate()
+
+          preNode = node
+        },
+        {
+          threshold: [0, 1],
+        },
+      )
+
+      // 开始观察
+      observer.observe(element)
+
+      return observer
+    }
+  })()
 
   /** 全部 展开/闭合 */
   onToggleAllDisplay() {

@@ -1,3 +1,5 @@
+import { TitleTreeData } from './contentScript/interface'
+
 export const DEFAULT_CONFIG = Object.freeze({
   /** 面板宽度 */
   PANEL_WIDTH: 300,
@@ -15,6 +17,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   PANEL_MIN_MARGIN: 10,
 })
 
-export const DEFAULT_TREE_CONFIG = Object.freeze({
+export const DEFAULT_TREE_CONFIG = Object.freeze<Partial<TitleTreeData>>({
   isDisplay: true,
+  isActive: false,
 })

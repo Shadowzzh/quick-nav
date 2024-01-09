@@ -11,6 +11,9 @@ cssRule.add(
   ':root',
   `
     --theme-primary: #536EDC;
+    --theme-primary-2: #e1f0fc;
+    --theme-primary-3: #bfdbfa;
+    --theme-primary-4: #a8b2f2;
     --theme-background: #E2E8F0;
     --theme-secondary: aliceblue;
     --theme-warning: red;
