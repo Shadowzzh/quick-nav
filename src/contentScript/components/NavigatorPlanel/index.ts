@@ -4,6 +4,8 @@ import { MovementController } from '../../controllers/Movement'
 import { ResizeController } from '../../controllers/Resize'
 import { syncStorage } from '../../../utils/storage'
 import { DEFAULT_CONFIG } from '../../../defaultConfig'
+import { Ref, createRef, ref } from 'lit/directives/ref.js'
+import { WCScroll } from '../Scrollbar'
 import '../Icons'
 import '../Button'
 import '../Scrollbar'
@@ -89,6 +91,8 @@ export class NavigatorPanel extends LitElement {
     ],
   })
 
+  scrollRef: Ref<WCScroll> = createRef()
+
   /** 扩展的 Icon */
   @property({ type: Array })
   extraIcon: TemplateResult<1>[] | null = null
@@ -160,6 +164,10 @@ export class NavigatorPanel extends LitElement {
     }, 300)
   }
 
+  scrollUpdate() {
+    this.scrollRef.value?.updateScroll()
+  }
+
   render() {
     return html`<div class="waves-effect quick-nav">
       <div class="header">
@@ -174,7 +182,9 @@ export class NavigatorPanel extends LitElement {
         ${this.extraIcon}
       </div>
       <div class="content">
-        <wc-scroll minScrollbarLength="1" suppressScrollX>${this.children}</wc-scroll>
+        <wc-scroll ref=${ref(this.scrollRef)} minScrollbarLength="1" suppressScrollX>
+          ${this.children}
+        </wc-scroll>
       </div>
     </div>`
   }

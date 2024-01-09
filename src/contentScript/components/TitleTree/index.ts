@@ -27,6 +27,8 @@ export class TitleTreeComponent extends LitElement {
 
   /** 点击 item 触发 */
   onClickItem: ((params: { target: HTMLElement }) => void) | undefined = undefined
+  /** 点击 item icon 触发 */
+  onClickItemIcon: (() => void) | undefined = undefined
 
   constructor(options: TitleTreeElementOptions) {
     super()
@@ -50,6 +52,8 @@ export class TitleTreeComponent extends LitElement {
       child.data.isDisplay = !child.data.isDisplay
       child.data.TitleItem?.requestUpdate()
     })
+
+    this.onClickItemIcon?.()
   }
 
   /**
