@@ -105,7 +105,9 @@ class WCExpandIcon extends LitElement {
   static styles = css`
     :host {
       padding: 4px;
+      margin: -4px;
       margin-right: -2px;
+      margin-left: 0px;
       user-select: none;
       transition: transform 0.3s var(--animation-ease-out-quart);
     }
