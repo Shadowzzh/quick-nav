@@ -19,16 +19,24 @@ export class WCNavigatorPanel extends LitElement {
         z-index: 9999999;
         display: block;
         position: fixed;
-        font-size: 13.5px;
-        background-color: #fff;
-        box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
-        overflow: hidden;
-        border-radius: 6px;
       }
 
       :host .quick-nav {
         border: 1px solid rgb(235, 238, 245);
+        /* opacity: 0.3; */
         height: 100%;
+
+        background-color: #fff;
+        box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
+        overflow: hidden;
+        border-radius: 6px;
+        font-size: 13.5px;
+
+        transition: opacity 0.5s var(--animation-ease-out-quart);
+      }
+
+      :host .quick-nav:hover {
+        opacity: 1;
       }
 
       :host * {
