@@ -10,8 +10,8 @@ import '../Icons'
 import '../Button'
 import '../Scrollbar'
 
-@customElement('navigator-panel')
-export class NavigatorPanel extends LitElement {
+@customElement('wc-navigator-panel')
+export class WCNavigatorPanel extends LitElement {
   static styles = [
     css`
       :host {

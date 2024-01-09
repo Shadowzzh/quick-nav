@@ -1,4 +1,4 @@
-import type { NavigatorPanel } from '../components/NavigatorPlanel'
+import type { WCNavigatorPanel } from '../components/NavigatorPanel'
 import { LitElement, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { TitleTree, TitleTreeData } from '../interface'
@@ -7,7 +7,7 @@ import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
 import '../components/TitleTree'
-import '../components/NavigatorPlanel'
+import '../components/NavigatorPanel'
 
 interface WCPageOptions {}
 
@@ -29,7 +29,7 @@ export class WCPage extends LitElement {
   @property({ type: Boolean })
   isAllDisplay: boolean = true
 
-  navigatorPanelRef: Ref<NavigatorPanel> = createRef()
+  navigatorPanelRef: Ref<WCNavigatorPanel> = createRef()
 
   constructor(props: { rootTree: TitleTree; content: Element }) {
     super()
@@ -84,14 +84,14 @@ export class WCPage extends LitElement {
     if (this.rootTree === null) return
 
     return html`<div>
-      <navigator-panel ref=${ref(this.navigatorPanelRef)} .extraIcon=${[this.allExpandIcon()]}>
+      <wc-navigator-panel ref=${ref(this.navigatorPanelRef)} .extraIcon=${[this.allExpandIcon()]}>
         <title-tree
           .rootTree=${this.rootTree}
           .onClickItem=${this.onClickTreeItem}
           .onClickItemIcon=${() => this.onclickTreeItemIcon()}
         >
         </title-tree>
-      </navigator-panel>
+      </wc-navigator-panel>
     </div>`
   }
 }
