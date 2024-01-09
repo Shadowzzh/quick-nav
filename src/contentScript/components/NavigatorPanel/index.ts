@@ -30,7 +30,6 @@ export class WCNavigatorPanel extends LitElement {
         box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
         overflow: hidden;
         border-radius: 6px;
-        font-size: 13.5px;
 
         transition: opacity 0.5s var(--animation-ease-out-quart);
       }

@@ -7,12 +7,11 @@ cssRule.add(
     --animation-ease-out-circ: cubic-bezier(0.165, 0.84, 0.44, 1);
   `,
 )
-
-cssRule.add('navigator-panel .header', `background-color: red;`)
 cssRule.add(
   ':root',
   `
-    --theme-primary: green;
+    --theme-primary: #536EDC;
+    --theme-background: #E2E8F0;
     --theme-secondary: aliceblue;
     --theme-warning: red;
     --theme-font-family: Roboto;

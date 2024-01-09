@@ -14,8 +14,10 @@ export class WCTitleItemSimple extends LitElement {
     css`
       :host {
         color: #3b3b3b;
+        font-size: 13px;
       }
       :host .title {
+        margin-right: 8px;
       }
       :host .title_content {
         display: flex;
@@ -24,19 +26,23 @@ export class WCTitleItemSimple extends LitElement {
 
         padding: 4px 8px;
         cursor: pointer;
+        /* transition: background-color 0.1s var(--animation-ease-out-quart); */
       }
+
+      :host .title_content:hover {
+        background-color: var(--theme-background);
+        border-radius: 4px;
+      }
+
       :host .title_children {
       }
+
       :host .title_text {
         flex: 1;
       }
 
       :host .title_icon:hover {
         user-select: none;
-      }
-
-      :host .title_content:hover {
-        background-color: #e6f7ff;
       }
     `,
   ]
