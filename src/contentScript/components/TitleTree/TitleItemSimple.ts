@@ -15,11 +15,17 @@ export class WCTitleItemSimple extends LitElement {
       :host {
         color: #3b3b3b;
         font-size: 13px;
+        position: relative;
+        display: block;
+        box-sizing: border-box;
+        margin-right: 12px;
       }
       :host .title {
-        margin-right: 8px;
       }
+
       :host .title_content {
+        position: relative;
+        z-index: 2;
         display: flex;
         justify-content: flex-start;
         align-items: center;
@@ -30,7 +36,7 @@ export class WCTitleItemSimple extends LitElement {
       }
 
       :host .title_content:hover {
-        background-color: var(--theme-background);
+        /* background-color: var(--theme-background); */
         border-radius: 4px;
       }
 
@@ -44,6 +50,29 @@ export class WCTitleItemSimple extends LitElement {
       :host .title_icon:hover {
         user-select: none;
       }
+
+      :host .title_background {
+        transform-origin: 100% 84%;
+        transform: scale(0.7) translate(0px, 0px);
+
+        background-color: var(--theme-background);
+        border-radius: 4px;
+        bottom: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        transition:
+          transform 0.25s var(--animation-ease-out-circ),
+          opacity 0.25s var(--animation-ease-out-circ);
+        z-index: 1;
+      }
+
+      :host .title:hover .title_background {
+        transform: scale(1) translate(0px, 0px);
+      }
     `,
   ]
 
@@ -53,6 +82,13 @@ export class WCTitleItemSimple extends LitElement {
   node: Tree<TitleTreeData> | null = null
 
   expandIconRef: Ref<HTMLElement> = createRef()
+
+  @property({ type: String })
+  backgroundOrigin: string = ''
+
+  /** 鼠标是否在 元素内 */
+  @property({ type: Boolean })
+  atInside: boolean = false
 
   constructor(options: WCTitleItemSimpleOptions) {
     super()
@@ -69,22 +105,41 @@ export class WCTitleItemSimple extends LitElement {
     }
   }
 
+  /** 计算 transform-origin 属性 */
+  calcOrigin(e: MouseEvent) {
+    const { x, y } = e
+    const containerRect = this.getBoundingClientRect()
+
+    const xByContainer = x - containerRect.left
+    const yByContainer = y - containerRect.top
+    const xOrigin = Math.round((xByContainer / containerRect.width) * 100)
+    const yOrigin = Math.round((yByContainer / containerRect.height) * 100)
+
+    this.backgroundOrigin = `${xOrigin}% ${yOrigin}%`
+  }
+
   render() {
     if (!this.node?.data?.element) return
     const { isDisplay, element } = this.node.data
     const isShowChildren = this.node?.children.every((child) => child.data?.isDisplay === true)
 
-    const style: StyleInfo = {
+    const isChildren = this.node.children.length > 0
+
+    const textStyle: StyleInfo = {
       opacity: this.opacity,
     }
-    const styleContent: StyleInfo = {
+
+    const contentStyle: StyleInfo = {
       marginLeft: `${(this.node.depth - 1) * 18}px`,
     }
 
-    const isChildren = this.node.children.length > 0
+    const backgroundStyle: StyleInfo = {
+      transformOrigin: this.backgroundOrigin,
+      opacity: this.atInside ? 1 : 0,
+    }
 
     if (isChildren) {
-      styleContent.paddingLeft = 0
+      contentStyle.paddingLeft = 0
     }
 
     if (isDisplay === false) return null
@@ -96,11 +151,23 @@ export class WCTitleItemSimple extends LitElement {
         ></wc-expand-icon>`
       : null
 
-    return html`<div class="title">
-      <div class="title_content" unique=${this.node.uniqueId} style=${styleMap(styleContent)}>
+    return html`<div
+      class="title"
+      @mouseenter=${(e: MouseEvent) => {
+        this.calcOrigin(e)
+        this.atInside = true
+      }}
+      @mouseleave=${(e: MouseEvent) => {
+        this.calcOrigin(e)
+        this.atInside = false
+      }}
+    >
+      <div class="title_content" unique=${this.node.uniqueId} style=${styleMap(contentStyle)}>
         ${WCExpandIconElement}
-        <div class="title_text" style=${styleMap(style)}>${element.innerText}</div>
+        <div class="title_text" style=${styleMap(textStyle)}>${element.innerText}</div>
       </div>
+
+      <span class="title_background" style=${styleMap(backgroundStyle)}></span>
     </div> `
   }
 }
