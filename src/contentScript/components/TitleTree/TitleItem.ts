@@ -67,7 +67,7 @@ export class WCTitleItem extends LitElement {
     const element = this.node?.data?.element
     if (!element) return
 
-    const isShowChildren = this.node.data?.isShowChildren
+    const isShowChildren = false
 
     const style: StyleInfo = {
       opacity: this.opacity,
