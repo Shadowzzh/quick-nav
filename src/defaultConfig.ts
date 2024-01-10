@@ -19,5 +19,6 @@ export const DEFAULT_CONFIG = Object.freeze({
 
 export const DEFAULT_TREE_CONFIG = Object.freeze<Partial<TitleTreeData>>({
   isDisplay: true,
+  childActive: false,
   isActive: false,
 })

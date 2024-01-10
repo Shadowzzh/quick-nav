@@ -23,7 +23,7 @@ export class TitleTreeComponent extends LitElement {
   static TreeMap: Map<string, TitleTree> = new Map()
 
   @property({ type: Object })
-  rootTree: TitleTree | null = null
+  rootTree: Tree<TitleTreeData> | null = null
 
   /** 点击 item 触发 */
   onClickItem: ((params: { target: HTMLElement }) => void) | undefined = undefined

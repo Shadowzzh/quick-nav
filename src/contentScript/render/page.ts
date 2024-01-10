@@ -1,7 +1,7 @@
 import type { WCNavigatorPanel } from '../components/NavigatorPanel'
 import { LitElement, html, css, PropertyValueMap } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { TitleTree, TitleTreeData } from '../interface'
+import { TitleTreeData } from '../interface'
 import { scrollSmoothTo } from '../../utils'
 import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
@@ -25,7 +25,7 @@ export class WCPage extends LitElement {
   ]
 
   @property({ type: Object })
-  rootTree: TitleTree
+  rootTree: Tree<TitleTreeData>
 
   @property({ type: Boolean })
   isAllDisplay: boolean = true
@@ -34,7 +34,7 @@ export class WCPage extends LitElement {
 
   navigatorPanelRef: Ref<WCNavigatorPanel> = createRef()
 
-  constructor(props: { rootTree: TitleTree; content: Element }) {
+  constructor(props: { rootTree: Tree<TitleTreeData>; content: Element }) {
     super()
     this.rootTree = props.rootTree
   }
@@ -65,7 +65,6 @@ export class WCPage extends LitElement {
 
     return function (this: WCPage, node: Tree<TitleTreeData>) {
       const element = node.data?.element
-
       if (!element) return
 
       const observer = new IntersectionObserver(
@@ -80,10 +79,12 @@ export class WCPage extends LitElement {
           // 清空上个node的状态
           if (preNode) {
             preNode.data!.isActive = false
+            this.observerToggleAncestorActive(preNode, false)
             preNode.data!.TitleItem?.requestUpdate()
           }
 
           this.observerKeepViewInfo(node)
+          this.observerToggleAncestorActive(node, true)
 
           data.isActive = true
           data.TitleItem?.requestUpdate()
@@ -127,6 +128,21 @@ export class WCPage extends LitElement {
           titleItemOffset.top + titleItemOffset.height - scrollInstance.ps.element.offsetHeight
       }
     }
+  }
+
+  /** 使选中的 item 的祖先 DOM 变为 Active 状态。 */
+  observerToggleAncestorActive(node: Tree<TitleTreeData>, isOpen: boolean) {
+    node.eachAncestor((ancestor) => {
+      if (!ancestor.data?.TitleItem) return
+
+      if (isOpen) {
+        ancestor.data.childActive = true
+      } else {
+        ancestor.data.childActive = false
+      }
+
+      ancestor.data.TitleItem.requestUpdate()
+    })
   }
 
   /** 全部 展开/闭合 */

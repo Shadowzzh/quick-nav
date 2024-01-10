@@ -57,6 +57,19 @@ export class Tree<Data extends any = any> {
     })
   }
 
+  /** 遍历祖先节点 */
+  eachAncestor(callback: (child: Tree<Data>) => void) {
+    let current: Tree<Data> | undefined = this
+    const ancestors = []
+
+    while ((current = current.parent)) {
+      ancestors.push(current)
+      callback(current)
+    }
+
+    return ancestors
+  }
+
   /** 遍历子节点 */
   eachChild(callback: (child: Tree<Data>) => void, options?: { method: 'deep' | 'breadth' }) {
     const method = options?.method ?? 'deep'

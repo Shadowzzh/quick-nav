@@ -14,12 +14,13 @@ export class WCTitleItemSimple extends LitElement {
     css`
       :host {
         color: #3b3b3b;
+        background-color: #fff;
         font-size: 13px;
         position: relative;
-        display: block;
         box-sizing: border-box;
         margin-right: 12px;
         margin-bottom: 1px;
+        display: block;
       }
       :host .title {
         transition: 0.3s background-color var(--animation-ease-out-quart);
@@ -123,7 +124,9 @@ export class WCTitleItemSimple extends LitElement {
 
   render() {
     if (!this.node?.data?.element) return
-    const { isDisplay, element, isActive } = this.node.data
+    const { isDisplay, element, isActive, childActive } = this.node.data
+    // TODO 重排
+    const thisHeight = this.offsetHeight - 1
     const isShowChildren = this.node?.children.every((child) => child.data?.isDisplay === true)
 
     const isChildren = this.node.children.length > 0
@@ -156,6 +159,19 @@ export class WCTitleItemSimple extends LitElement {
       titleStyle.backgroundColor = `var(--theme-primary-2)`
     }
 
+    // TODO 优化
+    if (childActive === true) {
+      titleStyle.color = 'var(--theme-primary)'
+      titleStyle.fontWeight = 'bold'
+      this.style.position = 'sticky'
+      this.style.top = `${(this.node.depth - 1) * thisHeight}px`
+      this.style.zIndex = '3'
+    } else {
+      this.style.position = 'none'
+      this.style.zIndex = 'auto'
+      this.style.top = `unset`
+    }
+
     const WCExpandIconElement = isChildren
       ? html`<wc-expand-icon
           .isExpand=${isShowChildren}
@@ -176,7 +192,6 @@ export class WCTitleItemSimple extends LitElement {
         if (this.node?.data?.isActive === false) {
           this.calcOrigin(e)
         }
-
         this.atInside = false
       }}
     >
