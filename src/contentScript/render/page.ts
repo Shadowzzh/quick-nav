@@ -70,10 +70,6 @@ export class WCPage extends LitElement {
 
       const observer = new IntersectionObserver(
         (entries) => {
-          const titleItemOffset = {
-            top: node.data?.TitleItem?.offsetTop ?? 0,
-            height: node.data?.TitleItem?.offsetHeight ?? 0,
-          }
           const firstEntries = entries[0]
 
           // 跳过从下面进入视图中的元素
@@ -87,25 +83,7 @@ export class WCPage extends LitElement {
             preNode.data!.TitleItem?.requestUpdate()
           }
 
-          // TODO 逻辑优化
-          const scrollInstance = this.navigatorPanelRef.value?.getScrollInstance()
-          if (scrollInstance && scrollInstance.ps && data.TitleItem) {
-            const isViewTop =
-              titleItemOffset.top + titleItemOffset.height >= scrollInstance.ps.element.scrollTop
-            if (isViewTop === false) {
-              scrollInstance.ps.element.scrollTop = titleItemOffset.top
-            }
-
-            const isViewBottom =
-              scrollInstance.ps.element.scrollTop + scrollInstance.ps.element.offsetHeight >=
-              titleItemOffset.top + titleItemOffset.height
-            if (isViewBottom === false) {
-              scrollInstance.ps.element.scrollTop =
-                titleItemOffset.top +
-                titleItemOffset.height -
-                scrollInstance.ps.element.offsetHeight
-            }
-          }
+          this.observerKeepViewInfo(node)
 
           data.isActive = true
           data.TitleItem?.requestUpdate()
@@ -123,6 +101,33 @@ export class WCPage extends LitElement {
       return observer
     }
   })()
+
+  /** 控制 scroll 滚动，使选中的 item 保存在视图中 */
+  observerKeepViewInfo(node: Tree<TitleTreeData>) {
+    const titleItemOffset = {
+      top: node.data?.TitleItem?.offsetTop ?? 0,
+      height: node.data?.TitleItem?.offsetHeight ?? 0,
+    }
+    const data = node.data!
+
+    // TODO 逻辑优化
+    const scrollInstance = this.navigatorPanelRef.value?.getScrollInstance()
+    if (scrollInstance && scrollInstance.ps && data.TitleItem) {
+      const isViewTop =
+        titleItemOffset.top + titleItemOffset.height >= scrollInstance.ps.element.scrollTop
+      if (isViewTop === false) {
+        scrollInstance.ps.element.scrollTop = titleItemOffset.top
+      }
+
+      const isViewBottom =
+        scrollInstance.ps.element.scrollTop + scrollInstance.ps.element.offsetHeight >=
+        titleItemOffset.top + titleItemOffset.height
+      if (isViewBottom === false) {
+        scrollInstance.ps.element.scrollTop =
+          titleItemOffset.top + titleItemOffset.height - scrollInstance.ps.element.offsetHeight
+      }
+    }
+  }
 
   /** 全部 展开/闭合 */
   onToggleAllDisplay() {
