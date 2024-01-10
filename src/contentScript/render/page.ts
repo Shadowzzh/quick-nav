@@ -58,6 +58,7 @@ export class WCPage extends LitElement {
 
   observerTrigger() {}
 
+  // TODO 使用 scroll 代替 IntersectionObserver 实现
   /** 观测每一个 node 的 element */
   observerNodeElement = (function () {
     /** 上一个被触发的 node */
@@ -83,8 +84,8 @@ export class WCPage extends LitElement {
             preNode.data!.TitleItem?.requestUpdate()
           }
 
-          this.observerKeepViewInfo(node)
           this.observerToggleAncestorActive(node, true)
+          this.observerKeepViewInfo(node)
 
           data.isActive = true
           data.TitleItem?.requestUpdate()
@@ -110,14 +111,18 @@ export class WCPage extends LitElement {
       height: node.data?.TitleItem?.offsetHeight ?? 0,
     }
     const data = node.data!
+    /** childActive 为 true 的 childActive 数量 */
+    const childActiveTreeCount = TitleTreeComponent.childActiveTree.size
+    /** childActive 的总高度 */
+    const childActiveTreeHeight = childActiveTreeCount * titleItemOffset.height
 
     // TODO 逻辑优化
     const scrollInstance = this.navigatorPanelRef.value?.getScrollInstance()
     if (scrollInstance && scrollInstance.ps && data.TitleItem) {
       const isViewTop =
-        titleItemOffset.top + titleItemOffset.height >= scrollInstance.ps.element.scrollTop
+        titleItemOffset.top - childActiveTreeHeight >= scrollInstance.ps.element.scrollTop
       if (isViewTop === false) {
-        scrollInstance.ps.element.scrollTop = titleItemOffset.top
+        scrollInstance.ps.element.scrollTop = titleItemOffset.top - childActiveTreeHeight
       }
 
       const isViewBottom =
@@ -137,10 +142,11 @@ export class WCPage extends LitElement {
 
       if (isOpen) {
         ancestor.data.childActive = true
+        TitleTreeComponent.childActiveTree.add(ancestor)
       } else {
         ancestor.data.childActive = false
+        TitleTreeComponent.childActiveTree.delete(ancestor)
       }
-
       ancestor.data.TitleItem.requestUpdate()
     })
   }

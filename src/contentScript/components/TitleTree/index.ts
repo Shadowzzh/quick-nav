@@ -21,6 +21,7 @@ export class TitleTreeComponent extends LitElement {
   ]
 
   static TreeMap: Map<string, TitleTree> = new Map()
+  static childActiveTree: Set<TitleTree> = new Set()
 
   @property({ type: Object })
   rootTree: Tree<TitleTreeData> | null = null
