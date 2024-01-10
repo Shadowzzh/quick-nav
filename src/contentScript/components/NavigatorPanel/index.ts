@@ -171,6 +171,10 @@ export class WCNavigatorPanel extends LitElement {
     }, 300)
   }
 
+  getScrollInstance() {
+    return this.scrollRef.value
+  }
+
   scrollUpdate() {
     this.scrollRef.value?.updateScroll()
   }

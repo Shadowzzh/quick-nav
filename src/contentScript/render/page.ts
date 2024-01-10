@@ -56,21 +56,30 @@ export class WCPage extends LitElement {
     })
   }
 
+  observerTrigger() {}
+
   /** 观测每一个 node 的 element */
   observerNodeElement = (function () {
     /** 上一个被触发的 node */
     let preNode: Tree<TitleTreeData> | undefined = undefined
 
-    return function (node: Tree<TitleTreeData>) {
+    return function (this: WCPage, node: Tree<TitleTreeData>) {
       const element = node.data?.element
+
       if (!element) return
 
       const observer = new IntersectionObserver(
-        function (entries) {
+        (entries) => {
+          const titleItemOffset = {
+            top: node.data?.TitleItem?.offsetTop ?? 0,
+            height: node.data?.TitleItem?.offsetHeight ?? 0,
+          }
           const firstEntries = entries[0]
 
           // 跳过从下面进入视图中的元素
           if (firstEntries.boundingClientRect.top >= firstEntries.boundingClientRect.height) return
+
+          const data = node.data!
 
           // 清空上个node的状态
           if (preNode) {
@@ -78,8 +87,27 @@ export class WCPage extends LitElement {
             preNode.data!.TitleItem?.requestUpdate()
           }
 
-          node.data!.isActive = true
-          node.data!.TitleItem?.requestUpdate()
+          const scrollInstance = this.navigatorPanelRef.value?.getScrollInstance()
+          if (scrollInstance && scrollInstance.ps && data.TitleItem) {
+            const isViewTop =
+              titleItemOffset.top + titleItemOffset.height >= scrollInstance.ps.element.scrollTop
+            if (isViewTop === false) {
+              scrollInstance.ps.element.scrollTop = titleItemOffset.top
+            }
+
+            const isViewBottom =
+              scrollInstance.ps.element.scrollTop + scrollInstance.ps.element.offsetHeight >=
+              titleItemOffset.top + titleItemOffset.height
+            if (isViewBottom === false) {
+              scrollInstance.ps.element.scrollTop =
+                titleItemOffset.top +
+                titleItemOffset.height -
+                scrollInstance.ps.element.offsetHeight
+            }
+          }
+
+          data.isActive = true
+          data.TitleItem?.requestUpdate()
 
           preNode = node
         },
@@ -128,7 +156,6 @@ export class WCPage extends LitElement {
   /** 点击树的 item */
   onClickTreeItem(params: Parameters<Exclude<TitleTreeComponent['onClickItem'], undefined>>[0]) {
     const container = getScrollElement(params.target)
-
     scrollSmoothTo({ target: params.target, container })
   }
 

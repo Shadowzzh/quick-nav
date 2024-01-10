@@ -109,7 +109,7 @@ export class WCTitleItemSimple extends LitElement {
   }
 
   /** 计算 transform-origin 属性 */
-  calcOrigin(e: MouseEvent) {
+  private calcOrigin(e: MouseEvent) {
     const { x, y } = e
     const containerRect = this.getBoundingClientRect()
 

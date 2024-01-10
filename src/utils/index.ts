@@ -71,7 +71,11 @@ export function scrollSmoothTo(prop: ScrollSmoothToProps) {
   let { target, container = window } = prop
 
   if (asserts.isHTMLElement(target)) {
-    target = target.offsetTop
+    if (asserts.isHTMLElement(container)) {
+      target = target.getBoundingClientRect().top - container.getBoundingClientRect().top
+    } else {
+      target = target.getBoundingClientRect().top
+    }
   }
   if (typeof target !== 'number') return
 
@@ -84,7 +88,7 @@ export function scrollSmoothTo(prop: ScrollSmoothToProps) {
     scrollTop = scrollTop + distance / 6
 
     if (Math.abs(distance) < 1) {
-      container.scrollTo({ top: position })
+      container.scrollTo({ top: position + 1 })
     } else {
       container.scrollTo({ top: scrollTop })
       requestAnimationFrame(() => step(position))
