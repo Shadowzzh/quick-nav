@@ -87,6 +87,7 @@ export class WCPage extends LitElement {
             preNode.data!.TitleItem?.requestUpdate()
           }
 
+          // TODO 逻辑优化
           const scrollInstance = this.navigatorPanelRef.value?.getScrollInstance()
           if (scrollInstance && scrollInstance.ps && data.TitleItem) {
             const isViewTop =
