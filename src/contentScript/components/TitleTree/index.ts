@@ -43,15 +43,22 @@ export class TitleTreeComponent extends LitElement {
    * 点击展开按钮
    * @param props
    */
-  private onClickExpand(props: { tree: TitleTree }) {
+  private onClickExpand(props: { tree: TitleTree; isExpand: boolean }) {
     if (!props.tree.data) return
 
+    const nextIsExpand = !props.isExpand
+    const setNextIsExpand = (node?: Tree<TitleTreeData>) => {
+      if (!node?.data) return
+      node.data.isDisplay = nextIsExpand
+      node.data.TitleItem?.requestUpdate()
+    }
+
     props.tree.data.TitleItem?.requestUpdate()
-    props.tree.eachChild((child) => {
-      if (!child.data) return
-      child.data.isDisplay = !child.data.isDisplay
-      child.data.TitleItem?.requestUpdate()
-    })
+    if (nextIsExpand === false) {
+      props.tree.eachChild(setNextIsExpand)
+    } else {
+      props.tree.children.forEach(setNextIsExpand)
+    }
 
     this.onClickItemIcon?.()
   }
@@ -73,11 +80,12 @@ export class TitleTreeComponent extends LitElement {
 
       if (className === 'title_icon') {
         const uniqueId = target.getAttribute('unique')
+        const isExpand = Boolean(Number(target.getAttribute('is_expand')))
         if (!uniqueId) continue
 
         const child = TitleTreeComponent.TreeMap.get(uniqueId)
 
-        child && this.onClickExpand({ tree: child })
+        child && this.onClickExpand({ tree: child, isExpand })
         break
       } else if (className === 'title_content') {
         const uniqueId = target.getAttribute('unique')

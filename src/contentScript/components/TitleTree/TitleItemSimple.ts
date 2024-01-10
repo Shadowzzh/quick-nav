@@ -266,6 +266,7 @@ class WCExpandIcon extends LitElement {
       class="title_icon"
       name="arrowRight"
       unique=${this.uniqueId}
+      is_expand=${Number(this.isExpand)}
       size="16"
       style=${styleMap(this.styleInfo)}
     ></wc-icon>`
