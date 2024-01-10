@@ -200,7 +200,6 @@ export class WCScroll extends LitElement {
 
   /** 如果容器或内容的大小发生变化，请调用更新。 */
   updateScroll() {
-    console.log('updateScroll')
     this.ps?.update()
   }
 
