@@ -1,5 +1,6 @@
 const LowestWeights = [-100, -50, -25]
-const baseWeights = [0, 100, 90, 80, 70, 60, 50]
+// TODO 性能优化：每增加一级标签，计算会指数级增加
+const baseWeights = [0, 100, 90, 80, 70, 60, 50, 40, 30]
 
 /** 不同标签的权重 */
 export const CONTENT_TAG_WEIGHT = Object.freeze({
