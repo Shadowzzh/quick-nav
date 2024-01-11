@@ -14,6 +14,7 @@ export const defaultThemeLight = {
   border: 'rgb(235, 238, 245)',
   wavesBackground: 'rgba(0, 0, 0, 0.2)',
   icon: '#999',
+  scrollBarBackground: '#bbb',
 }
 
 export const defaultThemeDark = {
@@ -29,6 +30,7 @@ export const defaultThemeDark = {
   wavesBackground: '#71757B',
   itemHoverBackground: '#383e4a',
   icon: '#ccc',
+  scrollBarBackground: '#6d6d6e',
 }
 
 cssRule.add(
@@ -53,6 +55,7 @@ cssRule.add(
     --theme-selectedColor:${defaultThemeLight.selectedColor};
     --theme-selectedBackground:${defaultThemeLight.selectedBackground};
     --theme-item-hover-background: ${defaultThemeLight.itemHoverBackground};
+    --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
   `,
 )
 
@@ -71,5 +74,6 @@ cssRule.add(
     --theme-selectedColor:${defaultThemeDark.selectedColor};
     --theme-selectedBackground:${defaultThemeDark.selectedBackground};
     --theme-item-hover-background: ${defaultThemeDark.itemHoverBackground};
+    --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
   `,
 )

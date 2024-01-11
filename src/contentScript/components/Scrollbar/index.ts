@@ -107,7 +107,7 @@ export class WCScroll extends LitElement {
       }
 
       .ps__thumb-y {
-        background-color: #bbb;
+        background-color: var(--theme-scrollBar-background);
         border-radius: 6px;
         transition:
           background-color 0.2s linear,
@@ -125,14 +125,14 @@ export class WCScroll extends LitElement {
       .ps__rail-x:hover > .ps__thumb-x,
       .ps__rail-x:focus > .ps__thumb-x,
       .ps__rail-x.ps--clicking .ps__thumb-x {
-        background-color: #aaa;
+        background-color: var(--theme-scrollBar-background);
         height: 11px;
       }
 
       .ps__rail-y:hover > .ps__thumb-y,
       .ps__rail-y:focus > .ps__thumb-y,
       .ps__rail-y.ps--clicking .ps__thumb-y {
-        background-color: #aaa;
+        background-color: var(--theme-scrollBar-background);
         width: 11px;
       }
 
