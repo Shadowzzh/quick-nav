@@ -74,6 +74,7 @@ export class WCNavigatorPanel extends LitElement {
       }
 
       :host .content {
+        margin-top: 2px;
         padding-left: 10px;
         padding-bottom: 5px;
         height: calc(100% - 32px);
