@@ -18,9 +18,9 @@ export const defaultThemeLight = {
 
 export const defaultThemeDark = {
   color: '#ccc',
-  border: '#4d4d4d',
+  border: '#2d2d2d',
   primary: '#898ae9',
-  shadow: 'rgba(1, 1, 1, .4) 0px 0px 12px 1px;',
+  shadow: 'rgba(1, 1, 1, 0.15) 0px 0px 12px 1px',
   selectedBackground: '#594dc0',
   selectedColor: '#eee',
   background: '#282C34',
