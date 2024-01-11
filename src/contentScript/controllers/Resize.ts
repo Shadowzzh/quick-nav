@@ -9,7 +9,17 @@ interface ResizeControllerOptions {
   onDblClick?: (direction: Direction, downEvent: MouseEvent) => void
 }
 
-type Direction =
+interface MouseMoveOptions {
+  mouseInTarget: { left: number; right: number; top: number; bottom: number }
+  containerRect: DOMRect
+  originOffset: QN.Position
+  downPosition: { downX: number; downY: number }
+  size: QN.Size
+  direction: Direction
+  offset: QN.Position
+}
+
+export type Direction =
   | 'left'
   | 'right'
   | 'bottom'
@@ -71,42 +81,90 @@ export class ResizeController implements ReactiveController {
     })
   }
 
-  /** 鼠标按下 Drag 元素后，可进行拖动容器 */
+  /** 鼠标按下 Drag 元素后 */
   private onDragMouseDown(direction: Direction, downEvent: MouseEvent) {
+    // 获取当前触发事件的元素
+    const handleTarget = downEvent.target as HTMLElement
     const { x: downX, y: downY } = downEvent
+    const downPosition = { downX, downY }
+
+    this.handleContainerSize(direction, handleTarget, downPosition)
+  }
+
+  /** 通过鼠标移动控制容器的大小 */
+  private handleContainerSize(
+    /** 在这个方向上改变大小 */
+    direction: Direction,
+    /** 控制者的 Element */
+    handleTarget: HTMLElement,
+    /** 鼠标按下时的位置 */
+    downPosition: { downX: number; downY: number },
+  ) {
+    const handleTargetRect = handleTarget.getBoundingClientRect()
+    const { downX, downY } = downPosition
+
     const containerRect = this.getContainerRect()
     if (!containerRect) return
 
     // 获取当前容器的偏移量
     const originOffset = getTranslateByElement(this.target)
 
-    // 获取当前触发事件的元素
-    const target = downEvent.target as HTMLElement
-    const targetReact = target.getBoundingClientRect()
-
+    // 鼠标在目标元素内的矩形信息
     const mouseInTarget = {
       // 鼠标左侧在目标元素内的距离
-      left: downX - targetReact.left,
+      left: downX - handleTargetRect.left,
       // 鼠标右侧在目标元素内的距离
-      right: targetReact.left + targetReact.width - downX,
+      right: handleTargetRect.left + handleTargetRect.width - downX,
       // 鼠标顶部在目标元素内的距离
-      top: downY - targetReact.top,
+      top: downY - handleTargetRect.top,
       // 鼠标底部在目标元素内的距离
-      bottom: targetReact.top + targetReact.height - downY,
+      bottom: handleTargetRect.top + handleTargetRect.height - downY,
     }
 
     // 保存当前帧的鼠标位置
     const size = { width: containerRect.width, height: containerRect.height }
+
     // 保存当前帧的偏移量
     const offset = { x: originOffset.x, y: originOffset.y }
 
+    const onMouseMove = this.onMouseMove.bind(this, {
+      mouseInTarget,
+      containerRect,
+      originOffset,
+      downPosition,
+      size,
+      direction,
+      offset,
+    })
+
+    this._mouseMove = onMouseMove
+
+    /** 鼠标抬起后， */
+    const mouseUp = () => {
+      window.removeEventListener('mousemove', onMouseMove)
+      window.removeEventListener('mouseup', mouseUp)
+
+      this.sizeEndCallbackTasks.forEach((task) => {
+        task({ size, offset: { x: offset.x, y: offset.y } })
+      })
+    }
+
+    // 鼠标按下后，监听鼠标移动事件, 并在鼠标抬起后移除监听
+    window.addEventListener('mousemove', onMouseMove)
+    window.addEventListener('mouseup', mouseUp)
+  }
+
+  /** 鼠标移动时，改变容器的大小 */
+  private onMouseMove = (() => {
     // 保存当前帧的 requestAnimationFrame
     let raf: number | null = null
 
-    /** 鼠标移动时，拖动容器 */
-    const mouseMoveBySize = (e: MouseEvent) => {
-      raf && cancelAnimationFrame(raf)
-      raf = requestAnimationFrame(() => {
+    return function (this: ResizeController, options: MouseMoveOptions, e: MouseEvent) {
+      const { mouseInTarget, containerRect, offset, originOffset, downPosition, size, direction } =
+        options
+      const { downX, downY } = downPosition
+
+      const run = () => {
         const { x: mouseX, y: mouseY } = e // 鼠标的位置离
 
         // 鼠标最右侧可移动最大距离限制
@@ -226,25 +284,14 @@ export class ResizeController implements ReactiveController {
             break
           }
         }
-      })
+      }
+
+      raf && cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(run)
     }
-    this._mouseMove = mouseMoveBySize
+  })()
 
-    /** 鼠标抬起后， */
-    const mouseUp = () => {
-      window.removeEventListener('mousemove', mouseMoveBySize)
-      window.removeEventListener('mouseup', mouseUp)
-
-      this.sizeEndCallbackTasks.forEach((task) => {
-        task({ size, offset: { x: offset.x, y: offset.y } })
-      })
-    }
-
-    // 鼠标按下后，监听鼠标移动事件, 并在鼠标抬起后移除监听
-    window.addEventListener('mousemove', mouseMoveBySize)
-    window.addEventListener('mouseup', mouseUp)
-  }
-
+  /** 双击事件 */
   private onDblClickHandle(direction: Direction, downEvent: MouseEvent) {
     this.onDblClick?.(direction, downEvent)
   }
