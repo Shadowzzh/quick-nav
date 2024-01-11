@@ -18,7 +18,7 @@ export const DEFAULT_CONFIG = Object.freeze({
   PANEL_MIN_MARGIN: 10,
 })
 
-export const DEFAULT_TREE_CONFIG = Object.freeze<Partial<TitleTreeData>>({
+export const DEFAULT_TREE_CONFIG = Object.freeze({
   isDisplay: true,
   childActive: false,
   isActive: false,
