@@ -95,3 +95,34 @@ export function scrollSmoothTo(prop: ScrollSmoothToProps) {
     }
   }
 }
+
+type Fn = (...args: any) => any
+
+/**
+ * 对一个高频率处理的函数防抖处理, 如重复操作时间短于规定的时间则始终等待到大于规定的时间之后在触发
+ * @param fn 需要被防抖的函数
+ * @param delay 防抖延迟时间
+ */
+export const asyncDebounce = <F extends Fn>(fn: F, delay = 100) => {
+  let loading = false
+  let timer: number
+
+  return async function (this: any, ...args: Parameters<F>) {
+    let onOkResolve: (v: any) => any, onOkReject: (v: any) => any
+    const onOkPromise = new Promise((r, re) => ((onOkResolve = r), (onOkReject = re)))
+
+    loading = true
+    if (loading) clearTimeout(timer)
+    timer = setTimeout(async () => {
+      try {
+        await fn.apply(this, args)
+        onOkResolve(true)
+      } catch (error) {
+        onOkReject(error)
+      }
+      loading = false
+    }, delay) as unknown as number
+
+    return onOkPromise
+  }
+}
