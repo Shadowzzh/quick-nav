@@ -21,6 +21,10 @@ export class WCButton extends WCWaves {
         display: block;
       }
 
+      :host .wc-button:hover {
+        background-color: var(--theme-background-hover);
+      }
+
       :host .waves-effect {
         display: flex;
         justify-content: center;

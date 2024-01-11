@@ -60,12 +60,7 @@ export class WCNavigatorPanel extends LitElement {
         cursor: grab;
         transition: background-color 0.3s var(--animation-ease-out-quart);
       }
-      :host .header .header_drag:hover {
-        background-color: var(--theme-background-hover);
-      }
-
       :host .header .header_drag:active {
-        background-color: var(--theme-background-active);
         cursor: grabbing;
       }
 
