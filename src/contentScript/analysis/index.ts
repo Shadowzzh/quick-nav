@@ -47,6 +47,7 @@ export function isSafeScrollElement(element: HTMLElement) {
   )
 }
 
+/** 获取元素的滚动元素 */
 export function getScrollElement(element: HTMLElement) {
   const ancestors = traceAncestor(element, Number.MAX_SAFE_INTEGER, (ancestor) => {
     return isSafeScrollElement(ancestor)
@@ -57,7 +58,7 @@ export function getScrollElement(element: HTMLElement) {
 
 /** 判断元素是否为空 */
 function elementIsEmpty(element: HTMLElement) {
-  return element.innerText.trim() === '' || element.innerText === undefined
+  return element.innerText.trim() === '' || element.innerText === undefined || element.offsetHeight === 0
 }
 
 /** 获取 element 标签对应的权重 */
@@ -74,6 +75,7 @@ export function extractContent() {
   const contentTags = Object.keys(CONTENT_TAG_WEIGHT)
 
   contentTags.forEach((tag) => {
+    // 获取文章中所有标签的 element
     const contentsOfTag = $(tag)
     if (contentsOfTag.length === 0) return
 
