@@ -40,6 +40,7 @@ export class ResizeController implements ReactiveController {
   minWidth: number = DEFAULT_CONFIG.PANEL_MIN_WIDTH
   /** 最小高度 */
   minHeight: number = DEFAULT_CONFIG.PANEL_MIN_HEIGHT
+
   onDblClick: ResizeControllerOptions['onDblClick'] = undefined
 
   /** 被监听的内部函数 */
@@ -401,10 +402,36 @@ export class ResizeController implements ReactiveController {
     }
   }
 
+  getSize() {
+    return {
+      height: this.target.offsetHeight,
+      width: this.target.offsetWidth,
+    }
+  }
+
   /** 设置元素大小 */
-  setSize(size: QN.Size) {
-    this.target.style.width = `${size.width}px`
-    this.target.style.height = `${size.height}px`
+  setSize(size: Partial<QN.Size>) {
+    if (size.width) {
+      this.target.style.width = `${size.width}px`
+    }
+    if (size.height) {
+      this.target.style.height = `${size.height}px`
+    }
+  }
+
+  /** 设置元素大小，如果超出边界，则设置为边界值 */
+  setSizeSafe(size: Partial<QN.Size>) {
+    const MARGIN = DEFAULT_CONFIG.PANEL_MIN_MARGIN
+
+    if (size.width !== undefined) {
+      const safeWidth = Math.min(Math.max(size.width, MARGIN), window.innerWidth - MARGIN * 2)
+      this.target.style.width = `${safeWidth}px`
+    }
+
+    if (size.height !== undefined) {
+      const safeHeight = Math.min(Math.max(size.height, MARGIN), window.innerHeight - MARGIN * 2)
+      this.target.style.height = `${safeHeight}px`
+    }
   }
 
   /** 元素大小改变结束后触发的回调 */

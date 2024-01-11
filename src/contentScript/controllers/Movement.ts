@@ -66,14 +66,19 @@ export class MovementController implements ReactiveController {
   }
 
   /** 设置容器的位置 */
-  private setContainerPosition(position: QN.Position) {
-    // console.log(position)
+  private setContainerPosition(position: Partial<QN.Position>) {
     if (this.locked) return this.offset
 
     // 容器位置 = 位置 + 偏移量
     const { x: offsetLeft, y: offsetTop } = this.offset
-    const x = position.x + offsetLeft
-    const y = position.y + offsetTop
+    let { x, y } = getTranslateByElement(this.target)
+
+    if (position.x !== undefined) {
+      x = position.x + offsetLeft
+    }
+    if (position.y !== undefined) {
+      y = position.y + offsetTop
+    }
 
     this.target.style.transform = `translate(${x}px, ${y}px)`
     return { x, y }
@@ -88,7 +93,7 @@ export class MovementController implements ReactiveController {
   }
 
   /** 提供给外部使用的 setContainerPosition */
-  setPosition(position: QN.Position) {
+  setPosition(position: Partial<QN.Position>) {
     if (this.locked) return
 
     const offset = this.setContainerPosition(position)

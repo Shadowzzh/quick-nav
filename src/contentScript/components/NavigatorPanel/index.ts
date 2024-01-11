@@ -1,7 +1,7 @@
 import { LitElement, html, css, TemplateResult } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { MovementController } from '../../controllers/Movement'
-import { ResizeController } from '../../controllers/Resize'
+import { Direction, ResizeController } from '../../controllers/Resize'
 import { syncStorage } from '../../../utils/storage'
 import { DEFAULT_CONFIG } from '../../../defaultConfig'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
@@ -96,6 +96,7 @@ export class WCNavigatorPanel extends LitElement {
       'right-top',
       'right-bottom',
     ],
+    onDblClick: (direction, downEvent) => this.onDblClickResizeController(direction, downEvent),
   })
 
   scrollRef: Ref<WCScroll> = createRef()
@@ -150,7 +151,7 @@ export class WCNavigatorPanel extends LitElement {
   }
 
   /** 双击 icon 后初始化容器矩形信息 */
-  initializationPosition() {
+  private initializationPosition() {
     this.style.transition =
       'transform 0.3s var(--animation-ease-out-quart), width 0.3s ease-out, height 0.3s ease-out'
     const initialPosition = { x: 0, y: 0 }
@@ -169,6 +170,29 @@ export class WCNavigatorPanel extends LitElement {
     setTimeout(() => {
       this.style.transition = ''
     }, 300)
+  }
+
+  /** 双击后设置最大高度 */
+  private async onDblClickResizeController(direction: Direction, _: MouseEvent) {
+    this.style.transition =
+      'transform 0.3s var(--animation-ease-out-quart), width 0.3s ease-out, height 0.3s ease-out'
+
+    if (['top', 'bottom'].includes(direction)) {
+      const initialPositionY = -DEFAULT_CONFIG.PANEL_Y + DEFAULT_CONFIG.PANEL_MIN_MARGIN
+
+      this.movementController.offset.y = 0
+      this.movementController.setPosition({ y: initialPositionY })
+      this.resizeController.setSizeSafe({ height: Number.MAX_SAFE_INTEGER })
+    }
+
+    // TODO: 动画实现方式优化
+    await new Promise((resolve) => setTimeout(resolve, 250))
+    this.style.transition = ''
+
+    const offset = this.movementController.offset
+    const size = this.resizeController.getSize()
+
+    syncStorage.set(['navigatorPanel'], { size, position: offset })
   }
 
   getScrollInstance() {
