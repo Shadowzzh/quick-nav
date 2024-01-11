@@ -122,15 +122,21 @@ export class WCPage extends LitElement {
       const isViewTop =
         titleItemOffset.top - childActiveTreeHeight >= scrollInstance.ps.element.scrollTop
       if (isViewTop === false) {
-        scrollInstance.ps.element.scrollTop = titleItemOffset.top - childActiveTreeHeight
+        scrollSmoothTo({
+          container: scrollInstance.ps.element,
+          target: titleItemOffset.top - childActiveTreeHeight,
+        })
       }
 
       const isViewBottom =
         scrollInstance.ps.element.scrollTop + scrollInstance.ps.element.offsetHeight >=
         titleItemOffset.top + titleItemOffset.height
       if (isViewBottom === false) {
-        scrollInstance.ps.element.scrollTop =
-          titleItemOffset.top + titleItemOffset.height - scrollInstance.ps.element.offsetHeight
+        scrollSmoothTo({
+          container: scrollInstance.ps.element,
+          target:
+            titleItemOffset.top + titleItemOffset.height - scrollInstance.ps.element.offsetHeight,
+        })
       }
     }
   }
