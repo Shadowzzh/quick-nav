@@ -73,7 +73,7 @@ export class TitleTreeComponent extends LitElement {
     let ancientTargets = e.composedPath().slice() as HTMLElement[]
 
     while ((target = ancientTargets.shift())) {
-      const className = target.className as 'title_icon' | 'title_content'
+      const className = target.className as 'title_icon' | 'title'
 
       switch (className) {
       }
@@ -87,7 +87,7 @@ export class TitleTreeComponent extends LitElement {
 
         child && this.onClickExpand({ tree: child, isExpand })
         break
-      } else if (className === 'title_content') {
+      } else if (className === 'title') {
         const uniqueId = target.getAttribute('unique')
         if (!uniqueId) continue
         const child = TitleTreeComponent.TreeMap.get(uniqueId)

@@ -17,9 +17,12 @@ export class WCTitleItemSimple extends LitElement {
         font-size: 13px;
         position: relative;
         box-sizing: border-box;
-        margin-right: 12px;
+        margin-right: 16px;
         margin-bottom: 1px;
         display: block;
+      }
+      :host * {
+        box-sizing: border-box;
       }
       :host .title {
         color: var(--theme-color);
@@ -27,6 +30,7 @@ export class WCTitleItemSimple extends LitElement {
           0.3s background-color var(--animation-ease-out-quart),
           0.25s transform var(--animation-ease-out-quart);
         border-radius: 4px;
+        cursor: pointer;
       }
 
       :host .title_content {
@@ -37,7 +41,6 @@ export class WCTitleItemSimple extends LitElement {
         align-items: center;
 
         padding: 4px 8px;
-        cursor: pointer;
         /* transition: background-color 0.1s var(--animation-ease-out-quart); */
       }
 
@@ -188,6 +191,7 @@ export class WCTitleItemSimple extends LitElement {
 
     return html`<div
       class="title"
+      unique=${this.node.uniqueId}
       style=${styleMap(titleStyle)}
       @mouseenter=${(e: MouseEvent) => {
         if (this.node?.data?.isActive === false) {
@@ -202,9 +206,9 @@ export class WCTitleItemSimple extends LitElement {
         this.atInside = false
       }}
     >
-      <div class="title_content" unique=${this.node.uniqueId} style=${styleMap(contentStyle)}>
+      <div class="title_content" style=${styleMap(contentStyle)}>
         ${WCExpandIconElement}
-        <div class="title_text" style=${styleMap(textStyle)}>${element.innerText}</div>
+        <span class="title_text" style=${styleMap(textStyle)}>${element.innerText}</span>
       </div>
 
       <span class="title_background" style=${styleMap(backgroundStyle)}></span>
