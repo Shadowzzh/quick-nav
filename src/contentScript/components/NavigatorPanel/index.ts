@@ -16,18 +16,18 @@ export class WCNavigatorPanel extends LitElement {
     css`
       :host {
         box-sizing: border-box;
-        z-index: 9999999;
+        z-index: 9998;
         display: block;
         position: fixed;
       }
 
       :host .quick-nav {
-        border: 1px solid rgb(235, 238, 245);
+        border: 1px solid var(--theme-border);
         /* opacity: 0.3; */
         height: 100%;
 
-        background-color: #fff;
-        box-shadow: rgb(0 0 0 / 7%) 0px 0px 8px 1px;
+        background-color: var(--theme-background);
+        box-shadow: var(--theme-shadow);
         overflow: hidden;
         border-radius: 6px;
 
@@ -51,23 +51,24 @@ export class WCNavigatorPanel extends LitElement {
 
       /* 拖动icon */
       :host .header .header_icon {
-        color: red;
       }
       /* place */
       :host .header .header_space {
         flex: auto;
       }
       :host .header .header_drag {
+        cursor: grab;
         transition: background-color 0.3s var(--animation-ease-out-quart);
       }
       :host .header .header_drag:hover {
-        background-color: #f5f5f5;
+        background-color: var(--theme-background-hover);
       }
 
       :host .header .header_drag:active {
-        background-color: #ebebeb;
-        cursor: grab;
+        background-color: var(--theme-background-active);
+        cursor: grabbing;
       }
+
       :host .header .header_drag wc-icon {
         transform: translate(-2px, -2px);
       }
@@ -207,11 +208,12 @@ export class WCNavigatorPanel extends LitElement {
     return html`<div class="waves-effect quick-nav">
       <div class="header">
         <wc-button
+          size="normal"
           class="header_drag"
           @mousedown=${this.movementController.dragMouseDown}
           @dblclick=${this.initializationPosition}
         >
-          <wc-icon class="header_icon" name="drag" size="16" color="#999"></wc-icon>
+          <wc-icon class="header_icon" name="drag" size="16" color="var(--theme-icon)"></wc-icon>
         </wc-button>
         <div class="header_space"></div>
         ${this.extraIcon}

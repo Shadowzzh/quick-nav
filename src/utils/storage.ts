@@ -5,6 +5,7 @@ interface StorageRecord {
     position: QN.Position
     size: QN.Size
   }
+  theme: QN.Theme
 }
 
 /**

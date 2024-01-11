@@ -1,7 +1,7 @@
 import type { WCNavigatorPanel } from '../components/NavigatorPanel'
 import { LitElement, html, css, PropertyValueMap } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { TitleTreeData } from '../interface'
+import { QN, TitleTreeData } from '../interface'
 import { scrollSmoothTo } from '../../utils'
 import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
@@ -9,6 +9,8 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js'
 import { Tree } from '../../utils/models/Tree'
 import '../components/TitleTree'
 import '../components/NavigatorPanel'
+import { DEFAULT_CONFIG } from '../../defaultConfig'
+import { syncStorage } from '../../utils/storage'
 
 interface WCPageOptions {}
 
@@ -27,8 +29,13 @@ export class WCPage extends LitElement {
   @property({ type: Object })
   rootTree: Tree<TitleTreeData>
 
+  /** 是否全部展开 */
   @property({ type: Boolean })
   isAllDisplay: boolean = true
+
+  /** 主题 */
+  @property({ type: String })
+  theme: QN.Theme = 'light'
 
   observerList: IntersectionObserver[] = []
 
@@ -48,6 +55,8 @@ export class WCPage extends LitElement {
   protected firstUpdated(
     _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>,
   ): void {
+    this.theme = this.getAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`) as QN.Theme
+
     this.rootTree?.eachChild((child) => {
       TitleTreeComponent.TreeMap.set(child.uniqueId, child)
 
@@ -178,12 +187,28 @@ export class WCPage extends LitElement {
     })
   }
 
+  /** 切换主题 */
+  async onToggleTheme() {
+    this.theme = this.theme === 'light' ? 'dark' : 'light'
+    await syncStorage.set(['theme'], this.theme)
+    this.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, this.theme)
+  }
+
   /** 全部展开 Icon */
   allExpandIcon() {
     const iconName = this.isAllDisplay ? 'allCollapse' : 'allExpand'
 
     return html` <wc-button class="header_allCollapse" @click=${() => this.onToggleAllDisplay()}>
-      <wc-icon class="header_icon" name=${iconName} size="16" color="#999"></wc-icon>
+      <wc-icon class="header_icon" name=${iconName} size="16" color="var(--theme-icon)"></wc-icon>
+    </wc-button>`
+  }
+
+  /** 主题 Icon */
+  themeIcon() {
+    const iconName = this.theme === 'light' ? 'moonLight' : 'sunLight'
+
+    return html` <wc-button @click=${() => this.onToggleTheme()}>
+      <wc-icon class="header_icon" name=${iconName} size="16" color="var(--theme-icon)"></wc-icon>
     </wc-button>`
   }
 
@@ -204,7 +229,10 @@ export class WCPage extends LitElement {
     if (this.rootTree === null) return
 
     return html`<div>
-      <wc-navigator-panel ref=${ref(this.navigatorPanelRef)} .extraIcon=${[this.allExpandIcon()]}>
+      <wc-navigator-panel
+        ref=${ref(this.navigatorPanelRef)}
+        .extraIcon=${[this.themeIcon(), this.allExpandIcon()]}
+      >
         <title-tree
           .rootTree=${this.rootTree}
           .onClickItem=${this.onClickTreeItem}

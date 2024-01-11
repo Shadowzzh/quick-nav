@@ -1,7 +1,15 @@
 import { LitElement, html, css, CSSResult, svg, TemplateResult } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { StyleInfo, styleMap } from 'lit/directives/style-map.js'
-import { dragSvg, arrowRightSvg, arrowDownSvg, allExpandSvg, allCollapseSvg } from './svgs'
+import {
+  dragSvg,
+  arrowRightSvg,
+  arrowDownSvg,
+  allExpandSvg,
+  allCollapseSvg,
+  sunLightSvg,
+  moonLightSvg,
+} from './svgs'
 
 const iconMap = {
   drag: { svg: dragSvg },
@@ -9,6 +17,8 @@ const iconMap = {
   arrowDown: { svg: arrowDownSvg },
   allExpand: { svg: allExpandSvg },
   allCollapse: { svg: allCollapseSvg },
+  sunLight: { svg: sunLightSvg },
+  moonLight: { svg: moonLightSvg },
 }
 
 interface IconOptions {

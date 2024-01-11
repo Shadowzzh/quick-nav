@@ -19,6 +19,7 @@ export type TitleTreeData = {
 export type TitleTree = Tree<TitleTreeData>
 
 namespace QN {
+  export type Theme = 'light' | 'dark'
   export interface Position {
     y: number
     x: number

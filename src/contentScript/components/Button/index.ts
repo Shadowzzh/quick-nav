@@ -12,9 +12,11 @@ export class WCButton extends WCWaves {
   static styles = [
     ...WCWaves.styles,
     css`
-      :host button {
-        border: none;
+      :host {
         cursor: pointer;
+      }
+      :host .wc-button {
+        border: none;
         background: none;
         display: block;
       }
@@ -55,8 +57,6 @@ export class WCButton extends WCWaves {
   render() {
     const style = { padding: `${this.getValueBySize()}px` }
 
-    return html`<button class="wc-button waves-effect" style=${styleMap(style)}>
-      ${this.children}
-    </button>`
+    return html`<div class="wc-button waves-effect" style=${styleMap(style)}>${this.children}</div>`
   }
 }

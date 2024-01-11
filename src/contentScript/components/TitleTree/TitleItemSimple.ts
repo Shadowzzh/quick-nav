@@ -13,8 +13,7 @@ export class WCTitleItemSimple extends LitElement {
   static styles = [
     css`
       :host {
-        color: #3b3b3b;
-        background-color: #fff;
+        background-color: var(--theme-background);
         font-size: 13px;
         position: relative;
         box-sizing: border-box;
@@ -23,7 +22,10 @@ export class WCTitleItemSimple extends LitElement {
         display: block;
       }
       :host .title {
-        transition: 0.3s background-color var(--animation-ease-out-quart);
+        color: var(--theme-color);
+        transition:
+          0.3s background-color var(--animation-ease-out-quart),
+          0.25s transform var(--animation-ease-out-quart);
         border-radius: 4px;
       }
 
@@ -59,7 +61,7 @@ export class WCTitleItemSimple extends LitElement {
         transform-origin: 100% 84%;
         transform: scale(0.7) translate(0px, 0px);
 
-        background-color: var(--theme-background);
+        background-color: var(--theme-item-hover-background);
         border-radius: 4px;
         bottom: 0;
         left: 0;
@@ -131,7 +133,7 @@ export class WCTitleItemSimple extends LitElement {
 
     const isChildren = this.node.children.length > 0
 
-    const titleStyle: StyleInfo = {}
+    let titleStyle: StyleInfo = {}
 
     const textStyle: StyleInfo = {
       opacity: this.opacity,
@@ -156,7 +158,12 @@ export class WCTitleItemSimple extends LitElement {
       backgroundStyle = {
         transform: `none !important`,
       }
-      titleStyle.backgroundColor = `var(--theme-primary-2)`
+      titleStyle = {
+        color: `var(--theme-selectedColor)`,
+        backgroundColor: `var(--theme-selectedBackground)`,
+        transform: `translateX(6px) scale(1, 1.05)`,
+        zIndex: `2`,
+      }
     }
 
     // TODO 优化

@@ -1,6 +1,7 @@
 import { TitleTreeData } from './contentScript/interface'
 
 export const DEFAULT_CONFIG = Object.freeze({
+  THEME_NAME: 'quick-nav-theme',
   /** 面板宽度 */
   PANEL_WIDTH: 300,
   /** 面板高度 */

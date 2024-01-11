@@ -9,7 +9,6 @@ export class WCWaves extends LitElement {
     css`
       .waves-effect {
         position: relative;
-        cursor: pointer;
         display: inline-block;
         overflow: hidden;
         user-select: none;
@@ -54,7 +53,7 @@ export class WCWaves extends LitElement {
         margin-left: -10px;
         opacity: 0;
 
-        background: rgba(0, 0, 0, 0.2);
+        background: var(--theme-waves-background);
         transition: all 0.7s ease-out;
         transition-property: transform, opacity;
         transform: scale(0);
