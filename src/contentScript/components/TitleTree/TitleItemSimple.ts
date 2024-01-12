@@ -164,7 +164,7 @@ export class WCTitleItemSimple extends LitElement {
       titleStyle = {
         color: `var(--theme-selectedColor)`,
         backgroundColor: `var(--theme-selectedBackground)`,
-        transform: `translateX(6px) scale(1, 1.05)`,
+        transform: `translate(6px, -2px) scale(1, 1.05)`,
         zIndex: `2`,
       }
     }
