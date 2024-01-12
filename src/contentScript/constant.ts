@@ -51,3 +51,9 @@ export const TITLE_TAG_WEIGHT = Object.freeze({
   h6: 1,
   // strong: 0,
 })
+
+/** 通讯消息类型 */
+export const PLATFORM_MESSAGE_TYPE = Object.freeze({
+  OPEN_QN: 'open-qn',
+  CLOSE_QN: 'close-qn',
+})

@@ -18,6 +18,7 @@ export type TitleTreeData = {
 /** 标题 Tree */
 export type TitleTree = Tree<TitleTreeData>
 
+/** 应用相关的全局类型 */
 namespace QN {
   export type Theme = 'light' | 'dark'
   export interface Position {
@@ -28,5 +29,19 @@ namespace QN {
   export interface Size {
     width: number
     height: number
+  }
+}
+
+/** 通讯消息 */
+export namespace PlatformMessage {
+  /** 通讯消息类型 */
+  export type Type = 'open-qn' | 'close-qn'
+
+  /** 通讯消息 */
+  export interface Data<T = any> {
+    /** 通讯消息类型 */
+    type: Type
+    /** 消息内容 */
+    content?: T
   }
 }
