@@ -98,31 +98,53 @@ export function scrollSmoothTo(prop: ScrollSmoothToProps) {
 
 type Fn = (...args: any) => any
 
+/** 扁平化创建 Promise */
+export const createPromise = <T>() => {
+  let resolve, reject
+
+  const promise = new Promise<T>((r, j) => ((resolve = r), (reject = j)))
+
+  return [
+    promise,
+    resolve as unknown as (value: T | PromiseLike<T>) => void,
+    reject as unknown as (value: T | PromiseLike<T>) => void,
+  ] as const
+}
+
 /**
  * 对一个高频率处理的函数防抖处理, 如重复操作时间短于规定的时间则始终等待到大于规定的时间之后在触发
  * @param fn 需要被防抖的函数
  * @param delay 防抖延迟时间
+ * @param immediately 是否立即执行
  */
-export const asyncDebounce = <F extends Fn>(fn: F, delay = 100) => {
-  let loading = false
-  let timer: number
+export const asyncDebounce = <F extends Fn>(fn: F, delay = 100, immediately: boolean = false) => {
+  let timer: any
 
   return async function (this: any, ...args: Parameters<F>) {
-    let onOkResolve: (v: any) => any, onOkReject: (v: any) => any
-    const onOkPromise = new Promise((r, re) => ((onOkResolve = r), (onOkReject = re)))
+    if (timer) clearTimeout(timer)
 
-    loading = true
-    if (loading) clearTimeout(timer)
-    timer = setTimeout(async () => {
+    const [promise, resolve, reject] = createPromise()
+
+    // 执行任务
+    const task = async () => {
       try {
         await fn.apply(this, args)
-        onOkResolve(true)
+        resolve(true)
       } catch (error) {
-        onOkReject(error)
+        reject(error)
+      } finally {
+        timer = undefined
       }
-      loading = false
-    }, delay) as unknown as number
+    }
 
-    return onOkPromise
+    // 如果是立即执行，且定时器不存在，则立即执行
+    if (timer === undefined && immediately) {
+      task()
+      timer = setTimeout(() => {}, delay)
+    } else {
+      timer = setTimeout(task, delay)
+    }
+
+    return promise
   }
 }
