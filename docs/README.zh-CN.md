@@ -2,7 +2,7 @@
 English · [简体中文](../README.md)
 
 <p align="center">
-    <img src="../public/img/logo-256.png" width="150">
+    <img src="../public/img/logo-1080.png" width="150">
 </p>
 
 <h3 align="center">Quick Nav</h3>
