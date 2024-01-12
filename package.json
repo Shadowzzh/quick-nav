@@ -1,16 +1,15 @@
 {
   "name": "quick-nav",
   "displayName": "quick-nav",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "author": "zziheng",
-  "description": "",
+  "description": "quick-nav chrome extrension",
   "type": "module",
   "license": "MIT",
   "keywords": [
     "chrome-extension",
-    "react",
-    "vite",
-    "create-chrome-ext"
+    "web-component",
+    "quick-nav"
   ],
   "engines": {
     "node": ">=14.18.0"
@@ -22,9 +21,7 @@
     "fmt": "prettier --write '**/*.{tsx,ts,json,css,scss,md}'"
   },
   "dependencies": {
-    "lit": "^3.1.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "lit": "^3.1.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.19",
