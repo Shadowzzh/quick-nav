@@ -1,4 +1,4 @@
-English · [简体中文](./docs/README.zh-CN.md)
+简体中文 · [English](./docs/README.zh-CN.md)
 
 <p align="center">
     <img src="./public/img/logo-256.png" width="150">
