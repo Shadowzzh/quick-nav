@@ -34,6 +34,7 @@ export class WCScroll extends LitElement {
       }
 
       .ps__rail-x {
+        z-index: 10;
         display: none;
         opacity: 0;
         transition:
@@ -51,6 +52,7 @@ export class WCScroll extends LitElement {
 
       .ps__rail-y {
         display: none;
+        z-index: 10;
         opacity: 0;
         transition:
           background-color 0.2s linear,
