@@ -17,10 +17,11 @@ export class WCTitleItemSimple extends LitElement {
         font-size: 13px;
         position: relative;
         box-sizing: border-box;
-        margin-right: 16px;
-        margin-bottom: 1px;
+        padding-right: 16px;
+        /* margin-bottom: 1px; */
         display: block;
       }
+
       :host * {
         box-sizing: border-box;
       }
@@ -33,12 +34,16 @@ export class WCTitleItemSimple extends LitElement {
         cursor: pointer;
       }
 
+      :host .title_inner {
+        position: relative;
+      }
+
       :host .title_content {
         position: relative;
-        z-index: 2;
         display: flex;
         justify-content: flex-start;
         align-items: center;
+        z-index: 2;
 
         padding: 4px 8px;
         /* transition: background-color 0.1s var(--animation-ease-out-quart); */
@@ -131,7 +136,7 @@ export class WCTitleItemSimple extends LitElement {
     if (!this.node?.data?.element) return
     const { isDisplay, element, isActive, childActive } = this.node.data
     // TODO 重排
-    const thisHeight = this.offsetHeight - 1
+    const thisHeight = this.offsetHeight - 0.5
     const isShowChildren = this.node?.children.every((child) => child.data?.isDisplay === true)
 
     const isChildren = this.node.children.length > 0
@@ -145,6 +150,8 @@ export class WCTitleItemSimple extends LitElement {
     const contentStyle: StyleInfo = {
       marginLeft: `${(this.node.depth - 1) * 18}px`,
     }
+
+    const innerStyle: StyleInfo = {}
 
     let backgroundStyle: StyleInfo = {
       transformOrigin: this.backgroundOrigin,
@@ -189,29 +196,29 @@ export class WCTitleItemSimple extends LitElement {
         ></wc-expand-icon>`
       : null
 
-    return html`<div
-      class="title"
-      unique=${this.node.uniqueId}
-      style=${styleMap(titleStyle)}
-      @mouseenter=${(e: MouseEvent) => {
-        if (this.node?.data?.isActive === false) {
-          this.calcOrigin(e)
-        }
-        this.atInside = true
-      }}
-      @mouseleave=${(e: MouseEvent) => {
-        if (this.node?.data?.isActive === false) {
-          this.calcOrigin(e)
-        }
-        this.atInside = false
-      }}
-    >
-      <div class="title_content" style=${styleMap(contentStyle)}>
-        ${WCExpandIconElement}
-        <span class="title_text" style=${styleMap(textStyle)}>${element.innerText}</span>
-      </div>
+    return html`<div class="title" unique=${this.node.uniqueId} style=${styleMap(titleStyle)}>
+      <div
+        class="title_inner"
+        @mouseenter=${(e: MouseEvent) => {
+          if (this.node?.data?.isActive === false) {
+            this.calcOrigin(e)
+          }
+          this.atInside = true
+        }}
+        @mouseleave=${(e: MouseEvent) => {
+          if (this.node?.data?.isActive === false) {
+            this.calcOrigin(e)
+          }
+          this.atInside = false
+        }}
+      >
+        <div class="title_content" style=${styleMap(contentStyle)}>
+          ${WCExpandIconElement}
+          <span class="title_text" style=${styleMap(textStyle)}>${element.innerText}</span>
+        </div>
 
-      <span class="title_background" style=${styleMap(backgroundStyle)}></span>
+        <span class="title_background" style=${styleMap(backgroundStyle)}></span>
+      </div>
     </div> `
   }
 }

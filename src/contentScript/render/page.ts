@@ -19,13 +19,6 @@ interface WCPageOptions {}
  */
 @customElement('wc-page')
 export class WCPage extends LitElement {
-  static styles = [
-    css`
-      :host {
-      }
-    `,
-  ]
-
   @property({ type: Object })
   rootTree: Tree<TitleTreeData>
 
@@ -274,12 +267,14 @@ export class WCPage extends LitElement {
           // this.moreIcon(),
         ]}
       >
-        <title-tree
-          .rootTree=${this.rootTree}
-          .onClickItem=${this.onClickTreeItem}
-          .onClickItemIcon=${() => this.onclickTreeItemIcon()}
-        >
-        </title-tree>
+        <div style="margin-top: 3px;">
+          <title-tree
+            .rootTree=${this.rootTree}
+            .onClickItem=${this.onClickTreeItem}
+            .onClickItemIcon=${() => this.onclickTreeItemIcon()}
+          >
+          </title-tree>
+        </div>
       </wc-navigator-panel>
     </div>`
   }
