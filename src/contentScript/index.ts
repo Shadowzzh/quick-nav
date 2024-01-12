@@ -29,8 +29,6 @@ const App = (() => {
 
       const debounceRunRender = asyncDebounce(runRender, 500, true)
 
-      // 立即执行一次
-      debounceRunRender()
       /**
        * 监听页面高度变化，重新生成标题树。
        * 因为页面高度变化可能是因为文章内容增加了，所以需要重新生成标题树 */
