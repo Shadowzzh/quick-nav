@@ -212,6 +212,39 @@ export class WCPage extends LitElement {
     </wc-button>`
   }
 
+  /** 放大 Icon */
+  zoomInIcon() {
+    return html` <wc-button>
+      <wc-icon class="header_icon" name="zoomIn" size="16" color="var(--theme-icon)"></wc-icon>
+    </wc-button>`
+  }
+
+  /** 缩小 Icon */
+  zoomOutIcon() {
+    return html` <wc-button>
+      <wc-icon class="header_icon" name="zoomOut" size="16" color="var(--theme-icon)"></wc-icon>
+    </wc-button>`
+  }
+
+  /** 搜索 Icon */
+  searcherIcon() {
+    return html` <wc-button>
+      <wc-icon class="header_icon" name="searcher" size="16" color="var(--theme-icon)"></wc-icon>
+    </wc-button>`
+  }
+
+  moreIcon() {
+    return html` <wc-button>
+      <wc-icon class="header_icon" name="more" size="16" color="var(--theme-icon)"></wc-icon>
+    </wc-button>`
+  }
+
+  refreshIcon() {
+    return html` <wc-button>
+      <wc-icon class="header_icon" name="refresh" size="16" color="var(--theme-icon)"></wc-icon>
+    </wc-button>`
+  }
+
   /** 点击树的 item */
   onClickTreeItem(params: Parameters<Exclude<TitleTreeComponent['onClickItem'], undefined>>[0]) {
     const container = getScrollElement(params.target)
@@ -231,7 +264,15 @@ export class WCPage extends LitElement {
     return html`<div>
       <wc-navigator-panel
         ref=${ref(this.navigatorPanelRef)}
-        .extraIcon=${[this.themeIcon(), this.allExpandIcon()]}
+        .extraIcon=${[
+          this.searcherIcon(),
+          this.zoomInIcon(),
+          this.zoomOutIcon(),
+          this.themeIcon(),
+          this.allExpandIcon(),
+          this.refreshIcon(),
+          this.moreIcon(),
+        ]}
       >
         <title-tree
           .rootTree=${this.rootTree}

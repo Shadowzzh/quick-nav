@@ -9,6 +9,11 @@ import {
   allCollapseSvg,
   sunLightSvg,
   moonLightSvg,
+  ZoomInSvg,
+  ZoomOutSvg,
+  searcherSvg,
+  refreshSvg,
+  moreSvg,
 } from './svgs'
 
 const iconMap = {
@@ -19,6 +24,12 @@ const iconMap = {
   allCollapse: { svg: allCollapseSvg },
   sunLight: { svg: sunLightSvg },
   moonLight: { svg: moonLightSvg },
+  zoomIn: { svg: ZoomInSvg },
+  zoomOut: { svg: ZoomOutSvg },
+  searcher: { svg: searcherSvg },
+  refresh: { svg: refreshSvg },
+  more: { svg: moreSvg },
+
 }
 
 interface IconOptions {
