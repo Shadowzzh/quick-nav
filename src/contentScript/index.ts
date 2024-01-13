@@ -1,3 +1,4 @@
+import '@webcomponents/custom-elements'
 import { asyncDebounce } from '../utils'
 import { extractContent, generatorTitleTree } from './analysis'
 import { PLATFORM_MESSAGE_TYPE } from './constant'
