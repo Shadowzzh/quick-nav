@@ -354,9 +354,9 @@ export class WCPage extends LitElement {
         ref=${ref(this.navigatorPanelRef)}
         .extraIcon=${[
           this.searcherIcon(),
+          this.themeIcon(),
           this.zoomInIcon(),
           this.zoomOutIcon(),
-          this.themeIcon(),
           this.allExpandIcon(),
           this.refreshIcon(),
           this.moreIcon(),
