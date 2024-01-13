@@ -198,6 +198,8 @@ export class WCPage extends LitElement {
 
   /** 切换主题 */
   async onToggleTheme() {
+    this.theme = this.theme === APP_THEME.LIGHT ? 'dark' : 'light'
+
     await syncStorage.set(['theme'], this.theme)
     this.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, this.theme)
   }
@@ -219,6 +221,7 @@ export class WCPage extends LitElement {
   /** 主题 Icon */
   themeIcon() {
     const iconName = this.theme === APP_THEME.LIGHT ? 'moonLight' : 'sunLight'
+    console.log(this.theme, APP_THEME.LIGHT)
 
     return html` <wc-button @click=${() => this.onToggleTheme()}>
       <wc-icon
