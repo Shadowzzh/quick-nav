@@ -1,4 +1,4 @@
-import { PLATFORM_MESSAGE_TYPE } from '../contentScript/constant'
+import { PLATFORM_MESSAGE_TYPE } from '@/contentScript'
 import { PlatformMessage } from '../contentScript/interface'
 import { ENV } from '@/env'
 

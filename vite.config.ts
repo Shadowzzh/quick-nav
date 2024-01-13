@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
       outDir,
       rollupOptions: {
         output: {
-          chunkFileNames: 'assets/chunk-[hash].js',
+          chunkFileNames: 'assets/quick-nav-chunk-[hash].js',
         },
       },
     },
