@@ -1,24 +1,26 @@
-import type { WCNavigatorPanel } from '../components/NavigatorPanel'
-import { LitElement, html, css, PropertyValueMap } from 'lit'
+import { LitElement, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
-import { QN, TitleTreeData } from '../interface'
-import { scrollSmoothTo } from '../../utils'
+import { Ref, createRef, ref } from 'lit/directives/ref.js'
+
+import type { WCNavigatorPanel } from '../components/NavigatorPanel'
+import type { QN, TitleTreeData } from '../interface'
+
+import '@/components/TitleTree'
+import '@/components/NavigatorPanel'
+import { Tree } from '@/utils/models'
+import { DEFAULT_CONFIG } from '@/defaultConfig'
+import { scrollSmoothTo } from '@/utils'
+import { syncStorage } from '@/utils/storage'
+
 import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
-import { Ref, createRef, ref } from 'lit/directives/ref.js'
-import { Tree } from '../../utils/models/Tree'
-import '../components/TitleTree'
-import '../components/NavigatorPanel'
-import { DEFAULT_CONFIG } from '../../defaultConfig'
-import { syncStorage } from '../../utils/storage'
-
-interface WCPageOptions {}
 
 /**
  * 页面
  */
 @customElement('wc-page')
 export class WCPage extends LitElement {
+  /** 根节点 */
   @property({ type: Object })
   rootTree: Tree<TitleTreeData>
 
@@ -30,8 +32,10 @@ export class WCPage extends LitElement {
   @property({ type: String })
   theme: QN.Theme = 'light'
 
+  /** 所有观察者列表 */
   observerList: IntersectionObserver[] = []
 
+  /** 导航面板 Ref */
   navigatorPanelRef: Ref<WCNavigatorPanel> = createRef()
 
   constructor(props: { rootTree: Tree<TitleTreeData>; content: Element }) {
@@ -40,25 +44,26 @@ export class WCPage extends LitElement {
   }
 
   disconnectedCallback(): void {
+    // 移除所有观察者
     this.observerList.forEach((observer) => {
       observer.disconnect()
     })
   }
 
-  protected firstUpdated(
-    _changedProperties: PropertyValueMap<any> | Map<PropertyKey, unknown>,
-  ): void {
+  /** 第一次更新 */
+  protected firstUpdated() {
+    // 从属性中获取主题
     this.theme = this.getAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`) as QN.Theme
 
     this.rootTree?.eachChild((child) => {
+      // 将所有的节点存入 map 中
       TitleTreeComponent.TreeMap.set(child.uniqueId, child)
 
+      // 观察每一个节点
       const observerInstance = this.observerNodeElement(child)
       observerInstance && this.observerList.push(observerInstance)
     })
   }
-
-  observerTrigger() {}
 
   // TODO 使用 scroll 代替 IntersectionObserver 实现
   /** 观测每一个 node 的 element */
