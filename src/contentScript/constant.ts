@@ -1,3 +1,5 @@
+import { QN } from './interface'
+
 const LowestWeights = [-100, -50, -25]
 // TODO 性能优化：每增加一级标签，计算会指数级增加
 const baseWeights = [0, 100, 90, 80, 70, 60, 50, 40, 30]
@@ -50,4 +52,10 @@ export const TITLE_TAG_WEIGHT = Object.freeze({
   h5: 2,
   h6: 1,
   // strong: 0,
+})
+
+/** 应用主题 */
+export const APP_THEME = Object.freeze({
+  LIGHT: 'light',
+  DARK: 'dark',
 })

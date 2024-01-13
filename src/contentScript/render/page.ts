@@ -14,6 +14,7 @@ import { syncStorage } from '@/utils/storage'
 
 import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
+import { APP_THEME } from '../constant'
 
 /**
  * 页面
@@ -189,7 +190,6 @@ export class WCPage extends LitElement {
 
   /** 切换主题 */
   async onToggleTheme() {
-    this.theme = this.theme === 'light' ? 'dark' : 'light'
     await syncStorage.set(['theme'], this.theme)
     this.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, this.theme)
   }
@@ -205,7 +205,7 @@ export class WCPage extends LitElement {
 
   /** 主题 Icon */
   themeIcon() {
-    const iconName = this.theme === 'light' ? 'moonLight' : 'sunLight'
+    const iconName = this.theme === APP_THEME.LIGHT ? 'moonLight' : 'sunLight'
 
     return html` <wc-button @click=${() => this.onToggleTheme()}>
       <wc-icon class="header_icon" name=${iconName} size="16" color="var(--theme-icon)"></wc-icon>
