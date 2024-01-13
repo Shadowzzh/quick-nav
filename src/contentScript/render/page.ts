@@ -5,14 +5,15 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js'
 import type { WCNavigatorPanel } from '../components/NavigatorPanel'
 import type { QN, TitleTreeData } from '../interface'
 
-import '@/components/TitleTree'
-import '@/components/NavigatorPanel'
+import '../components/TitleTree'
+import '../components/NavigatorPanel'
+import { TitleTreeComponent } from '../components/TitleTree'
+
 import { Tree } from '@/utils/models'
 import { DEFAULT_CONFIG } from '@/defaultConfig'
 import { scrollSmoothTo } from '@/utils'
 import { syncStorage } from '@/utils/storage'
 
-import { TitleTreeComponent } from '../components/TitleTree'
 import { getScrollElement } from '../analysis'
 import { APP_THEME } from '../constant'
 
