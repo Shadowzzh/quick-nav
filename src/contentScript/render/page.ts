@@ -33,6 +33,9 @@ export class WCPage extends LitElement {
   @property({ type: String })
   theme: QN.Theme = 'light'
 
+  /** 额外的 Icon 大小 */
+  extraIconSize = 16
+
   /** 所有观察者列表 */
   observerList: IntersectionObserver[] = []
 
@@ -199,7 +202,12 @@ export class WCPage extends LitElement {
     const iconName = this.isAllDisplay ? 'allCollapse' : 'allExpand'
 
     return html` <wc-button class="header_allCollapse" @click=${() => this.onToggleAllDisplay()}>
-      <wc-icon class="header_icon" name=${iconName} size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name=${iconName}
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
@@ -208,40 +216,70 @@ export class WCPage extends LitElement {
     const iconName = this.theme === APP_THEME.LIGHT ? 'moonLight' : 'sunLight'
 
     return html` <wc-button @click=${() => this.onToggleTheme()}>
-      <wc-icon class="header_icon" name=${iconName} size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name=${iconName}
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
   /** 放大 Icon */
   zoomInIcon() {
     return html` <wc-button>
-      <wc-icon class="header_icon" name="zoomIn" size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name="zoomIn"
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
   /** 缩小 Icon */
   zoomOutIcon() {
     return html` <wc-button>
-      <wc-icon class="header_icon" name="zoomOut" size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name="zoomOut"
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
   /** 搜索 Icon */
   searcherIcon() {
     return html` <wc-button>
-      <wc-icon class="header_icon" name="searcher" size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name="searcher"
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
   moreIcon() {
     return html` <wc-button>
-      <wc-icon class="header_icon" name="more" size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name="more"
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
   refreshIcon() {
     return html` <wc-button>
-      <wc-icon class="header_icon" name="refresh" size="16" color="var(--theme-icon)"></wc-icon>
+      <wc-icon
+        class="header_icon"
+        name="refresh"
+        size=${this.extraIconSize}
+        color="var(--theme-icon)"
+      ></wc-icon>
     </wc-button>`
   }
 
