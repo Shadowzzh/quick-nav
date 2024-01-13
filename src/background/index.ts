@@ -8,8 +8,11 @@ if (ENV.isDev) {
   chrome.action.setBadgeBackgroundColor({ color: '#999' })
 }
 
+/** 监听浏览器图标点击事件 */
 chrome.action.onClicked.addListener((tab) => {
   if (!tab.id) return
+
+  // 通知 contentScript 打开 QN
   chrome.tabs.sendMessage<PlatformMessage.Data>(tab.id, {
     type: PLATFORM_MESSAGE_TYPE.OPEN_QN,
   })
