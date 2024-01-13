@@ -1,4 +1,3 @@
-import { PLATFORM_MESSAGE_TYPE } from '@/contentScript'
 import { PlatformMessage } from '../contentScript/interface'
 import { ENV } from '@/env'
 
@@ -14,6 +13,6 @@ chrome.action.onClicked.addListener((tab) => {
 
   // 通知 contentScript 打开 QN
   chrome.tabs.sendMessage<PlatformMessage.Data>(tab.id, {
-    type: PLATFORM_MESSAGE_TYPE.OPEN_QN,
+    type: 'open-qn',
   })
 })
