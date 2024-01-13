@@ -1,7 +1,8 @@
 import '@webcomponents/custom-elements'
-import { asyncDebounce } from './utils'
+import { ElapsedTime, asyncDebounce } from './utils'
 import { extractContent, generatorTitleTree } from './contentScript/analysis'
 import { removeRenderTree, renderTree } from './contentScript/render'
+import { ENV } from './env'
 import './contentScript/styles/mixins'
 import './contentScript/styles/waves.js'
 
@@ -12,6 +13,8 @@ export const App = (() => {
   return {
     /** 打开渲染树 */
     open() {
+      console.clear()
+      ENV.isDev && ElapsedTime.start('open app')
       const content = extractContent()
       if (!content) return console.error('未找到文章内容')
 
@@ -20,8 +23,9 @@ export const App = (() => {
         const TitleTree = generatorTitleTree(content)
         renderTree(content, TitleTree)
 
-        console.timeEnd('open app')
-        console.log(`🚀 ~ open ~ quick nav, my home link : https://github.com/Shadowzzh`)
+        ENV.isDev && ElapsedTime.end('open app')
+        ENV.isPro &&
+          console.log(`🚀 ~ open ~ quick nav, my home link : https://github.com/Shadowzzh`)
 
         isOpen = true
       }

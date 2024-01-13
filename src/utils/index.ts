@@ -148,3 +148,24 @@ export const asyncDebounce = <F extends Fn>(fn: F, delay = 100, immediately: boo
     return promise
   }
 }
+
+/** 计算耗时 */
+export const ElapsedTime = (() => {
+  const timeMap = new Map<string, number>()
+
+  return {
+    /** 开始计时 */
+    start(tag: string = 'default') {
+      timeMap.set(tag, Date.now())
+    },
+
+    /** 结束计时 */
+    end(tag: string = 'default') {
+      const endTime = Date.now()
+      const startTime = timeMap.get(tag)
+
+      startTime && console.log(`🚀 ~ 耗时-${tag} : ${endTime - startTime}ms`)
+      timeMap.delete(tag)
+    },
+  }
+})()
