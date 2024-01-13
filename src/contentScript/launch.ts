@@ -21,6 +21,7 @@ export const App = (() => {
       /** run render tree */
       const runRender = () => {
         const TitleTree = generatorTitleTree(content)
+        ENV.isDev && console.log('TitleTree', TitleTree)
         renderTree(content, TitleTree)
 
         ENV.isDev && ElapsedTime.end('open app')

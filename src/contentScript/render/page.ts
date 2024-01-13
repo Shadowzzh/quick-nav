@@ -1,4 +1,4 @@
-import { LitElement, html } from 'lit'
+import { LitElement, PropertyValueMap, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
 
@@ -34,6 +34,13 @@ export class WCPage extends LitElement {
   @property({ type: String })
   theme: QN.Theme = 'light'
 
+  /** 当前展示的深度 */
+  @property({ type: Number })
+  currentShowDepth: number = 0
+
+  /** 最大的深度 */
+  depthMax: number
+
   /** 额外的 Icon 大小 */
   extraIconSize = 16
 
@@ -46,6 +53,8 @@ export class WCPage extends LitElement {
   constructor(props: { rootTree: Tree<TitleTreeData>; content: Element }) {
     super()
     this.rootTree = props.rootTree
+    this.depthMax = this.rootTree.getMaxDepth()
+    this.currentShowDepth = this.depthMax
   }
 
   disconnectedCallback(): void {
@@ -176,6 +185,8 @@ export class WCPage extends LitElement {
     const isOneChildren = this.rootTree.children.length === 1
     // 根节点只有一个字节点时，遍历子节点的子节点
     const baseTree = isOneChildren ? this.rootTree.children[0].children : this.rootTree.children
+    // 全部展开时，展示最大深度，否则展示 1
+    isAllDisplay ? (this.currentShowDepth = this.depthMax) : (this.currentShowDepth = 1)
 
     baseTree.forEach((tree) => {
       // 根节点不参与
@@ -206,7 +217,8 @@ export class WCPage extends LitElement {
 
   /** 全部展开 Icon */
   allExpandIcon() {
-    const iconName = this.isAllDisplay ? 'allCollapse' : 'allExpand'
+    const iconName =
+      this.isAllDisplay && this.currentShowDepth === this.depthMax ? 'allCollapse' : 'allExpand'
 
     return html` <wc-button class="header_allCollapse" @click=${() => this.onToggleAllDisplay()}>
       <wc-icon
@@ -221,7 +233,6 @@ export class WCPage extends LitElement {
   /** 主题 Icon */
   themeIcon() {
     const iconName = this.theme === APP_THEME.LIGHT ? 'moonLight' : 'sunLight'
-    console.log(this.theme, APP_THEME.LIGHT)
 
     return html` <wc-button @click=${() => this.onToggleTheme()}>
       <wc-icon
@@ -233,9 +244,40 @@ export class WCPage extends LitElement {
     </wc-button>`
   }
 
+  /** 放大缩小 */
+  onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
+    const isZoomIn = method === 'zoomIn'
+    // 当前展示的深度
+    let currentShowDepth = this.currentShowDepth
+
+    // 不同的方法，深度不同
+    if (isZoomIn) {
+      currentShowDepth = Math.min(this.depthMax, currentShowDepth + 1)
+    } else {
+      currentShowDepth = Math.max(1, currentShowDepth - 1)
+    }
+
+    this.rootTree.depthMap.forEach((value, key) => {
+      // 不同的方法，判断条件不同
+      if (isZoomIn ? key > currentShowDepth : key <= currentShowDepth) return
+
+      value.forEach((node) => {
+        if (!node.data) return
+
+        node.data.isDisplay = isZoomIn ? true : false
+        node.data.TitleItem?.requestUpdate()
+        node.parent?.data?.TitleItem?.requestUpdate()
+      })
+    })
+
+    this.currentShowDepth = currentShowDepth
+    // 当前展示的深度等于最大深度时，全部展开
+    this.isAllDisplay = currentShowDepth === this.depthMax
+  }
+
   /** 放大 Icon */
   zoomInIcon() {
-    return html` <wc-button>
+    return html` <wc-button @click=${() => this.onClickZooIcon('zoomIn')}>
       <wc-icon
         class="header_icon"
         name="zoomIn"
@@ -247,7 +289,7 @@ export class WCPage extends LitElement {
 
   /** 缩小 Icon */
   zoomOutIcon() {
-    return html` <wc-button>
+    return html` <wc-button @click=${() => this.onClickZooIcon('zoomOut')}>
       <wc-icon
         class="header_icon"
         name="zoomOut"

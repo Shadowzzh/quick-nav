@@ -9,13 +9,19 @@ export class Tree<Data extends any = any> {
   private _root: Tree<Data> | undefined = undefined
   /** 节点的深度 */
   private _depth: number = 0
-
+  /** 节点的唯一标识 */
   private _uniqueId: string
+  /** 深度映射表 */
+  private _depthMap: Map<number, Set<Tree<Data>>> = new Map()
 
   constructor(options?: { data?: Data }) {
     this._data = options?.data
     this._root = this
     this._uniqueId = Math.random().toString() + this._depth
+  }
+
+  get depthMap() {
+    return this._depthMap
   }
 
   get uniqueId() {
@@ -48,12 +54,20 @@ export class Tree<Data extends any = any> {
     child._root = this._root
     child._depth = this._depth + 1
 
+    const depthSet = this.root?._depthMap.get(child._depth) ?? new Set()
+    depthSet.add(child)
+    this.root?._depthMap.set(child._depth, depthSet)
+
     this._children.push(child)
 
     // 更新子节点的根节点和深度
     this.eachChild((child) => {
       child._root = this._root // 更新子节点的根节点
       child._depth = child._parent!._depth + 1 // 更新子节点的深度
+
+      const depthSet = this.root?._depthMap.get(child._depth) ?? new Set()
+      depthSet.add(child)
+      this.root?._depthMap.set(child._depth, depthSet)
     })
   }
 
@@ -93,5 +107,29 @@ export class Tree<Data extends any = any> {
   /** 判断是否是根节点 */
   isRoot(): this is { root: Tree<Data> } {
     return this === this._root
+  }
+
+  /** 获取叶子结点 */
+  getLeaf() {
+    let leaf: undefined | Tree<Data> = undefined
+
+    this.root?.eachChild((child) => {
+      if (child.children.length !== 0) return
+      if (!leaf) return (leaf = child)
+      if (child.depth > leaf.depth) leaf = child
+    })
+
+    return leaf
+  }
+
+  /** 获取最大深度 */
+  getMaxDepth() {
+    let maxDepth = 0
+
+    this.root?.eachChild((child) => {
+      if (child.depth > maxDepth) maxDepth = child.depth
+    })
+
+    return maxDepth
   }
 }
