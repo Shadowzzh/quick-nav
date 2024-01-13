@@ -33,7 +33,7 @@ export default defineManifest({
     {
       matches: ['<all_urls>', 'http://*/*', 'https://*/*'],
       run_at: 'document_end',
-      js: ['src/contentScript/index.ts'],
+      js: [isProduction ? 'src/contentScript/index.ts': 'src/contentScript/launch.ts'],
     },
   ],
   // side_panel: {

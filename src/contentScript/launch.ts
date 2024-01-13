@@ -1,10 +1,10 @@
 import '@webcomponents/custom-elements'
-import { ElapsedTime, asyncDebounce } from './utils'
-import { extractContent, generatorTitleTree } from './contentScript/analysis'
-import { removeRenderTree, renderTree } from './contentScript/render'
-import { ENV } from './env'
-import './contentScript/styles/mixins'
-import './contentScript/styles/waves.js'
+import { ElapsedTime, asyncDebounce } from '../utils'
+import { extractContent, generatorTitleTree } from './analysis'
+import { removeRenderTree, renderTree } from './render'
+import { ENV } from '../env'
+import './styles/mixins'
+import './styles/waves.js'
 
 export const App = (() => {
   let isOpen = false
@@ -53,3 +53,7 @@ export const App = (() => {
     },
   }
 })()
+
+if (ENV.isDev) {
+  App.open()
+}
