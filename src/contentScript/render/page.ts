@@ -164,25 +164,27 @@ export class WCPage extends LitElement {
     })
   }
 
-  /** 全部 展开/闭合 */
+  /** 全部的 item 展开｜闭合 */
   onToggleAllDisplay() {
-    this.isAllDisplay = !this.isAllDisplay
+    const isAllDisplay = !this.isAllDisplay
 
     this.rootTree.children.forEach((tree) => {
+      // 根节点不参与
       tree.eachChild((node) => {
         if (!node.data) return
-        node.data.isDisplay = this.isAllDisplay
+
+        node.data.isDisplay = isAllDisplay
         node.data.TitleItem?.requestUpdate()
       })
-      if (!tree.data) return
-      tree.data.TitleItem?.requestUpdate()
     })
 
-    // TODO FIX item 过多可能导致在下下一帧才会完成所有的更新，从而导致此次scrollUpdate调用过早。
-    /** 所有 item 闭合后，导致 scroll 变化，需要主动调用更新 */
+    /** 主动更新面板滚动轴的高度，
+     *  所有 item 闭合后，导致 scroll 变化，需要主动调用更新 */
     requestAnimationFrame(() => {
       this.navigatorPanelRef.value?.scrollUpdate()
     })
+
+    this.isAllDisplay = isAllDisplay
   }
 
   /** 切换主题 */
