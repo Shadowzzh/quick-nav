@@ -1,11 +1,14 @@
 import { defineManifest } from '@crxjs/vite-plugin'
 import packageData from '../package.json'
 
+const isProduction = process.env.NODE_ENV === 'production'
+const name = isProduction ? packageData.name : `${packageData.name}-${process.env.NODE_ENV}`
+
 export default defineManifest({
   content_security_policy: {
     extension_pages: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self';",
   },
-  name: packageData.name,
+  name,
   description: packageData.description,
   version: packageData.version,
   manifest_version: 3,
@@ -18,6 +21,7 @@ export default defineManifest({
   action: {
     // default_popup: 'popup.html',
     default_icon: 'img/logo-256.png',
+    // default_title: isProduction ? undefined : '测',
   },
   // options_page: 'options.html',
   // devtools_page: 'devtools.html',
