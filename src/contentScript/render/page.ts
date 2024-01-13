@@ -172,8 +172,12 @@ export class WCPage extends LitElement {
   /** 全部的 item 展开｜闭合 */
   onToggleAllDisplay() {
     const isAllDisplay = !this.isAllDisplay
+    // 根节点只有一个字节点时
+    const isOneChildren = this.rootTree.children.length === 1
+    // 根节点只有一个字节点时，遍历子节点的子节点
+    const baseTree = isOneChildren ? this.rootTree.children[0].children : this.rootTree.children
 
-    this.rootTree.children.forEach((tree) => {
+    baseTree.forEach((tree) => {
       // 根节点不参与
       tree.eachChild((node) => {
         if (!node.data) return
