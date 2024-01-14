@@ -49,12 +49,15 @@ export class WCPage extends LitElement {
   currentShowDepth: number = 0
 
   /** 最大的深度 */
+  @property({ type: Number })
   depthMax: number = 0
 
   /** 最小的深度 */
+  @property({ type: Number })
   depthMin: number = 0
 
   /** 额外的 Icon 大小 */
+  @property({ type: Number })
   extraIconSize = 16
 
   /** 所有观察者列表 */
@@ -66,6 +69,7 @@ export class WCPage extends LitElement {
   constructor(props: { rootTree: Tree<TitleTreeData>; content: Element }) {
     super()
     this.rootTree = props.rootTree
+    this.initialize()
   }
 
   /** 初始化 */
