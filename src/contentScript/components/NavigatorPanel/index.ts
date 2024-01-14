@@ -73,6 +73,7 @@ export class WCNavigatorPanel extends LitElement {
         padding-bottom: 5px;
         height: calc(100% - 32px);
         width: 100%;
+        position: relative;
       }
     `,
   ]
@@ -191,10 +192,12 @@ export class WCNavigatorPanel extends LitElement {
     syncStorage.set(['navigatorPanel'], { size, position: offset })
   }
 
+  /** 获取 scroll 实例 */
   getScrollInstance() {
     return this.scrollRef.value
   }
 
+  /** 更新 scroll 视图 */
   scrollUpdate() {
     this.scrollRef.value?.updateScroll()
   }
@@ -213,6 +216,7 @@ export class WCNavigatorPanel extends LitElement {
         <div class="header_space"></div>
         <slot name="extraIcon"></slot>
       </div>
+
       <div class="content">
         <wc-scroll ref=${ref(this.scrollRef)} minScrollbarLength="1" suppressScrollX>
           <slot></slot>

@@ -120,7 +120,7 @@ export class TitleTreeComponent extends LitElement {
   }
 
   render() {
-    return html`<div @click="${this.onClick}">
+    return html`<div @click="${this.onClick}" style="position: relative">
       ${this.rootTree?.children.map((node) => this.renderTree(node))}
     </div>`
   }

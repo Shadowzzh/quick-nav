@@ -1,5 +1,5 @@
 import { DEFAULT_TREE_CONFIG } from '../../defaultConfig'
-import { $ } from '../../utils'
+import { $, asserts } from '../../utils'
 import { Tree } from '../../utils/models/Tree'
 import { CONTENT_TAG_WEIGHT, TITLE_TAG_WEIGHT } from '../constant'
 import type { TitleTree, TitleTreeData } from '../interface'
@@ -47,18 +47,42 @@ export function isSafeScrollElement(element: HTMLElement) {
   )
 }
 
+/** 获取元素的滚动高度 */
+export const getScrollTopElement = (element: HTMLElement | Window) => {
+  if (asserts.isHTMLElement(element)) {
+    return element.scrollTop
+  } else {
+    return window.scrollY
+  }
+}
+
+/** 获取元素的 offsetTop */
+export const getOffsetTopElement = (element: HTMLElement) => {
+  let actualTop = element.offsetTop
+  let current = element.offsetParent as HTMLElement | null
+
+  while (current !== null) {
+    actualTop += current.offsetTop
+    current = current.offsetParent as HTMLElement | null
+  }
+  return actualTop
+}
+
 /** 获取元素的滚动元素 */
 export function getScrollElement(element: HTMLElement) {
   const ancestors = traceAncestor(element, Number.MAX_SAFE_INTEGER, (ancestor) => {
     return isSafeScrollElement(ancestor)
   })
 
-  return ancestors[ancestors.length - 1]
+  const ancestor = ancestors[ancestors.length - 1]
+  return ancestor
 }
 
 /** 判断元素是否为空 */
 function elementIsEmpty(element: HTMLElement) {
-  return element.innerText.trim() === '' || element.innerText === undefined || element.offsetHeight === 0
+  return (
+    element.innerText.trim() === '' || element.innerText === undefined || element.offsetHeight === 0
+  )
 }
 
 /** 获取 element 标签对应的权重 */

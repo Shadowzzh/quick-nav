@@ -149,6 +149,35 @@ export const asyncDebounce = <F extends Fn>(fn: F, delay = 100, immediately: boo
   }
 }
 
+/**
+ * 对一个高频率处理的函数节流, 规定在预期的延迟时间内只能执行一次
+ * @param fn 节流处理的函数
+ * @param delay 节流延迟时间
+ */
+export function asyncThrottle<F extends Fn>(fn: F, delay = 100) {
+  if (delay === 0) return fn
+  const [promise, resolve, reject] = createPromise()
+
+  let start = 0
+
+  return async function (this: any, ...args: Parameters<F>) {
+    const now = Date.now()
+
+    if (now - start >= delay) {
+      try {
+        await fn.apply(this, args)
+        resolve(true)
+      } catch (e) {
+        reject(e)
+        fn.apply(this, args)
+      }
+      start = now
+    }
+
+    return promise
+  }
+}
+
 /** 计算耗时 */
 export const ElapsedTime = (() => {
   const timeMap = new Map<string, number>()

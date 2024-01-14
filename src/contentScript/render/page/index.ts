@@ -20,6 +20,7 @@ import { Tree } from '@/utils/models'
 import { scrollSmoothTo } from '@/utils'
 
 import { getScrollElement } from '../../analysis'
+import { Anchor, ObserverViewController } from './ObserverViewController'
 
 /**
  * 页面
@@ -60,15 +61,17 @@ export class WCPage extends LitElement {
   @property({ type: Number })
   extraIconSize = 16
 
-  /** 所有观察者列表 */
-  observerList: IntersectionObserver[] = []
-
   /** 导航面板 Ref */
   navigatorPanelRef: Ref<WCNavigatorPanel> = createRef()
 
-  constructor(props: { rootTree: Tree<TitleTreeData>; content: Element }) {
+  private content: HTMLElement
+
+  private observerViewController = new ObserverViewController(this)
+
+  constructor(props: { rootTree: Tree<TitleTreeData>; content: HTMLElement }) {
     super()
     this.rootTree = props.rootTree
+    this.content = props.content
     this.initialize()
   }
 
@@ -78,134 +81,73 @@ export class WCPage extends LitElement {
     this.depthMin = this.rootTree.children.length === 1 ? 2 : 1
     this.depthMax = this.rootTree.getMaxDepth()
     this.currentShowDepth = this.depthMax
-  }
 
-  disconnectedCallback(): void {
-    // 移除所有观察者
-    this.observerList.forEach((observer) => {
-      observer.disconnect()
+    this.observerViewController.setInfo({
+      onInView: (params) => this.onNodeInView(params),
+      tree: this.rootTree,
+      container: this.content,
     })
   }
 
-  /** 第一次更新 */
+  disconnectedCallback(): void {}
+
+  /** 更新时 */
   protected updated(propertyValueMap: PropertyValueMap<WCPage>) {
     if (propertyValueMap.has('rootTree')) {
-      this.observerList.forEach((observer) => observer.disconnect())
-      this.observerList = []
-
       TitleTreeComponent.TreeMap.clear()
       TitleTreeComponent.childActiveTree.clear()
 
       this.rootTree?.eachChild((child) => {
         // 将所有的节点存入 map 中
         TitleTreeComponent.TreeMap.set(child.uniqueId, child)
-
-        // 观察每一个节点
-        const observerInstance = this.observerNodeElement(child)
-        observerInstance && this.observerList.push(observerInstance)
       })
     }
   }
 
-  // TODO 使用 scroll 代替 IntersectionObserver 实现
-  /** 观测每一个 node 的 element */
-  observerNodeElement = (function () {
-    /** 上一个被触发的 node */
-    let preNode: Tree<TitleTreeData> | undefined = undefined
-
-    return function (this: WCPage, node: Tree<TitleTreeData>) {
-      const element = node.data?.element
-      if (!element) return
-
-      const observer = new IntersectionObserver(
-        (entries) => {
-          const firstEntries = entries[0]
-
-          // 跳过从下面进入视图中的元素
-          if (firstEntries.boundingClientRect.top >= firstEntries.boundingClientRect.height) return
-
-          const data = node.data!
-
-          // 清空上个node的状态
-          if (preNode) {
-            preNode.data!.isActive = false
-            this.observerToggleAncestorActive(preNode, false)
-            preNode.data!.TitleItem?.requestUpdate()
-          }
-
-          this.observerToggleAncestorActive(node, true)
-          this.observerKeepViewInfo(node)
-
-          data.isActive = true
-          data.TitleItem?.requestUpdate()
-
-          preNode = node
-        },
-        {
-          threshold: [0, 1],
-        },
-      )
-
-      // 开始观察
-      observer.observe(element)
-
-      return observer
-    }
-  })()
+  /** 当前节点在视图中出现 */
+  onNodeInView({ anchor }: { anchor: Anchor }) {
+    this.keepViewInto(anchor)
+  }
 
   /** 控制 scroll 滚动，使选中的 item 保存在视图中 */
-  observerKeepViewInfo(node: Tree<TitleTreeData>) {
-    const titleItemOffset = {
-      top: node.data?.TitleItem?.offsetTop ?? 0,
-      height: node.data?.TitleItem?.offsetHeight ?? 0,
-    }
-    const data = node.data!
-    /** childActive 为 true 的 childActive 数量 */
-    const childActiveTreeCount = TitleTreeComponent.childActiveTree.size
-    /** childActive 的总高度 */
-    const childActiveTreeHeight = childActiveTreeCount * titleItemOffset.height
+  keepViewInto(anchor: Anchor) {
+    const node = anchor.node
+    if (!node.data?.TitleItem) return
 
-    // TODO 逻辑优化
+    const titleItem = node.data.TitleItem
+
     const scrollInstance = this.navigatorPanelRef.value?.getScrollInstance()
-    if (scrollInstance && scrollInstance.ps && data.TitleItem) {
-      const isViewTop =
-        titleItemOffset.top - childActiveTreeHeight >= scrollInstance.ps.element.scrollTop
-      if (isViewTop === false) {
-        scrollSmoothTo({
-          container: scrollInstance.ps.element,
-          target: titleItemOffset.top - childActiveTreeHeight,
-        })
-      }
+    const titleOffset = { top: titleItem.offsetTop, height: titleItem.offsetHeight }
 
-      const isViewBottom =
-        scrollInstance.ps.element.scrollTop + scrollInstance.ps.element.offsetHeight >=
-        titleItemOffset.top + titleItemOffset.height
-      if (isViewBottom === false) {
-        scrollSmoothTo({
-          container: scrollInstance.ps.element,
-          target:
-            titleItemOffset.top + titleItemOffset.height - scrollInstance.ps.element.offsetHeight,
-        })
-      }
+    /** childActive 的总高度 */
+    const activeNodeHeight = (() => {
+      let height = 0
+      TitleTreeComponent.childActiveTree.forEach((node) => {
+        height += node.data?.TitleItem?.offsetHeight ?? 0
+      })
+      return height
+    })()
+
+    if (!scrollInstance?.ps) return
+    const scrollElement = scrollInstance.ps.element
+
+    // 是否在视图上方
+    const isViewTop = titleOffset.top - activeNodeHeight >= scrollElement.scrollTop
+    // 如果不在视图上方，则滚动到视图上方
+    if (isViewTop === false) {
+      const target = titleOffset.top - activeNodeHeight
+      scrollSmoothTo({ container: scrollElement, target })
+    }
+
+    // 是否在视图下方
+    const isViewBottom =
+      scrollElement.scrollTop + scrollElement.offsetHeight >= titleOffset.top + titleOffset.height
+    // 如果不在视图下方，则滚动到视图下方
+    if (isViewBottom === false) {
+      const target = titleOffset.top + titleOffset.height - scrollElement.offsetHeight
+      scrollSmoothTo({ container: scrollElement, target })
     }
   }
-
-  /** 使选中的 item 的祖先 DOM 变为 Active 状态。 */
-  observerToggleAncestorActive(node: Tree<TitleTreeData>, isOpen: boolean) {
-    node.eachAncestor((ancestor) => {
-      if (!ancestor.data?.TitleItem) return
-
-      if (isOpen) {
-        ancestor.data.childActive = true
-        TitleTreeComponent.childActiveTree.add(ancestor)
-      } else {
-        ancestor.data.childActive = false
-        TitleTreeComponent.childActiveTree.delete(ancestor)
-      }
-      ancestor.data.TitleItem.requestUpdate()
-    })
-  }
-
   /** 搜索 Icon */
   searcherIcon() {
     return html` <wc-button disabled>
