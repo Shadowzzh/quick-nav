@@ -47,8 +47,7 @@ export class WCButton extends WCWaves {
   size: WCButtonOptions['size'] = 'normal'
 
   /** 是否禁用 */
-  @property({ type: Boolean })
-  disabled: boolean = false
+  @property({ type: Boolean }) disabled: boolean = false
 
   constructor(options: WCButtonOptions) {
     super()
@@ -72,6 +71,7 @@ export class WCButton extends WCWaves {
     return size
   }
 
+  /** 点击事件 */
   onClick(e: MouseEvent) {
     if (this.disabled) {
       e.stopPropagation()
@@ -81,13 +81,14 @@ export class WCButton extends WCWaves {
   render() {
     const style = { padding: `${this.getValueBySize()}px` }
     const classes = {
+      'waves-effect': true,
       'wc-button': true,
-      'waves-effect': this.disabled === false,
+      'waves-effect-disabled': this.disabled === true,
       'wc-button--disabled': this.disabled === true,
     }
 
     return html`<div class=${classMap(classes)} style=${styleMap(style)} @click=${this.onClick}>
-      ${this.children}
+      <slot></slot>
     </div>`
   }
 }

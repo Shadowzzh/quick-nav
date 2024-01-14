@@ -128,6 +128,7 @@ const className = 'waves-effect'
       // Get first ripple
       var ripple = null
       var ripples = el.getElementsByClassName('waves-ripple')
+
       if (ripples.length > 0) {
         ripple = ripples[ripples.length - 1]
       } else {
@@ -264,6 +265,7 @@ const className = 'waves-effect'
       if (typeof target?.className !== 'string') continue
 
       if (target.className.includes('waves-effect') === true) {
+        if (target.className.includes('waves-effect-disabled')) return
         element = target
         break
       }
