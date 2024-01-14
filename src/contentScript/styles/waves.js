@@ -281,6 +281,8 @@ const className = 'waves-effect'
     var element = getWavesEffectElement(e)
 
     if (element !== null) {
+      Effect.show(e, element)
+
       if ('ontouchstart' in window) {
         element.addEventListener('touchend', Effect.hide)
         element.addEventListener('touchcancel', Effect.hide)
