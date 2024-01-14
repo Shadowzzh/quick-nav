@@ -1,4 +1,4 @@
-import { LitElement, PropertyValueMap, html } from 'lit'
+import { LitElement, PropertyValueMap, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
 
@@ -22,6 +22,16 @@ import { APP_THEME } from '../constant'
  */
 @customElement('wc-page')
 export class WCPage extends LitElement {
+  static styles = css`
+    /* :host {
+    } */
+    :host .extra_icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `
+
   /** 根节点 */
   @property({ type: Object })
   rootTree: Tree<TitleTreeData>
@@ -368,18 +378,18 @@ export class WCPage extends LitElement {
     const foldDisabled = this.depthMax === this.depthMin
 
     return html`<div>
-      <wc-navigator-panel
-        ref=${ref(this.navigatorPanelRef)}
-        .extraIcon=${[
-          this.searcherIcon(),
-          this.themeIcon(),
-          this.zoomInIcon({ disabled: foldDisabled }),
-          this.zoomOutIcon({ disabled: foldDisabled }),
-          this.allExpandIcon({ disabled: foldDisabled }),
-          this.refreshIcon(),
-          this.moreIcon(),
-        ]}
-      >
+      <wc-navigator-panel ref=${ref(this.navigatorPanelRef)}>
+        <div slot="extraIcon" class="extra_icon">
+          ${[
+            this.searcherIcon(),
+            this.themeIcon(),
+            this.zoomInIcon({ disabled: foldDisabled }),
+            this.zoomOutIcon({ disabled: foldDisabled }),
+            this.allExpandIcon({ disabled: foldDisabled }),
+            this.refreshIcon(),
+            this.moreIcon(),
+          ]}
+        </div>
         <div style="margin-top: 3px;">
           <title-tree
             .rootTree=${this.rootTree}
