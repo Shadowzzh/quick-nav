@@ -14,7 +14,7 @@ import { DEFAULT_CONFIG } from '@/defaultConfig'
 import { scrollSmoothTo } from '@/utils'
 import { syncStorage } from '@/utils/storage'
 
-import { getScrollElement } from '../analysis'
+import { extractContent, generatorTitleTree, getScrollElement } from '../analysis'
 import { APP_THEME } from '../constant'
 
 /**
@@ -77,20 +77,29 @@ export class WCPage extends LitElement {
       observer.disconnect()
     })
   }
-
-  /** 第一次更新 */
   protected firstUpdated() {
     // 从属性中获取主题
     this.theme = this.getAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`) as QN.Theme
+  }
 
-    this.rootTree?.eachChild((child) => {
-      // 将所有的节点存入 map 中
-      TitleTreeComponent.TreeMap.set(child.uniqueId, child)
+  /** 第一次更新 */
+  protected updated(propertyValueMap: PropertyValueMap<WCPage>) {
+    if (propertyValueMap.has('rootTree')) {
+      this.observerList.forEach((observer) => observer.disconnect())
+      this.observerList = []
 
-      // 观察每一个节点
-      const observerInstance = this.observerNodeElement(child)
-      observerInstance && this.observerList.push(observerInstance)
-    })
+      TitleTreeComponent.TreeMap.clear()
+      TitleTreeComponent.childActiveTree.clear()
+
+      this.rootTree?.eachChild((child) => {
+        // 将所有的节点存入 map 中
+        TitleTreeComponent.TreeMap.set(child.uniqueId, child)
+
+        // 观察每一个节点
+        const observerInstance = this.observerNodeElement(child)
+        observerInstance && this.observerList.push(observerInstance)
+      })
+    }
   }
 
   // TODO 使用 scroll 代替 IntersectionObserver 实现
@@ -347,8 +356,23 @@ export class WCPage extends LitElement {
     </wc-button>`
   }
 
+  onRefresh() {
+    const content = extractContent()
+    if (!content) return console.error('未找到文章内容')
+
+    const TitleTree = generatorTitleTree(content)
+    if (!TitleTree) return
+
+    this.depthMax = this.rootTree.getMaxDepth()
+    // 根节点只有一个字节点时，最小深度为 2，否则为 1
+    this.depthMin = this.rootTree.children.length === 1 ? 2 : 1
+    this.currentShowDepth = this.depthMax
+    this.rootTree = TitleTree
+  }
+
+  /** 刷新 */
   refreshIcon() {
-    return html` <wc-button disabled>
+    return html` <wc-button @click=${() => this.onRefresh()}>
       <wc-icon
         class="header_icon"
         name="refresh"
