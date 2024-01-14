@@ -40,6 +40,8 @@ export class WCPage extends LitElement {
 
   /** 最大的深度 */
   depthMax: number
+  /** 最小的深度 */
+  depthMin: number = 1
 
   /** 额外的 Icon 大小 */
   extraIconSize = 16
@@ -54,6 +56,8 @@ export class WCPage extends LitElement {
     super()
     this.rootTree = props.rootTree
     this.depthMax = this.rootTree.getMaxDepth()
+    // 根节点只有一个字节点时，最小深度为 2，否则为 1
+    this.depthMin = this.rootTree.children.length === 1 ? 2 : 1
     this.currentShowDepth = this.depthMax
   }
 
@@ -186,7 +190,7 @@ export class WCPage extends LitElement {
     // 根节点只有一个字节点时，遍历子节点的子节点
     const baseTree = isOneChild ? this.rootTree.children[0].children : this.rootTree.children
     // 全部展开时，展示最大深度，否则展示 1
-    isAllDisplay ? (this.currentShowDepth = this.depthMax) : (this.currentShowDepth = 1)
+    this.currentShowDepth = isAllDisplay ? this.depthMax : this.depthMin
 
     baseTree.forEach((tree) => {
       // 根节点不参与
@@ -250,9 +254,6 @@ export class WCPage extends LitElement {
 
   /** 放大缩小 */
   onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
-    // 根节点只有一个字节点时
-    const isOneChild = this.rootTree.children.length === 1
-
     const isZoomIn = method === 'zoomIn'
     // 当前展示的深度
     let currentShowDepth = this.currentShowDepth
@@ -262,7 +263,7 @@ export class WCPage extends LitElement {
       currentShowDepth = Math.min(this.depthMax, currentShowDepth + 1)
     } else {
       // 根节点只有一个字节点时，最小深度为 2，否则为 1
-      currentShowDepth = Math.max(isOneChild ? 2 : 1, currentShowDepth - 1)
+      currentShowDepth = Math.max(this.depthMin, currentShowDepth - 1)
     }
 
     this.rootTree.depthMap.forEach((value, key) => {
@@ -299,9 +300,9 @@ export class WCPage extends LitElement {
   }
 
   /** 缩小 Icon */
-  zoomOutIcon({ disabled, isOneChild }: { disabled: boolean; isOneChild: boolean }) {
+  zoomOutIcon({ disabled }: { disabled: boolean }) {
     // 当前展示的深度等于最大深度时，禁用
-    let _disabled = disabled || this.currentShowDepth === (isOneChild ? 2 : 1)
+    let _disabled = disabled || this.currentShowDepth === this.depthMin
 
     return html` <wc-button .disabled=${_disabled} @click=${() => this.onClickZooIcon('zoomOut')}>
       <wc-icon
@@ -363,10 +364,8 @@ export class WCPage extends LitElement {
   render() {
     if (this.rootTree === null) return
 
-    // 根节点只有一个字节点时
-    const isOneChild = this.rootTree.children.length === 1
     // 是否禁用展开｜闭合按钮，根节点只有一个字节点时，判断最大深度为 2，否则为 1
-    const foldDisabled = this.depthMax === 1 || (isOneChild && this.depthMax === 2)
+    const foldDisabled = this.depthMax === this.depthMin
 
     return html`<div>
       <wc-navigator-panel
@@ -375,7 +374,7 @@ export class WCPage extends LitElement {
           this.searcherIcon(),
           this.themeIcon(),
           this.zoomInIcon({ disabled: foldDisabled }),
-          this.zoomOutIcon({ disabled: foldDisabled, isOneChild }),
+          this.zoomOutIcon({ disabled: foldDisabled }),
           this.allExpandIcon({ disabled: foldDisabled }),
           this.refreshIcon(),
           this.moreIcon(),
