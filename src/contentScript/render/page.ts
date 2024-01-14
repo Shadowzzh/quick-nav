@@ -207,14 +207,6 @@ export class WCPage extends LitElement {
     this.isAllDisplay = isAllDisplay
   }
 
-  /** 切换主题 */
-  async onToggleTheme() {
-    this.theme = this.theme === APP_THEME.LIGHT ? 'dark' : 'light'
-
-    await syncStorage.set(['theme'], this.theme)
-    this.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, this.theme)
-  }
-
   /** 全部展开 Icon */
   allExpandIcon() {
     const iconName =
@@ -228,6 +220,14 @@ export class WCPage extends LitElement {
         color="var(--theme-icon)"
       ></wc-icon>
     </wc-button>`
+  }
+
+  /** 切换主题 */
+  async onToggleTheme() {
+    this.theme = this.theme === APP_THEME.LIGHT ? 'dark' : 'light'
+
+    await syncStorage.set(['theme'], this.theme)
+    this.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, this.theme)
   }
 
   /** 主题 Icon */
@@ -246,6 +246,9 @@ export class WCPage extends LitElement {
 
   /** 放大缩小 */
   onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
+    // 根节点只有一个字节点时
+    const isOneChildren = this.rootTree.children.length === 1
+
     const isZoomIn = method === 'zoomIn'
     // 当前展示的深度
     let currentShowDepth = this.currentShowDepth
@@ -254,7 +257,8 @@ export class WCPage extends LitElement {
     if (isZoomIn) {
       currentShowDepth = Math.min(this.depthMax, currentShowDepth + 1)
     } else {
-      currentShowDepth = Math.max(1, currentShowDepth - 1)
+      // 根节点只有一个字节点时，最小深度为 2，否则为 1
+      currentShowDepth = Math.max(isOneChildren ? 2 : 1, currentShowDepth - 1)
     }
 
     this.rootTree.depthMap.forEach((value, key) => {
