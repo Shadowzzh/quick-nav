@@ -2,20 +2,18 @@ import { LitElement, PropertyValueMap, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
 
-import type { WCNavigatorPanel } from '../components/NavigatorPanel'
-import type { QN, TitleTreeData } from '../interface'
+import type { WCNavigatorPanel } from '../../components/NavigatorPanel'
+import type { TitleTreeData } from '../../interface'
 
-import '../components/TitleTree'
-import '../components/NavigatorPanel'
-import { TitleTreeComponent } from '../components/TitleTree'
+import '../../components/TitleTree'
+import '../../components/NavigatorPanel'
+import './ThemeIcon'
+import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
-import { DEFAULT_CONFIG } from '@/defaultConfig'
 import { scrollSmoothTo } from '@/utils'
-import { syncStorage } from '@/utils/storage'
 
-import { extractContent, generatorTitleTree, getScrollElement } from '../analysis'
-import { APP_THEME } from '../constant'
+import { extractContent, generatorTitleTree, getScrollElement } from '../../analysis'
 
 /**
  * 页面
@@ -40,16 +38,13 @@ export class WCPage extends LitElement {
   @property({ type: Boolean })
   isAllDisplay: boolean = true
 
-  /** 主题 */
-  @property({ type: String })
-  theme: QN.Theme = 'light'
-
   /** 当前展示的深度 */
   @property({ type: Number })
   currentShowDepth: number = 0
 
   /** 最大的深度 */
   depthMax: number
+
   /** 最小的深度 */
   depthMin: number = 1
 
@@ -76,10 +71,6 @@ export class WCPage extends LitElement {
     this.observerList.forEach((observer) => {
       observer.disconnect()
     })
-  }
-  protected firstUpdated() {
-    // 从属性中获取主题
-    this.theme = this.getAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`) as QN.Theme
   }
 
   /** 第一次更新 */
@@ -249,28 +240,6 @@ export class WCPage extends LitElement {
     </wc-button>`
   }
 
-  /** 切换主题 */
-  async onToggleTheme() {
-    this.theme = this.theme === APP_THEME.LIGHT ? 'dark' : 'light'
-
-    await syncStorage.set(['theme'], this.theme)
-    this.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, this.theme)
-  }
-
-  /** 主题 Icon */
-  themeIcon() {
-    const iconName = this.theme === APP_THEME.LIGHT ? 'moonLight' : 'sunLight'
-
-    return html` <wc-button @click=${() => this.onToggleTheme()}>
-      <wc-icon
-        class="header_icon"
-        name=${iconName}
-        size=${this.extraIconSize}
-        color="var(--theme-icon)"
-      ></wc-icon>
-    </wc-button>`
-  }
-
   /** 放大缩小 */
   onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
     const isZoomIn = method === 'zoomIn'
@@ -404,9 +373,12 @@ export class WCPage extends LitElement {
     return html`<div>
       <wc-navigator-panel ref=${ref(this.navigatorPanelRef)}>
         <div slot="extraIcon" class="extra_icon">
+          <wc-page-theme-icon
+            .pageInstance=${this}
+            .iconSize=${this.extraIconSize}
+          ></wc-page-theme-icon>
           ${[
             this.searcherIcon(),
-            this.themeIcon(),
             this.zoomInIcon({ disabled: foldDisabled }),
             this.zoomOutIcon({ disabled: foldDisabled }),
             this.allExpandIcon({ disabled: foldDisabled }),
