@@ -9,12 +9,14 @@ export const defaultThemeLight = {
   shadow: 'rgb(0 0 0 / 6%) 0px 0px 10px 1px',
   background: '#fff',
   backgroundHover: '#f5f5f5',
+  backgroundDisabled: '#ebebeb',
   backgroundActive: '#ebebeb',
   itemHoverBackground: '#E2E8F0',
   border: 'rgb(235, 238, 245)',
   wavesBackground: 'rgba(0, 0, 0, 0.2)',
   icon: '#999',
   scrollBarBackground: '#bbb',
+  colorDisabled: '#ddd',
 }
 
 export const defaultThemeDark = {
@@ -25,12 +27,14 @@ export const defaultThemeDark = {
   selectedBackground: '#594dc0',
   selectedColor: '#eee',
   background: '#282C34',
+  backgroundDisabled: '#2E3238',
   backgroundHover: '#31353B',
   backgroundActive: '#41454B',
   wavesBackground: '#71757B',
   itemHoverBackground: '#383e4a',
   icon: '#ccc',
   scrollBarBackground: '#6d6d6e',
+  colorDisabled: '#6E7073',
 }
 
 cssRule.add(
@@ -56,6 +60,8 @@ cssRule.add(
     --theme-selectedBackground:${defaultThemeLight.selectedBackground};
     --theme-item-hover-background: ${defaultThemeLight.itemHoverBackground};
     --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
+    --theme-background-disabled: ${defaultThemeLight.backgroundDisabled};
+    --theme-color-disabled: ${defaultThemeLight.colorDisabled};
   `,
 )
 
@@ -75,5 +81,7 @@ cssRule.add(
     --theme-selectedBackground:${defaultThemeDark.selectedBackground};
     --theme-item-hover-background: ${defaultThemeDark.itemHoverBackground};
     --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
+    --theme-background-disabled: ${defaultThemeDark.backgroundDisabled};
+    --theme-color-disabled: ${defaultThemeDark.colorDisabled};
   `,
 )
