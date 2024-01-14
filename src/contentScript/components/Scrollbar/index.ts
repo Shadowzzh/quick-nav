@@ -206,6 +206,8 @@ export class WCScroll extends LitElement {
   }
 
   render() {
-    return html`<div class="wc-scroll" ${ref(this.containerRef)}>${this.children}</div>`
+    return html`<div class="wc-scroll" ${ref(this.containerRef)}>
+      <slot></slot>
+    </div>`
   }
 }

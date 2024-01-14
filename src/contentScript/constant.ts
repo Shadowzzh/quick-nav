@@ -1,3 +1,5 @@
+import { QN } from './interface'
+
 const LowestWeights = [-100, -50, -25]
 // TODO 性能优化：每增加一级标签，计算会指数级增加
 const baseWeights = [0, 100, 90, 80, 70, 60, 50, 40, 30]
@@ -52,8 +54,8 @@ export const TITLE_TAG_WEIGHT = Object.freeze({
   // strong: 0,
 })
 
-/** 通讯消息类型 */
-export const PLATFORM_MESSAGE_TYPE = Object.freeze({
-  OPEN_QN: 'open-qn',
-  CLOSE_QN: 'close-qn',
+/** 应用主题 */
+export const APP_THEME = Object.freeze({
+  LIGHT: 'light',
+  DARK: 'dark',
 })

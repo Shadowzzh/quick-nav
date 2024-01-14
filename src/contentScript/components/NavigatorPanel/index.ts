@@ -211,11 +211,11 @@ export class WCNavigatorPanel extends LitElement {
           <wc-icon class="header_icon" name="drag" size="16" color="var(--theme-icon)"></wc-icon>
         </wc-button>
         <div class="header_space"></div>
-        ${this.extraIcon}
+        <slot name="extraIcon"></slot>
       </div>
       <div class="content">
         <wc-scroll ref=${ref(this.scrollRef)} minScrollbarLength="1" suppressScrollX>
-          ${this.children}
+          <slot></slot>
         </wc-scroll>
       </div>
     </div>`

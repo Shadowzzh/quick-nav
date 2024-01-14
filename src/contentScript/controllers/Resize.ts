@@ -324,40 +324,12 @@ export class ResizeController implements ReactiveController {
     handler.style.userSelect = 'none'
 
     switch (direction) {
-      case 'left': {
-        handler.style.left = '0'
-        handler.style.top = '0'
-        handler.style.cursor = 'ew-resize'
-        handler.style.width = '6px'
-        handler.style.height = '100%'
-        break
-      }
-
       case 'top': {
         handler.style.top = '0'
         handler.style.width = '100%'
         handler.style.cursor = 'ns-resize'
         handler.style.height = '6px'
         handler.style.left = '0'
-        break
-      }
-
-      case 'bottom': {
-        handler.style.bottom = '0'
-        handler.style.width = '100%'
-        handler.style.cursor = 'ns-resize'
-        handler.style.height = '6px'
-        handler.style.left = '0'
-        break
-      }
-
-      case 'left-bottom': {
-        handler.style.left = '0'
-        handler.style.bottom = '0'
-        handler.style.cursor = 'nesw-resize'
-        handler.style.width = '6px'
-        handler.style.height = '6px'
-        handler.style.zIndex = '2'
         break
       }
 
@@ -370,13 +342,41 @@ export class ResizeController implements ReactiveController {
         break
       }
 
+      case 'bottom': {
+        handler.style.bottom = '0'
+        handler.style.width = '100%'
+        handler.style.cursor = 'ns-resize'
+        handler.style.height = '6px'
+        handler.style.left = '0'
+        break
+      }
+
+      case 'left': {
+        handler.style.left = '0'
+        handler.style.top = '0'
+        handler.style.cursor = 'ew-resize'
+        handler.style.width = '6px'
+        handler.style.height = '100%'
+        break
+      }
+
+      case 'left-bottom': {
+        handler.style.left = '0'
+        handler.style.bottom = '0'
+        handler.style.cursor = 'nesw-resize'
+        handler.style.width = '6px'
+        handler.style.height = '6px'
+        handler.style.zIndex = '3'
+        break
+      }
+
       case 'right-bottom': {
         handler.style.right = '0'
         handler.style.bottom = '0'
         handler.style.cursor = 'nwse-resize'
         handler.style.width = '6px'
         handler.style.height = '6px'
-        handler.style.zIndex = '2'
+        handler.style.zIndex = '3'
         break
       }
 
@@ -386,7 +386,7 @@ export class ResizeController implements ReactiveController {
         handler.style.cursor = 'nesw-resize'
         handler.style.width = '6px'
         handler.style.height = '6px'
-        handler.style.zIndex = '2'
+        handler.style.zIndex = '3'
         break
       }
 
@@ -396,7 +396,7 @@ export class ResizeController implements ReactiveController {
         handler.style.cursor = 'nwse-resize'
         handler.style.width = '6px'
         handler.style.height = '6px'
-        handler.style.zIndex = '2'
+        handler.style.zIndex = '3'
         break
       }
     }

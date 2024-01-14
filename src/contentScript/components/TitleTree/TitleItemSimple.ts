@@ -90,7 +90,8 @@ export class WCTitleItemSimple extends LitElement {
     `,
   ]
 
-  private opacity = 1
+  @property({ type: Number })
+  opacity = 1
 
   @property({ type: Object })
   node: Tree<TitleTreeData> | null = null
@@ -108,13 +109,13 @@ export class WCTitleItemSimple extends LitElement {
     super()
   }
 
-  connectedCallback(): void {
-    super.connectedCallback()
-
-    if (this.node) {
-      this.opacity = 1 - this.node.depth * 0.15
-      if (this.node.data) {
-        this.node.data.TitleItem = this
+  protected updated(changedProperties: PropertyValueMap<WCTitleItemSimple>) {
+    if (changedProperties.has('node')) {
+      if (this.node) {
+        this.opacity = 1 - this.node.depth * 0.15
+        if (this.node.data) {
+          this.node.data.TitleItem = this
+        }
       }
     }
   }
@@ -223,6 +224,7 @@ export class WCTitleItemSimple extends LitElement {
   }
 }
 
+/***************************** wc-expand-icon **************************** */
 type EventMethod = 'enter' | 'leave' | null
 @customElement('wc-expand-icon')
 class WCExpandIcon extends LitElement {

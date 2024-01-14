@@ -7,6 +7,7 @@ export async function renderTree(content: HTMLElement, titleTree?: TitleTree) {
   if (!titleTree) return
 
   removeRenderTree()
+
   const Page = new WCPage({ rootTree: titleTree, content })
 
   const theme: QN.Theme = (await syncStorage.get('theme')) ?? 'light'

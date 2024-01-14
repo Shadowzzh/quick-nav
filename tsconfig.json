@@ -20,6 +20,12 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "experimentalDecorators": true, //  Enables experimental support for ES7 decorators.
+    "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+    },
   },
   "include": [
     "src"

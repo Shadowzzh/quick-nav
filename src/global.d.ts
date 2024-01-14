@@ -6,6 +6,10 @@ import type { WCScroll } from './contentScript/components/Scrollbar'
 import type { WCTitleItem } from './contentScript/components/TitleTree/TitleItem'
 import type { WCNavigatorPanel } from './contentScript/components/NavigatorPanel'
 import type { WCPage } from './contentScript/render/page'
+import type { WCPageThemeIcon } from './contentScript/render/page/ThemeIcon'
+import type { WCPageAllExpandIcon } from './contentScript/render/page/AllExpandIcon'
+import type { WCPageZoomIcon } from './contentScript/render/page/ZoomIcon'
+import type { WCPageRefreshIcon } from './contentScript/render/page/RefreshIcon'
 
 declare const __APP_VERSION__: string
 
@@ -18,6 +22,9 @@ declare global {
     'wc-scroll': WCScroll
     'wc-title-item': WCTitleItem
     'wc-page': WCPage
+    'wc-page-zoom-icon': WCPageZoomIcon
+    'wc-page-all-expand-icon': WCPageAllExpandIcon
+    'wc-page-refresh-icon': WCPageRefreshIcon
     'wc-navigator-panel': WCNavigatorPanel
   }
 

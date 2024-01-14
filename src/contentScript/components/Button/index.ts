@@ -2,6 +2,7 @@ import { html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { WCWaves } from '../Waves'
 import { styleMap } from 'lit/directives/style-map.js'
+import { classMap } from 'lit/directives/class-map.js'
 
 export interface WCButtonOptions {
   size: 'small' | 'normal' | 'large'
@@ -25,6 +26,14 @@ export class WCButton extends WCWaves {
         background-color: var(--theme-background-hover);
       }
 
+      :host .wc-button--disabled {
+        /* background-color: var(--theme-background-disabled); */
+        --theme-icon: var(--theme-color-disabled);
+        cursor: default;
+        color: var(--theme-color-disabled) !important;
+        background-color: transparent !important;
+      }
+
       :host .waves-effect {
         display: flex;
         justify-content: center;
@@ -33,8 +42,12 @@ export class WCButton extends WCWaves {
     `,
   ]
 
+  /** 按钮大小 */
   @property({ type: String })
   size: WCButtonOptions['size'] = 'normal'
+
+  /** 是否禁用 */
+  @property({ type: Boolean }) disabled: boolean = false
 
   constructor(options: WCButtonOptions) {
     super()
@@ -58,9 +71,24 @@ export class WCButton extends WCWaves {
     return size
   }
 
+  /** 点击事件 */
+  onClick(e: MouseEvent) {
+    if (this.disabled) {
+      e.stopPropagation()
+    }
+  }
+
   render() {
     const style = { padding: `${this.getValueBySize()}px` }
+    const classes = {
+      'waves-effect': true,
+      'wc-button': true,
+      'waves-effect-disabled': this.disabled === true,
+      'wc-button--disabled': this.disabled === true,
+    }
 
-    return html`<div class="wc-button waves-effect" style=${styleMap(style)}>${this.children}</div>`
+    return html`<div class=${classMap(classes)} style=${styleMap(style)} @click=${this.onClick}>
+      <slot></slot>
+    </div>`
   }
 }
