@@ -78,7 +78,10 @@ export class WCPage extends LitElement {
   /** 初始化 */
   initialize() {
     // 根节点只有一个字节点时，最小深度为 2，否则为 1
-    this.depthMin = this.rootTree.children.length === 1 ? 2 : 1
+    this.depthMin = (() => {
+      if (this.rootTree.children.length !== 1) return 1
+      return this.rootTree.children[0].children.length === 0 ? 1 : 2
+    })()
     this.depthMax = this.rootTree.getMaxDepth()
     this.currentShowDepth = this.depthMax
 
