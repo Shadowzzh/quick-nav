@@ -64,6 +64,7 @@ const className = 'waves-effect'
       }
 
       var el = element || this
+      if (!el) return
 
       // Create ripple
       var ripple = document.createElement('div')
@@ -265,7 +266,7 @@ const className = 'waves-effect'
       if (typeof target?.className !== 'string') continue
 
       if (target.className.includes('waves-effect') === true) {
-        if (target.className.includes('waves-effect-disabled')) return
+        if (target.className.includes('waves-effect-disabled')) return null
         element = target
         break
       }
@@ -280,8 +281,6 @@ const className = 'waves-effect'
     var element = getWavesEffectElement(e)
 
     if (element !== null) {
-      Effect.show(e, element)
-
       if ('ontouchstart' in window) {
         element.addEventListener('touchend', Effect.hide)
         element.addEventListener('touchcancel', Effect.hide)
