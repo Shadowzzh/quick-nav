@@ -5,19 +5,21 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js'
 import type { WCNavigatorPanel } from '../../components/NavigatorPanel'
 import type { TitleTreeData } from '../../interface'
 import type { WCPageZoomIcon } from './ZoomIcon'
+import type { WCPageAllExpandIcon } from './AllExpandIcon'
+import type { WCPageRefreshIcon } from './RefreshIcon'
 
 import '../../components/TitleTree'
 import '../../components/NavigatorPanel'
 import './ThemeIcon'
 import './AllExpandIcon'
 import './ZoomIcon'
+import './RefreshIcon'
 import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
 import { scrollSmoothTo } from '@/utils'
 
-import { extractContent, generatorTitleTree, getScrollElement } from '../../analysis'
-import { WCPageAllExpandIcon } from './AllExpandIcon'
+import { getScrollElement } from '../../analysis'
 
 /**
  * 页面
@@ -47,10 +49,10 @@ export class WCPage extends LitElement {
   currentShowDepth: number = 0
 
   /** 最大的深度 */
-  depthMax: number
+  depthMax: number = 0
 
   /** 最小的深度 */
-  depthMin: number
+  depthMin: number = 0
 
   /** 额外的 Icon 大小 */
   extraIconSize = 16
@@ -64,9 +66,13 @@ export class WCPage extends LitElement {
   constructor(props: { rootTree: Tree<TitleTreeData>; content: Element }) {
     super()
     this.rootTree = props.rootTree
-    this.depthMax = this.rootTree.getMaxDepth()
+  }
+
+  /** 初始化 */
+  initialize() {
     // 根节点只有一个字节点时，最小深度为 2，否则为 1
     this.depthMin = this.rootTree.children.length === 1 ? 2 : 1
+    this.depthMax = this.rootTree.getMaxDepth()
     this.currentShowDepth = this.depthMax
   }
 
@@ -219,32 +225,6 @@ export class WCPage extends LitElement {
     </wc-button>`
   }
 
-  onRefresh() {
-    const content = extractContent()
-    if (!content) return console.error('未找到文章内容')
-
-    const TitleTree = generatorTitleTree(content)
-    if (!TitleTree) return
-
-    this.depthMax = this.rootTree.getMaxDepth()
-    // 根节点只有一个字节点时，最小深度为 2，否则为 1
-    this.depthMin = this.rootTree.children.length === 1 ? 2 : 1
-    this.currentShowDepth = this.depthMax
-    this.rootTree = TitleTree
-  }
-
-  /** 刷新 */
-  refreshIcon() {
-    return html` <wc-button @click=${() => this.onRefresh()}>
-      <wc-icon
-        class="header_icon"
-        name="refresh"
-        size=${this.extraIconSize}
-        color="var(--theme-icon)"
-      ></wc-icon>
-    </wc-button>`
-  }
-
   /** 点击树的 item */
   onClickTreeItem(params: Parameters<Exclude<TitleTreeComponent['onClickItem'], undefined>>[0]) {
     const container = getScrollElement(params.target)
@@ -253,9 +233,7 @@ export class WCPage extends LitElement {
 
   /** 点击树的 item icon */
   onclickTreeItemIcon() {
-    requestAnimationFrame(() => {
-      this.navigatorPanelRef.value?.scrollUpdate()
-    })
+    this.onUpdateNavigatorScroll()
   }
 
   /** 一些可能导致 scroll 变化的操作，需要主动调用更新 */
@@ -269,9 +247,9 @@ export class WCPage extends LitElement {
   onClickAllExpand({
     isAllDisplay: isAllDisplay,
   }: Parameters<WCPageAllExpandIcon['onClickAllExpand']>[0]) {
-    this.onUpdateNavigatorScroll()
     this.currentShowDepth = isAllDisplay ? this.depthMax : this.depthMin
     this.isAllDisplay = isAllDisplay
+    this.onUpdateNavigatorScroll()
   }
 
   /** 点击放大镜 - 触发 */
@@ -279,6 +257,14 @@ export class WCPage extends LitElement {
     // 当前展示的深度等于最大深度时，全部展开
     this.isAllDisplay = currentShowDepth === this.depthMax
     this.currentShowDepth = currentShowDepth
+    this.onUpdateNavigatorScroll()
+  }
+
+  /** 点击刷新时 - 触发 */
+  onClickRefresh({ TitleTree }: Parameters<WCPageRefreshIcon['onClickRefresh']>[0]) {
+    this.rootTree = TitleTree
+    this.initialize()
+    this.onUpdateNavigatorScroll()
   }
 
   render() {
@@ -331,13 +317,17 @@ export class WCPage extends LitElement {
               this.onClickAllExpand(params)}
           >
           </wc-page-all-expand-icon>
-          ${[
-            this.searcherIcon(),
-            // this.zoomInIcon({ disabled: foldDisabled }),
-            // this.zoomOutIcon({ disabled: foldDisabled }),
-            this.refreshIcon(),
-            this.moreIcon(),
-          ]}
+
+          <!-- 刷新功能 -->
+          <wc-page-refresh-icon
+            .iconSize=${this.extraIconSize}
+            .rootTree=${this.rootTree}
+            .onClickRefresh=${(params: Parameters<WCPageRefreshIcon['onClickRefresh']>[0]) =>
+              this.onClickRefresh(params)}
+          >
+          </wc-page-refresh-icon>
+
+          <!-- ${[this.searcherIcon(), this.moreIcon()]} -->
         </div>
         <div style="margin-top: 3px;">
           <title-tree

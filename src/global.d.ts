@@ -9,6 +9,7 @@ import type { WCPage } from './contentScript/render/page'
 import type { WCPageThemeIcon } from './contentScript/render/page/ThemeIcon'
 import type { WCPageAllExpandIcon } from './contentScript/render/page/AllExpandIcon'
 import type { WCPageZoomIcon } from './contentScript/render/page/ZoomIcon'
+import type { WCPageRefreshIcon } from './contentScript/render/page/RefreshIcon'
 
 declare const __APP_VERSION__: string
 
@@ -23,6 +24,7 @@ declare global {
     'wc-page': WCPage
     'wc-page-zoom-icon': WCPageZoomIcon
     'wc-page-all-expand-icon': WCPageAllExpandIcon
+    'wc-page-refresh-icon': WCPageRefreshIcon
     'wc-navigator-panel': WCNavigatorPanel
   }
 
