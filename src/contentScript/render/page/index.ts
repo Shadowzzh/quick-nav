@@ -4,17 +4,20 @@ import { Ref, createRef, ref } from 'lit/directives/ref.js'
 
 import type { WCNavigatorPanel } from '../../components/NavigatorPanel'
 import type { TitleTreeData } from '../../interface'
+import type { WCPageZoomIcon } from './ZoomIcon'
 
 import '../../components/TitleTree'
 import '../../components/NavigatorPanel'
 import './ThemeIcon'
 import './AllExpandIcon'
+import './ZoomIcon'
 import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
 import { scrollSmoothTo } from '@/utils'
 
 import { extractContent, generatorTitleTree, getScrollElement } from '../../analysis'
+import { WCPageAllExpandIcon } from './AllExpandIcon'
 
 /**
  * 页面
@@ -193,68 +196,6 @@ export class WCPage extends LitElement {
     })
   }
 
-  /** 放大缩小 */
-  onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
-    const isZoomIn = method === 'zoomIn'
-    // 当前展示的深度
-    let currentShowDepth = this.currentShowDepth
-
-    // 不同的方法，深度不同
-    if (isZoomIn) {
-      currentShowDepth = Math.min(this.depthMax, currentShowDepth + 1)
-    } else {
-      // 根节点只有一个字节点时，最小深度为 2，否则为 1
-      currentShowDepth = Math.max(this.depthMin, currentShowDepth - 1)
-    }
-
-    this.rootTree.depthMap.forEach((value, key) => {
-      // 不同的方法，判断条件不同
-      if (isZoomIn ? key > currentShowDepth : key <= currentShowDepth) return
-
-      value.forEach((node) => {
-        if (!node.data) return
-
-        node.data.isDisplay = isZoomIn ? true : false
-        node.data.TitleItem?.requestUpdate()
-        node.parent?.data?.TitleItem?.requestUpdate()
-      })
-    })
-
-    this.currentShowDepth = currentShowDepth
-    // 当前展示的深度等于最大深度时，全部展开
-    this.isAllDisplay = currentShowDepth === this.depthMax
-  }
-
-  /** 放大 Icon */
-  zoomInIcon({ disabled }: { disabled: boolean }) {
-    // 当前展示的深度等于最大深度时，禁用
-    let _disabled = disabled || this.currentShowDepth === this.depthMax
-
-    return html` <wc-button .disabled=${_disabled} @click=${() => this.onClickZooIcon('zoomIn')}>
-      <wc-icon
-        class="header_icon"
-        name="zoomIn"
-        size=${this.extraIconSize}
-        color="var(--theme-icon)"
-      ></wc-icon>
-    </wc-button>`
-  }
-
-  /** 缩小 Icon */
-  zoomOutIcon({ disabled }: { disabled: boolean }) {
-    // 当前展示的深度等于最大深度时，禁用
-    let _disabled = disabled || this.currentShowDepth === this.depthMin
-
-    return html` <wc-button .disabled=${_disabled} @click=${() => this.onClickZooIcon('zoomOut')}>
-      <wc-icon
-        class="header_icon"
-        name="zoomOut"
-        size=${this.extraIconSize}
-        color="var(--theme-icon)"
-      ></wc-icon>
-    </wc-button>`
-  }
-
   /** 搜索 Icon */
   searcherIcon() {
     return html` <wc-button disabled>
@@ -324,11 +265,24 @@ export class WCPage extends LitElement {
     })
   }
 
+  /** 点击全部展开时 - 触发*/
+  onClickAllExpand({
+    isAllDisplay: isAllDisplay,
+  }: Parameters<WCPageAllExpandIcon['onClickAllExpand']>[0]) {
+    this.onUpdateNavigatorScroll()
+    this.currentShowDepth = isAllDisplay ? this.depthMax : this.depthMin
+    this.isAllDisplay = isAllDisplay
+  }
+
+  /** 点击放大镜 - 触发 */
+  onClickZoom({ currentShowDepth }: Parameters<WCPageZoomIcon['onClickZoom']>[0]) {
+    // 当前展示的深度等于最大深度时，全部展开
+    this.isAllDisplay = currentShowDepth === this.depthMax
+    this.currentShowDepth = currentShowDepth
+  }
+
   render() {
     if (this.rootTree === null) return
-
-    // 是否禁用展开｜闭合按钮，根节点只有一个字节点时，判断最大深度为 2，否则为 1
-    const foldDisabled = this.depthMax === this.depthMin
 
     return html`<div>
       <wc-navigator-panel ref=${ref(this.navigatorPanelRef)}>
@@ -339,6 +293,32 @@ export class WCPage extends LitElement {
             .iconSize=${this.extraIconSize}
           ></wc-page-theme-icon>
 
+          <!-- 放大功能 -->
+          <wc-page-zoom-icon
+            mode="zoomIn"
+            .iconSize=${this.extraIconSize}
+            .isAllDisplay=${this.isAllDisplay}
+            .currentShowDepth=${this.currentShowDepth}
+            .depthMax=${this.depthMax}
+            .depthMin=${this.depthMin}
+            .rootTree=${this.rootTree}
+            .onClickZoom=${(params: Parameters<WCPageZoomIcon['onClickZoom']>[0]) =>
+              this.onClickZoom(params)}
+          ></wc-page-zoom-icon>
+
+          <!-- 缩小功能 -->
+          <wc-page-zoom-icon
+            mode="zoomOut"
+            .iconSize=${this.extraIconSize}
+            .isAllDisplay=${this.isAllDisplay}
+            .currentShowDepth=${this.currentShowDepth}
+            .depthMax=${this.depthMax}
+            .depthMin=${this.depthMin}
+            .rootTree=${this.rootTree}
+            .onClickZoom=${(params: Parameters<WCPageZoomIcon['onClickZoom']>[0]) =>
+              this.onClickZoom(params)}
+          ></wc-page-zoom-icon>
+
           <!-- 一键全部展开｜关闭功能 -->
           <wc-page-all-expand-icon
             .iconSize=${this.extraIconSize}
@@ -347,13 +327,14 @@ export class WCPage extends LitElement {
             .depthMax=${this.depthMax}
             .depthMin=${this.depthMin}
             .rootTree=${this.rootTree}
-            .onClickAllExpand=${() => this.onUpdateNavigatorScroll()}
+            .onClickAllExpand=${(params: Parameters<WCPageAllExpandIcon['onClickAllExpand']>[0]) =>
+              this.onClickAllExpand(params)}
           >
           </wc-page-all-expand-icon>
           ${[
             this.searcherIcon(),
-            this.zoomInIcon({ disabled: foldDisabled }),
-            this.zoomOutIcon({ disabled: foldDisabled }),
+            // this.zoomInIcon({ disabled: foldDisabled }),
+            // this.zoomOutIcon({ disabled: foldDisabled }),
             this.refreshIcon(),
             this.moreIcon(),
           ]}
