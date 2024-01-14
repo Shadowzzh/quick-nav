@@ -8,6 +8,7 @@ import type { TitleTreeData } from '../../interface'
 import '../../components/TitleTree'
 import '../../components/NavigatorPanel'
 import './ThemeIcon'
+import './AllExpandIcon'
 import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
@@ -46,7 +47,7 @@ export class WCPage extends LitElement {
   depthMax: number
 
   /** 最小的深度 */
-  depthMin: number = 1
+  depthMin: number
 
   /** 额外的 Icon 大小 */
   extraIconSize = 16
@@ -192,54 +193,6 @@ export class WCPage extends LitElement {
     })
   }
 
-  /** 全部的 item 展开｜闭合 */
-  onToggleAllDisplay() {
-    const isAllDisplay = !this.isAllDisplay
-    // 根节点只有一个字节点时
-    const isOneChild = this.rootTree.children.length === 1
-    // 根节点只有一个字节点时，遍历子节点的子节点
-    const baseTree = isOneChild ? this.rootTree.children[0].children : this.rootTree.children
-    // 全部展开时，展示最大深度，否则展示 1
-    this.currentShowDepth = isAllDisplay ? this.depthMax : this.depthMin
-
-    baseTree.forEach((tree) => {
-      // 根节点不参与
-      tree.eachChild((node) => {
-        if (!node.data) return
-
-        node.data.isDisplay = isAllDisplay
-        node.data.TitleItem?.requestUpdate()
-      })
-    })
-
-    /** 主动更新面板滚动轴的高度，
-     *  所有 item 闭合后，导致 scroll 变化，需要主动调用更新 */
-    requestAnimationFrame(() => {
-      this.navigatorPanelRef.value?.scrollUpdate()
-    })
-
-    this.isAllDisplay = isAllDisplay
-  }
-
-  /** 全部展开 Icon */
-  allExpandIcon({ disabled }: { disabled: boolean }) {
-    const iconName =
-      this.isAllDisplay && this.currentShowDepth === this.depthMax ? 'allCollapse' : 'allExpand'
-
-    return html` <wc-button
-      class="header_allCollapse"
-      @click=${() => this.onToggleAllDisplay()}
-      .disabled=${disabled}
-    >
-      <wc-icon
-        class="header_icon"
-        name=${iconName}
-        size=${this.extraIconSize}
-        color="var(--theme-icon)"
-      ></wc-icon>
-    </wc-button>`
-  }
-
   /** 放大缩小 */
   onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
     const isZoomIn = method === 'zoomIn'
@@ -364,6 +317,13 @@ export class WCPage extends LitElement {
     })
   }
 
+  /** 一些可能导致 scroll 变化的操作，需要主动调用更新 */
+  onUpdateNavigatorScroll() {
+    requestAnimationFrame(() => {
+      this.navigatorPanelRef.value?.scrollUpdate()
+    })
+  }
+
   render() {
     if (this.rootTree === null) return
 
@@ -373,15 +333,27 @@ export class WCPage extends LitElement {
     return html`<div>
       <wc-navigator-panel ref=${ref(this.navigatorPanelRef)}>
         <div slot="extraIcon" class="extra_icon">
+          <!-- 主题色功能 -->
           <wc-page-theme-icon
             .pageInstance=${this}
             .iconSize=${this.extraIconSize}
           ></wc-page-theme-icon>
+
+          <!-- 一键全部展开｜关闭功能 -->
+          <wc-page-all-expand-icon
+            .iconSize=${this.extraIconSize}
+            .isAllDisplay=${this.isAllDisplay}
+            .currentShowDepth=${this.currentShowDepth}
+            .depthMax=${this.depthMax}
+            .depthMin=${this.depthMin}
+            .rootTree=${this.rootTree}
+            .onClickAllExpand=${() => this.onUpdateNavigatorScroll()}
+          >
+          </wc-page-all-expand-icon>
           ${[
             this.searcherIcon(),
             this.zoomInIcon({ disabled: foldDisabled }),
             this.zoomOutIcon({ disabled: foldDisabled }),
-            this.allExpandIcon({ disabled: foldDisabled }),
             this.refreshIcon(),
             this.moreIcon(),
           ]}
