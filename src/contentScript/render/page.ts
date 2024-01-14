@@ -182,9 +182,9 @@ export class WCPage extends LitElement {
   onToggleAllDisplay() {
     const isAllDisplay = !this.isAllDisplay
     // 根节点只有一个字节点时
-    const isOneChildren = this.rootTree.children.length === 1
+    const isOneChild = this.rootTree.children.length === 1
     // 根节点只有一个字节点时，遍历子节点的子节点
-    const baseTree = isOneChildren ? this.rootTree.children[0].children : this.rootTree.children
+    const baseTree = isOneChild ? this.rootTree.children[0].children : this.rootTree.children
     // 全部展开时，展示最大深度，否则展示 1
     isAllDisplay ? (this.currentShowDepth = this.depthMax) : (this.currentShowDepth = 1)
 
@@ -208,11 +208,15 @@ export class WCPage extends LitElement {
   }
 
   /** 全部展开 Icon */
-  allExpandIcon() {
+  allExpandIcon({ disabled }: { disabled: boolean }) {
     const iconName =
       this.isAllDisplay && this.currentShowDepth === this.depthMax ? 'allCollapse' : 'allExpand'
 
-    return html` <wc-button class="header_allCollapse" @click=${() => this.onToggleAllDisplay()}>
+    return html` <wc-button
+      class="header_allCollapse"
+      @click=${() => this.onToggleAllDisplay()}
+      .disabled=${disabled}
+    >
       <wc-icon
         class="header_icon"
         name=${iconName}
@@ -247,7 +251,7 @@ export class WCPage extends LitElement {
   /** 放大缩小 */
   onClickZooIcon(method: 'zoomIn' | 'zoomOut') {
     // 根节点只有一个字节点时
-    const isOneChildren = this.rootTree.children.length === 1
+    const isOneChild = this.rootTree.children.length === 1
 
     const isZoomIn = method === 'zoomIn'
     // 当前展示的深度
@@ -258,7 +262,7 @@ export class WCPage extends LitElement {
       currentShowDepth = Math.min(this.depthMax, currentShowDepth + 1)
     } else {
       // 根节点只有一个字节点时，最小深度为 2，否则为 1
-      currentShowDepth = Math.max(isOneChildren ? 2 : 1, currentShowDepth - 1)
+      currentShowDepth = Math.max(isOneChild ? 2 : 1, currentShowDepth - 1)
     }
 
     this.rootTree.depthMap.forEach((value, key) => {
@@ -280,8 +284,11 @@ export class WCPage extends LitElement {
   }
 
   /** 放大 Icon */
-  zoomInIcon() {
-    return html` <wc-button @click=${() => this.onClickZooIcon('zoomIn')}>
+  zoomInIcon({ disabled }: { disabled: boolean }) {
+    // 当前展示的深度等于最大深度时，禁用
+    let _disabled = disabled || this.currentShowDepth === this.depthMax
+
+    return html` <wc-button .disabled=${_disabled} @click=${() => this.onClickZooIcon('zoomIn')}>
       <wc-icon
         class="header_icon"
         name="zoomIn"
@@ -292,8 +299,11 @@ export class WCPage extends LitElement {
   }
 
   /** 缩小 Icon */
-  zoomOutIcon() {
-    return html` <wc-button @click=${() => this.onClickZooIcon('zoomOut')}>
+  zoomOutIcon({ disabled, isOneChild }: { disabled: boolean; isOneChild: boolean }) {
+    // 当前展示的深度等于最大深度时，禁用
+    let _disabled = disabled || this.currentShowDepth === (isOneChild ? 2 : 1)
+
+    return html` <wc-button .disabled=${_disabled} @click=${() => this.onClickZooIcon('zoomOut')}>
       <wc-icon
         class="header_icon"
         name="zoomOut"
@@ -305,7 +315,7 @@ export class WCPage extends LitElement {
 
   /** 搜索 Icon */
   searcherIcon() {
-    return html` <wc-button>
+    return html` <wc-button disabled>
       <wc-icon
         class="header_icon"
         name="searcher"
@@ -316,7 +326,7 @@ export class WCPage extends LitElement {
   }
 
   moreIcon() {
-    return html` <wc-button>
+    return html` <wc-button disabled>
       <wc-icon
         class="header_icon"
         name="more"
@@ -327,7 +337,7 @@ export class WCPage extends LitElement {
   }
 
   refreshIcon() {
-    return html` <wc-button>
+    return html` <wc-button disabled>
       <wc-icon
         class="header_icon"
         name="refresh"
@@ -353,15 +363,20 @@ export class WCPage extends LitElement {
   render() {
     if (this.rootTree === null) return
 
+    // 根节点只有一个字节点时
+    const isOneChild = this.rootTree.children.length === 1
+    // 是否禁用展开｜闭合按钮，根节点只有一个字节点时，判断最大深度为 2，否则为 1
+    const foldDisabled = this.depthMax === 1 || (isOneChild && this.depthMax === 2)
+
     return html`<div>
       <wc-navigator-panel
         ref=${ref(this.navigatorPanelRef)}
         .extraIcon=${[
           this.searcherIcon(),
           this.themeIcon(),
-          this.zoomInIcon(),
-          this.zoomOutIcon(),
-          this.allExpandIcon(),
+          this.zoomInIcon({ disabled: foldDisabled }),
+          this.zoomOutIcon({ disabled: foldDisabled, isOneChild }),
+          this.allExpandIcon({ disabled: foldDisabled }),
           this.refreshIcon(),
           this.moreIcon(),
         ]}
