@@ -5,6 +5,7 @@ import { Tree } from '@/utils/models'
 
 import { TitleTree, TitleTreeData } from '../../interface'
 import './TitleItem'
+import { asserts } from '@/utils'
 
 export interface TitleTreeElementOptions {
   rootTree: TitleTree
@@ -82,10 +83,8 @@ export class TitleTreeComponent extends LitElement {
     let ancientTargets = e.composedPath().slice() as HTMLElement[]
 
     while ((target = ancientTargets.shift())) {
-      const className = target.className as 'title_icon' | 'title'
-
-      switch (className) {
-      }
+      if (asserts.isString(target.className) === false) continue
+      const className = target.className?.trim() as 'title_icon' | 'title'
 
       if (className === 'title_icon') {
         const uniqueId = target.getAttribute('unique')
