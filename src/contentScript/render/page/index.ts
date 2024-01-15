@@ -77,6 +77,16 @@ export class WCPage extends LitElement {
 
   /** 初始化 */
   initialize() {
+    //// 清空数据
+    TitleTreeComponent.TreeMap.clear()
+    TitleTreeComponent.childActiveTree.clear()
+
+    this.rootTree?.eachChild((child) => {
+      // 将所有的节点存入 map 中
+      TitleTreeComponent.TreeMap.set(child.uniqueId, child)
+    })
+
+    //// 初始化 depth 数据
     // 根节点只有一个字节点时，最小深度为 2，否则为 1
     this.depthMin = (() => {
       if (this.rootTree.children.length !== 1) return 1
@@ -85,6 +95,7 @@ export class WCPage extends LitElement {
     this.depthMax = this.rootTree.getMaxDepth()
     this.currentShowDepth = this.depthMax
 
+    //// 初始化 observerViewController
     this.observerViewController.setInfo({
       onInView: (params) => this.onNodeInView(params),
       tree: this.rootTree,
@@ -93,19 +104,6 @@ export class WCPage extends LitElement {
   }
 
   disconnectedCallback(): void {}
-
-  /** 更新时 */
-  protected updated(propertyValueMap: PropertyValueMap<WCPage>) {
-    if (propertyValueMap.has('rootTree')) {
-      TitleTreeComponent.TreeMap.clear()
-      TitleTreeComponent.childActiveTree.clear()
-
-      this.rootTree?.eachChild((child) => {
-        // 将所有的节点存入 map 中
-        TitleTreeComponent.TreeMap.set(child.uniqueId, child)
-      })
-    }
-  }
 
   /** 当前节点在视图中出现 */
   onNodeInView({ anchor }: { anchor: Anchor }) {
