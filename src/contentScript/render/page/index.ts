@@ -78,8 +78,7 @@ export class WCPage extends LitElement {
   /** 初始化 */
   initialize() {
     //// 清空数据
-    TitleTreeComponent.TreeMap.clear()
-    TitleTreeComponent.childActiveTree.clear()
+    TitleTreeComponent.clearMap()
 
     this.rootTree?.eachChild((child) => {
       // 将所有的节点存入 map 中
@@ -123,7 +122,7 @@ export class WCPage extends LitElement {
     /** childActive 的总高度 */
     const activeNodeHeight = (() => {
       let height = 0
-      TitleTreeComponent.childActiveTree.forEach((node) => {
+      TitleTreeComponent.ChildActiveMap.forEach((node) => {
         height += node.data?.TitleItem?.offsetHeight ?? 0
       })
       return height

@@ -114,10 +114,10 @@ export class ObserverViewController implements ReactiveController {
 
       if (isOpen) {
         ancestor.data.childActive = true
-        TitleTreeComponent.childActiveTree.add(ancestor)
+        TitleTreeComponent.ChildActiveMap.add(ancestor)
       } else {
         ancestor.data.childActive = false
-        TitleTreeComponent.childActiveTree.delete(ancestor)
+        TitleTreeComponent.ChildActiveMap.delete(ancestor)
       }
       ancestor.data.TitleItem.requestUpdate()
     })

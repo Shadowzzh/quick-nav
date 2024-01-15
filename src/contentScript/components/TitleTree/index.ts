@@ -15,13 +15,22 @@ export interface TitleTreeElementOptions {
 export class TitleTreeComponent extends LitElement {
   static styles = [
     css`
-      :host {
-      }
+      /* :host {
+      } */
     `,
   ]
 
+  /** 标题树 */
   static TreeMap: Map<string, TitleTree> = new Map()
-  static childActiveTree: Set<TitleTree> = new Set()
+
+  /** 当前被激活的子节点 */
+  static ChildActiveMap: Set<TitleTree> = new Set()
+
+  /** 清空 Map 数据 */
+  static clearMap() {
+    TitleTreeComponent.TreeMap.clear()
+    TitleTreeComponent.ChildActiveMap.clear()
+  }
 
   @property({ type: Object })
   rootTree: Tree<TitleTreeData> | null = null
