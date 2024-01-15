@@ -88,16 +88,24 @@ export class ObserverViewController implements ReactiveController {
   }
 
   /** 搜索当前视图中的锚点 */
-  private searcherAnchorInView() {
-    if (!this.container) return
+  private searcherAnchorInView = (() => {
+    let preAnchor: Anchor | undefined = undefined
 
-    const targetAnchor = this.searchAnchor(this.anchors, getScrollTopElement(this.container))
+    return function (this: ObserverViewController) {
+      if (!this.container) return
 
-    if (targetAnchor) {
-      this.inViewActive(targetAnchor)
-      this.onInView({ anchor: targetAnchor })
+      const targetAnchor = this.searchAnchor(this.anchors, getScrollTopElement(this.container))
+      // 如果上一个锚点和当前锚点相同，则不触发
+      if (preAnchor === targetAnchor) return
+
+      if (targetAnchor) {
+        this.inViewActive(targetAnchor)
+        this.onInView({ anchor: targetAnchor })
+      }
+
+      preAnchor = targetAnchor
     }
-  }
+  })()
 
   /** 使选中的 item 的祖先 DOM 变为 Active 状态。 */
   private inViewActiveAncestor(anchor: Anchor, isOpen: boolean) {
