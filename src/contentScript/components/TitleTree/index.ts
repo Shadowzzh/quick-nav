@@ -1,11 +1,10 @@
-import { LitElement, html, css, render, TemplateResult, PropertyValueMap } from 'lit'
-import { customElement, eventOptions, property } from 'lit/decorators.js'
-import { TitleTree, TitleTreeData } from '../../interface'
+import { LitElement, html, css, TemplateResult } from 'lit'
+import { customElement, property } from 'lit/decorators.js'
 
+import { Tree } from '@/utils/models'
+
+import { TitleTree, TitleTreeData } from '../../interface'
 import './TitleItem'
-import './TitleItemSimple'
-import { Tree } from '../../../utils/models/Tree'
-import { scrollSmoothTo } from '../../../utils'
 
 export interface TitleTreeElementOptions {
   rootTree: TitleTree
@@ -15,8 +14,9 @@ export interface TitleTreeElementOptions {
 export class TitleTreeComponent extends LitElement {
   static styles = [
     css`
-      /* :host {
-      } */
+      :host {
+        position: relative;
+      }
     `,
   ]
 
@@ -113,23 +113,17 @@ export class TitleTreeComponent extends LitElement {
   }
 
   private renderTree(node: Tree<TitleTreeData>): any {
-    // return html`<wc-title-item .node=${node}>
-    //   ${node.children.map((child) => {
-    //     return this.renderTree(child)
-    //   })}
-    // </wc-title-item>`
-    const titleAll: TemplateResult[] = [
-      html`<wc-title-item-simple .node=${node}></wc-title-item-simple>`,
-    ]
+    const titleAll: TemplateResult[] = [html`<wc-title-item .node=${node}></wc-title-item>`]
 
     node.eachChild((child) => {
-      titleAll.push(html`<wc-title-item-simple .node=${child}></wc-title-item-simple>`)
+      titleAll.push(html`<wc-title-item .node=${child}></wc-title-item>`)
     })
+
     return titleAll
   }
 
   render() {
-    return html`<div @click="${this.onClick}" style="position: relative">
+    return html`<div @click="${this.onClick}">
       ${this.rootTree?.children.map((node) => this.renderTree(node))}
     </div>`
   }

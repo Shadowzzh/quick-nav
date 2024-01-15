@@ -1,6 +1,5 @@
 import type { Tree } from '../utils/models/Tree'
-import { WCTitleItem } from './components/TitleTree/TitleItem'
-import { WCTitleItemSimple } from './components/TitleTree/TitleItemSimple'
+import type { WCTitleItem } from './components/TitleTree/TitleItem'
 
 export type TitleTreeData = {
   /** node 对应的元素 */
@@ -8,7 +7,7 @@ export type TitleTreeData = {
   /** 是否显示 */
   isDisplay: boolean
   /** node 对应的组件 */
-  TitleItem?: WCTitleItem | WCTitleItemSimple
+  TitleItem?: WCTitleItem
   /** 是否为活动状态 */
   isActive: boolean
   /** 子元素是否为活动状态 */
