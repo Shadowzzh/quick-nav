@@ -84,27 +84,27 @@ export class TitleTreeComponent extends LitElement {
 
     while ((target = ancientTargets.shift())) {
       if (asserts.isString(target.className) === false) continue
-      const className = target.className?.trim() as 'title_icon' | 'title'
+      const classList = Array.from(target.classList)
 
-      if (className === 'title_icon') {
+      // 点击展开按钮
+      if (classList.findIndex((v) => v === 'title_icon') !== -1) {
         const uniqueId = target.getAttribute('unique')
-        const isExpand = Boolean(Number(target.getAttribute('is_expand')))
         if (!uniqueId) continue
 
+        const isExpand = Boolean(Number(target.getAttribute('is_expand')))
         const child = TitleTreeComponent.TreeMap.get(uniqueId)
 
         child && this.onClickExpand({ tree: child, isExpand })
         break
-      } else if (className === 'title') {
+      } else if (classList.findIndex((v) => v === 'title') !== -1) {
+        // 点击标题
         const uniqueId = target.getAttribute('unique')
         if (!uniqueId) continue
+
         const child = TitleTreeComponent.TreeMap.get(uniqueId)
-
         const element = child?.data?.element
-        if (!element) return
 
-        this.onClickItem?.({ target: element })
-
+        element && this.onClickItem?.({ target: element })
         break
       }
     }
