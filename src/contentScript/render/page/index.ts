@@ -272,8 +272,6 @@ export class WCPage extends LitElement {
               this.onClickRefresh(params)}
           >
           </wc-page-refresh-icon>
-
-          <!-- ${[this.searcherIcon(), this.moreIcon()]} -->
         </div>
         <div style="margin-top: 3px;">
           <title-tree
