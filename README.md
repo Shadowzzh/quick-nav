@@ -11,7 +11,7 @@
 ## 预览
 
 <div align="center">
-    <img src="./docs/gifs/view.png" width="200"/>
+    <img src="./docs/images/view.png" width="200"/>
 </div>
 
 ## 功能
@@ -26,8 +26,8 @@
 
   <tbody>
     <tr>
-      <td><img src="./docs/gifs/基本功能.gif"/></td>
-      <td><img src="./docs/gifs/可拖动.gif"/></td>
+      <td><img src="./docs/images/base.gif"/></td>
+      <td><img src="./docs/images/drag.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -42,24 +42,8 @@
 
   <tbody>
     <tr>
-      <td><img src="./docs/gifs/所有方向大小可修改.gif"/></td>
-      <td><img src="./docs/gifs/双击回到初始位置.gif"/></td>
-    </tr>
-  </tbody>
-</table>
-
-<table width="100%">
-  <thead>
-    <tr>
-      <th width="50%" style="text-align: center">快速最大化</th>
-      <th width="50%" style="text-align: center">隐藏｜显示一级</th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <tr>
-      <td><img src="./docs/gifs/双击上下边线可快速放大.gif"/></td>
-      <td><img src="./docs/gifs/快速隐藏｜显示一级.gif"/></td>
+      <td><img src="./docs/images/resize.gif"/></td>
+      <td><img src="./docs/images/origin.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -68,14 +52,14 @@
   <thead>
     <tr>
       <th width="50%" style="text-align: center">展开｜隐藏</th>
-      <th width="50%" style="text-align: center">隐藏｜显示一级</th>
+      <th width="50%" style="text-align: center">显示 ｜ 隐藏一级</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/gifs/展开收缩.gif"/></td>
-      <td><img src="./docs/gifs/快速隐藏｜显示一级.gif"/></td>
+      <td><img src="./docs/images/expand_collapse.gif"/></td>
+      <td><img src="./docs/images/zoom.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -83,17 +67,31 @@
 <table width="100%">
   <thead>
     <tr>
-      <th width="50%" style="text-align: center">全部展开｜全部隐藏</th>
-      <th width="50%" style="text-align: center">主题色</th>
-
+      <th width="50%" style="text-align: center">快速最大化</th>
+      <th width="50%" style="text-align: center">刷新</th>
     </tr>
-
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/gifs/全部隐藏.gif"/></td>
-      <td><img src="./docs/gifs/theme.gif"/></td>
+      <td><img src="./docs/images/fast_maximize.gif"/></td>
+      <td><img src="./docs/images/refresh.gif"/></td>
+    </tr>
+  </tbody>
+</table>
+
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="50%" style="text-align: center">全部展开｜隐藏</th>
+      <th width="50%" style="text-align: center">主题色</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td><img src="./docs/images/all_expand_collapse.gif"/></td>
+      <td><img src="./docs/images/theme.gif"/></td>
     </tr>
   </tbody>
 </table>
