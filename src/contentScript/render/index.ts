@@ -10,9 +10,9 @@ export async function renderTree(content: HTMLElement, titleTree?: TitleTree) {
 
   const Page = new WCPage({ rootTree: titleTree, content })
 
-  const theme: QN.Theme = (await syncStorage.get('theme')) ?? 'light'
-
+  const theme: QN.Theme = (await syncStorage.get('theme')) ?? 'dark'
   Page.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, theme)
+
   document.body.appendChild(Page)
 }
 
