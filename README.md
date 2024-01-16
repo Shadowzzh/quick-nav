@@ -1,4 +1,4 @@
-简体中文 · [English](./docs/README.zh-EN.md)
+English · [简体中文](./docs/README.zh-EN.md) (by ChatGPT)
 
 <p align="center">
     <img src="./public/img/logo-1080.png" width="150">
@@ -6,28 +6,30 @@
 
 <h3 align="center">Quick Nav</h3>
 
-一个浏览器插件。自动生成页面内容大纲（TOC），用户可点击大纲中的条目，快速定位到页面内的相应部分。
+A browser extension. Automatically generates a table of contents (TOC) for page content, allowing users to click on items in the outline to quickly navigate to the corresponding sections of the page.
 
-## 预览
+## Preview
 
 <div align="center">
     <img src="./docs/images/view.png" width="200"/>
 </div>
 
-## 功能
+## Features
+
+### Display
 
 <table width="100%">
   <thead>
     <tr>
-      <th width="50%" style="text-align: center">基本功能</th>
-      <th width="50%"  style="text-align: center">可拖动</th>
+      <th width="50%" style="text-align: center">Basic Function</th>
+      <th width="50%"  style="text-align: center">Draggable</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/images/base.gif"/></td>
-      <td><img src="./docs/images/drag.gif"/></td>
+      <td><img src="./docs/images/gif/base.gif"/></td>
+      <td><img src="./docs/images/gif/drag.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -35,15 +37,15 @@
 <table width="100%">
   <thead>
     <tr>
-      <th width="50%" style="text-align: center">窗口大小修改</th>
-      <th width="50%" style="text-align: center">双击回到初始位置</th>
+      <th width="50%" style="text-align: center">Window Size Modification</th>
+      <th width="50%" style="text-align: center">Double-Click to Return to Original Position</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/images/resize.gif"/></td>
-      <td><img src="./docs/images/origin.gif"/></td>
+      <td><img src="./docs/images/gif/resize.gif"/></td>
+      <td><img src="./docs/images/gif/origin.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -51,15 +53,15 @@
 <table width="100%">
   <thead>
     <tr>
-      <th width="50%" style="text-align: center">展开｜隐藏</th>
-      <th width="50%" style="text-align: center">显示 ｜ 隐藏一级</th>
+      <th width="50%" style="text-align: center">Expand | Hide</th>
+      <th width="50%" style="text-align: center">Show | Hide Level 1</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/images/expand_collapse.gif"/></td>
-      <td><img src="./docs/images/zoom.gif"/></td>
+      <td><img src="./docs/images/gif/expand_collapse.gif"/></td>
+      <td><img src="./docs/images/gif/zoom.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -67,15 +69,15 @@
 <table width="100%">
   <thead>
     <tr>
-      <th width="50%" style="text-align: center">快速最大化</th>
-      <th width="50%" style="text-align: center">刷新</th>
+      <th width="50%" style="text-align: center">Quick Maximize</th>
+      <th width="50%" style="text-align: center">Refresh</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/images/fast_maximize.gif"/></td>
-      <td><img src="./docs/images/refresh.gif"/></td>
+      <td><img src="./docs/images/gif/fast_maximize.gif"/></td>
+      <td><img src="./docs/images/gif/refresh.gif"/></td>
     </tr>
   </tbody>
 </table>
@@ -83,15 +85,55 @@
 <table width="100%">
   <thead>
     <tr>
-      <th width="50%" style="text-align: center">全部展开｜隐藏</th>
-      <th width="50%" style="text-align: center">主题色</th>
+      <th width="50%" style="text-align: center">Expand All | Hide All</th>
+      <th width="50%" style="text-align: center">Theme Color</th>
     </tr>
   </thead>
 
   <tbody>
     <tr>
-      <td><img src="./docs/images/all_expand_collapse.gif"/></td>
-      <td><img src="./docs/images/theme.gif"/></td>
+      <td><img src="./docs/images/gif/all_expand_collapse.gif"/></td>
+      <td><img src="./docs/images/gif/theme.gif"/></td>
     </tr>
   </tbody>
+
 </table>
+
+### Asynchronous Loading of Code
+
+This extension injects a simple piece of code only when the page loads, not affecting the page's load speed. The main part of the code is requested only when the plugin icon is clicked (as shown below).
+
+![assets](./docs/images/assets.png)
+![assets](./docs/images/assets_code.png)
+
+![assets](./docs/images/gif/async.gif)
+
+## Technology Stack
+
+- [Vite](https://vitejs.dev)
+- [Lit](https://lit.dev)
+
+## To-Do
+
+- [ ] Close the plugin
+- [ ] Search functionality
+- [ ] Maximize / Minimize
+- [ ] Return to the top
+- [ ] Icon hints
+- [ ] Navigate to the selected node
+- [ ] Personalization settings
+  - [ ] Background blur transparency
+  - [ ] Custom colors
+  - [ ] Enable / Disable icon hints
+- [x] Draggable
+- [x] Window size modification
+- [x] Double-click to return to original position
+- [x] Double-click border to maximize window
+- [x] Refresh
+- [x] Dark mode
+- [x] Expand / Collapse
+- [x] Expand / Collapse level 1
+
+## Conclusion
+
+Suggestions and ideas💡, CodeReview 💻 from all experts are welcome.
