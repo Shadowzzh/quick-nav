@@ -14,7 +14,7 @@ import './ThemeIcon'
 import './AllExpandIcon'
 import './ZoomIcon'
 import './RefreshIcon'
-import './closeICon'
+import './closeIcon'
 import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
@@ -150,6 +150,7 @@ export class WCPage extends LitElement {
       scrollSmoothTo({ container: scrollElement, target })
     }
   }
+
   /** 搜索 Icon */
   searcherIcon() {
     return html` <wc-button disabled>
@@ -278,7 +279,8 @@ export class WCPage extends LitElement {
           <!-- 关闭 / 开启 -->
           <wc-page-close-icon> </wc-page-close-icon>
         </div>
-        <div style="margin-top: 3px;">
+
+        <div style="margin-top: 8px;">
           <title-tree
             .rootTree=${this.rootTree}
             .onClickItem=${this.onClickTreeItem}
