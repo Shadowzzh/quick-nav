@@ -13,6 +13,7 @@ import {
   ZoomOutSvg,
   searcherSvg,
   refreshSvg,
+  closeSvg,
   moreSvg,
 } from './svgs'
 
@@ -29,10 +30,12 @@ const iconMap = {
   searcher: { svg: searcherSvg },
   refresh: { svg: refreshSvg },
   more: { svg: moreSvg },
-
+  close: { svg: closeSvg },
 }
 
-interface IconOptions {
+/** 图标组件类型 */
+
+export interface IconOptions {
   /**图标名称 */
   name: keyof typeof iconMap
   /**图标大小 */
@@ -41,9 +44,7 @@ interface IconOptions {
   color?: string
 }
 
-/**
- * 图标组件
- */
+/** 图标组件 */
 @customElement('wc-icon')
 export class WCIcon extends LitElement {
   static styles = [
