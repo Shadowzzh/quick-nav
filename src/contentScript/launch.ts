@@ -1,5 +1,5 @@
 import '@webcomponents/custom-elements'
-import { ElapsedTime, asyncDebounce } from '../utils'
+import { ElapsedTime } from '../utils'
 import { extractContent, generatorTitleTree } from './analysis'
 import { removeRenderTree, renderTree } from './render'
 import { ENV } from '../env'
@@ -17,6 +17,7 @@ export const App = (() => {
         ElapsedTime.start('open app')
       }
       const content = extractContent()
+      ENV.isDev && console.log('content', content)
       if (!content) return console.error('未找到文章内容')
 
       /** run render tree */
@@ -29,14 +30,17 @@ export const App = (() => {
         isOpen = true
       }
 
-      const debounceRunRender = asyncDebounce(runRender, 500, true)
-      debounceRunRender()
+      runRender()
     },
 
     /** 移除渲染树 */
     close() {
-      isOpen = false
       removeRenderTree()
+    },
+
+    /** 设置是否打开 */
+    setIsOpen(value: boolean) {
+      isOpen = value
     },
 
     /** 是否打开 */

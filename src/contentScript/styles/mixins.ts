@@ -15,8 +15,10 @@ export const defaultThemeLight = {
   border: 'rgb(235, 238, 245)',
   wavesBackground: 'rgba(0, 0, 0, 0.2)',
   icon: '#999',
+  invertIcon: '#777',
   scrollBarBackground: '#bbb',
   colorDisabled: '#ddd',
+  danger: '#ff9393',
 }
 
 export const defaultThemeDark = {
@@ -32,9 +34,11 @@ export const defaultThemeDark = {
   backgroundActive: '#41454B',
   wavesBackground: '#71757B',
   itemHoverBackground: '#383e4a',
+  invertIcon: '#ddd',
   icon: '#ccc',
   scrollBarBackground: '#6d6d6e',
   colorDisabled: '#6E7073',
+  danger: '#bb3d3e',
 }
 
 cssRule.add(
@@ -49,6 +53,7 @@ cssRule.add(
   `
     --theme-primary: ${defaultThemeLight.primary};
     --theme-color: ${defaultThemeLight.color};
+    --theme-invertIcon: ${defaultThemeLight.invertIcon};
     --theme-icon: ${defaultThemeLight.icon};
     --theme-border: ${defaultThemeLight.border};
     --theme-shadow: ${defaultThemeLight.shadow};
@@ -62,6 +67,7 @@ cssRule.add(
     --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
     --theme-background-disabled: ${defaultThemeLight.backgroundDisabled};
     --theme-color-disabled: ${defaultThemeLight.colorDisabled};
+    --theme-danger: ${defaultThemeLight.danger};
   `,
 )
 
@@ -70,6 +76,7 @@ cssRule.add(
   `
     --theme-primary: ${defaultThemeDark.primary};
     --theme-color: ${defaultThemeDark.color};
+    --theme-invertIcon: ${defaultThemeDark.invertIcon};
     --theme-icon: ${defaultThemeDark.icon};
     --theme-border: ${defaultThemeDark.border};
     --theme-shadow: ${defaultThemeDark.shadow};
@@ -83,5 +90,6 @@ cssRule.add(
     --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
     --theme-background-disabled: ${defaultThemeDark.backgroundDisabled};
     --theme-color-disabled: ${defaultThemeDark.colorDisabled};
+    --theme-danger: ${defaultThemeDark.danger};
   `,
 )

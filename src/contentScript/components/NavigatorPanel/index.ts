@@ -22,8 +22,6 @@ export class WCNavigatorPanel extends LitElement {
       }
 
       :host .quick-nav {
-        border: 1px solid var(--theme-border);
-        /* opacity: 0.3; */
         height: 100%;
 
         background-color: var(--theme-background);
@@ -50,8 +48,8 @@ export class WCNavigatorPanel extends LitElement {
       }
 
       /* 拖动icon */
-      :host .header .header_icon {
-      }
+      /* :host .header .header_icon {
+      } */
       /* place */
       :host .header .header_space {
         flex: auto;
@@ -107,8 +105,7 @@ export class WCNavigatorPanel extends LitElement {
     this.style.visibility = 'hidden'
   }
 
-  connectedCallback() {
-    super.connectedCallback()
+  protected firstUpdated() {
     this.initial()
   }
 

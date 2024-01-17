@@ -1,4 +1,4 @@
-import { LitElement, PropertyValueMap, css, html } from 'lit'
+import { LitElement, css, html } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 import { Ref, createRef, ref } from 'lit/directives/ref.js'
 
@@ -14,6 +14,7 @@ import './ThemeIcon'
 import './AllExpandIcon'
 import './ZoomIcon'
 import './RefreshIcon'
+import './closeICon'
 import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
@@ -28,8 +29,9 @@ import { Anchor, ObserverViewController } from './ObserverViewController'
 @customElement('wc-page')
 export class WCPage extends LitElement {
   static styles = css`
-    /* :host {
-    } */
+    :host {
+      display: block;
+    }
     :host .extra_icon {
       display: flex;
       align-items: center;
@@ -272,6 +274,9 @@ export class WCPage extends LitElement {
               this.onClickRefresh(params)}
           >
           </wc-page-refresh-icon>
+
+          <!-- 关闭 / 开启 -->
+          <wc-page-close-icon> </wc-page-close-icon>
         </div>
         <div style="margin-top: 3px;">
           <title-tree
