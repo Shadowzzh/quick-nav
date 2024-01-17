@@ -33,8 +33,12 @@ export class WCPageRefreshIcon extends LitElement {
   }
 
   render() {
-    return html` <wc-button @click=${() => this.onRefresh()}>
-      <wc-icon name="refresh" size=${this.iconSize} color="var(--theme-icon)"></wc-icon>
+    return html` <wc-button
+      @click=${() => this.onRefresh()}
+      .iconSize=${this.iconSize}
+      icon="refresh"
+      iconColor="var(--theme-icon)"
+    >
     </wc-button>`
   }
 }

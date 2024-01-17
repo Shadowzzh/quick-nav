@@ -205,10 +205,12 @@ export class WCNavigatorPanel extends LitElement {
         <wc-button
           size="normal"
           class="header_drag"
+          icon="drag"
+          iconSize="16"
+          iconColor="var(--theme-icon)"
           @mousedown=${this.movementController.dragMouseDown}
           @dblclick=${this.initializationPosition}
         >
-          <wc-icon class="header_icon" name="drag" size="16" color="var(--theme-icon)"></wc-icon>
         </wc-button>
         <div class="header_space"></div>
         <slot name="extraIcon"></slot>

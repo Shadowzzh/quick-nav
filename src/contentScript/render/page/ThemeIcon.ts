@@ -37,13 +37,12 @@ export class WCPageThemeIcon extends LitElement {
   render() {
     const iconName = this.theme === APP_THEME.LIGHT ? 'moonLight' : 'sunLight'
 
-    return html` <wc-button @click=${() => this.onToggleTheme()}>
-      <wc-icon
-        class="header_icon"
-        name=${iconName}
-        size=${this.iconSize}
-        color="var(--theme-icon)"
-      ></wc-icon>
+    return html` <wc-button
+      @click=${() => this.onToggleTheme()}
+      .iconSize=${this.iconSize}
+      icon="${iconName}"
+      iconColor="var(--theme-icon)"
+    >
     </wc-button>`
   }
 }

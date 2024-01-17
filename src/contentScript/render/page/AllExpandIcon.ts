@@ -65,8 +65,13 @@ export class WCPageAllExpandIcon extends LitElement {
     const iconName = this.getIconName()
     const disabled = this.depthMax === this.depthMin
 
-    return html` <wc-button @click=${() => this.onToggleAllDisplay()} .disabled=${disabled}>
-      <wc-icon name=${iconName} size=${this.iconSize} color="var(--theme-icon)"></wc-icon>
+    return html` <wc-button
+      @click=${() => this.onToggleAllDisplay()}
+      .disabled=${disabled}
+      .iconSize=${this.iconSize}
+      .icon=${iconName}
+      iconColor="var(--theme-icon)"
+    >
     </wc-button>`
   }
 }

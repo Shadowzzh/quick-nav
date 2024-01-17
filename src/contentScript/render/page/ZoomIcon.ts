@@ -80,8 +80,13 @@ export class WCPageZoomIcon extends LitElement {
   render() {
     const disabled = this.getDisabled()
 
-    return html` <wc-button .disabled=${disabled} @click=${() => this.onClickZoomIcon()}>
-      <wc-icon name="${this.mode}" size=${this.iconSize} color="var(--theme-icon)"></wc-icon>
+    return html` <wc-button
+      .disabled=${disabled}
+      @click=${() => this.onClickZoomIcon()}
+      .iconSize=${this.iconSize}
+      .icon=${this.mode}
+      iconColor="var(--theme-icon)"
+    >
     </wc-button>`
   }
 }
