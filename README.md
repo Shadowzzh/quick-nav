@@ -115,7 +115,7 @@ This extension injects a simple piece of code only when the page loads, not affe
 
 ## To-Do
 
-- [ ] Close the plugin
+- [x] Close the plugin
 - [ ] Search functionality
 - [ ] Maximize / Minimize
 - [ ] Return to the top
