@@ -48,4 +48,5 @@ export const App = (() => {
 
 if (ENV.isDev) {
   App.open()
+  import('./index')
 }
