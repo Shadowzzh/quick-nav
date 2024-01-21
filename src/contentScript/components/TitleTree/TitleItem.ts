@@ -195,6 +195,7 @@ export class WCTitleItem extends LitElement {
       class=${classMap(this.classes)}
       style=${styleMap(titleStyle)}
       unique=${this.node.uniqueId}
+      title=${element.innerText}
     >
       <div
         class="title_inner"

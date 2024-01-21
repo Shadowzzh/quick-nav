@@ -6,6 +6,7 @@ export const WCTitleItemStyle = [
     :host {
       background-color: var(--theme-background);
       font-size: 13px;
+      line-height: 18px;
       position: relative;
       box-sizing: border-box;
       padding-right: 16px;
@@ -34,7 +35,8 @@ export const WCTitleItemStyle = [
       color: var(--theme-selectedColor);
       background-color: var(--theme-selectedBackground);
       transform: translate(6px, -2px) scale(1, 1.05);
-      z-index: 2;
+      position: relative;
+      z-index: 3;
     }
 
     :host .title--active .title_background {
@@ -56,7 +58,7 @@ export const WCTitleItemStyle = [
       align-items: center;
       z-index: 2;
 
-      padding: 4px 8px;
+      padding: 6px 8px;
     }
 
     :host .title_content:hover {
@@ -65,6 +67,10 @@ export const WCTitleItemStyle = [
 
     :host .title_text {
       flex: 1;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
     }
 
     :host .title_icon:hover {
