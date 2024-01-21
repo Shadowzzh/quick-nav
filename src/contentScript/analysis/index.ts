@@ -1,7 +1,8 @@
+import { ENV } from '@/env'
 import { DEFAULT_TREE_CONFIG } from '../../defaultConfig'
 import { $, asserts } from '../../utils'
 import { Tree } from '../../utils/models/Tree'
-import { CONTENT_TAG_WEIGHT, TITLE_TAG_WEIGHT } from '../constant'
+import { CONTENT_TAG_WEIGHT, MAX_TAG_DEPTH, TITLE_TAG_WEIGHT } from '../constant'
 import type { TitleTree, TitleTreeData } from '../interface'
 
 /**
@@ -105,10 +106,16 @@ export function extractContent() {
 
     const weightsOfTag = CONTENT_TAG_WEIGHT[tag as keyof typeof CONTENT_TAG_WEIGHT]
 
+    // 如果 value 是一个 NaN（不是一个数字），则函数返回 may；否则，返回 value 本身
+    const defaultIfNaN = <V extends any, M extends any>(value: V, may: M) =>
+      Number.isNaN(value) ? may : value
+
     contentsOfTag.forEach((content) => {
-      traceAncestor(content, weightsOfTag.length, (ancestor, depth) => {
-        const currentWeight = contentWeight.get(ancestor) ?? 0
-        contentWeight.set(ancestor, currentWeight + weightsOfTag[depth])
+      traceAncestor(content, MAX_TAG_DEPTH, (ancestor, depth) => {
+        const currentWeight = defaultIfNaN(contentWeight.get(ancestor) ?? 0, 0)
+        const currentOfDepth = defaultIfNaN(weightsOfTag[depth] ?? 0, 0)
+
+        contentWeight.set(ancestor, currentWeight + currentOfDepth)
       })
     })
   })
@@ -117,8 +124,12 @@ export function extractContent() {
     return undefined
   }
 
-  const sortedByWeight = [...contentWeight].sort((a, b) => b[1] - a[1])[0]
-  const [article] = sortedByWeight
+  const sortedByWeight = [...contentWeight].sort((a, b) => b[1] - a[1])
+  const [article] = sortedByWeight[0]
+
+  if (ENV.isDev) {
+    console.log('sortedByWeight', sortedByWeight)
+  }
 
   return article
 }
