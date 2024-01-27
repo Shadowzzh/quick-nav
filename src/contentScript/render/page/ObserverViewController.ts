@@ -8,6 +8,7 @@ import { TitleTreeComponent } from '@/contentScript/components/TitleTree'
 import { TitleTreeData } from '@/contentScript/interface'
 import { asyncThrottle } from '@/utils'
 import { Tree } from '@/utils/models'
+import { GET_SCROLL_MARGIN } from '@/contentScript/constant'
 
 export type Anchor = { node: Tree<TitleTreeData>; top: number }
 
@@ -95,6 +96,7 @@ export class ObserverViewController implements ReactiveController {
       if (!this.container) return
 
       const targetAnchor = this.searchAnchor(this.anchors, getScrollTopElement(this.container))
+
       // 如果上一个锚点和当前锚点相同，则不触发
       if (preAnchor === targetAnchor) return
 
@@ -156,9 +158,11 @@ export class ObserverViewController implements ReactiveController {
       const middle = Math.floor((left + right) / 2)
       const anchor = anchors[middle]
 
-      if (anchor.top < target) {
+      const range = 10
+
+      if (anchor.top < target + GET_SCROLL_MARGIN()) {
         left = middle + 1
-      } else if (anchor.top > target) {
+      } else if (anchor.top > target + GET_SCROLL_MARGIN() + range) {
         right = middle - 1
       } else {
         return anchor

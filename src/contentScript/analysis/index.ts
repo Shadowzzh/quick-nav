@@ -5,6 +5,43 @@ import { Tree } from '../../utils/models/Tree'
 import { CONTENT_TAG_WEIGHT, MAX_TAG_DEPTH, TITLE_TAG_WEIGHT } from '../constant'
 import type { TitleTree, TitleTreeData } from '../interface'
 
+/** 获取元素的最后一个子元素 */
+export const getLastOffspring = (element: HTMLElement) => {
+  let current = element
+  while (current.lastElementChild) {
+    current = current.lastElementChild as HTMLElement
+  }
+  return current
+}
+
+/**
+ * 设置元素的样式
+ * @param obj 目标对象
+ * @param style style对象
+ * @param options 选项
+ */
+export const mergeStyle = <O extends Partial<CSSStyleDeclaration>>(
+  obj: O,
+  style: Partial<CSSStyleDeclaration>,
+  options?: {
+    /** 排除的属性 */
+    exclude?: string[]
+    /** 包含的属性 */
+    include?: string[]
+  },
+) => {
+  const { exclude, include } = options ?? {}
+
+  for (const key in style) {
+    if (Object.prototype.hasOwnProperty.call(style, key)) {
+      if (include?.includes(key) === false) continue
+      if (exclude?.includes(key)) continue
+
+      obj[key] = style[key]
+    }
+  }
+}
+
 /**
  * 追溯并返回指定元素的祖先元素列表。
  *

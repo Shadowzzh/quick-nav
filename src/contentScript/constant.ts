@@ -9,6 +9,9 @@ export const BASE_WEIGHTS: number[] = [
   ...Array.from({ length: MAX_TAG_DEPTH }).map((_, i) => 120 - i * 5),
 ]
 
+/** 滚动的边距  */
+export const GET_SCROLL_MARGIN = () => window.innerHeight / 2
+
 /** 不同标签的权重 */
 export const CONTENT_TAG_WEIGHT = Object.freeze({
   h1: BASE_WEIGHTS,

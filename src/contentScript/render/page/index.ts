@@ -20,8 +20,9 @@ import { TitleTreeComponent } from '../../components/TitleTree'
 import { Tree } from '@/utils/models'
 import { scrollSmoothTo } from '@/utils'
 
-import { getScrollElement } from '../../analysis'
+import { getLastOffspring, getScrollElement } from '../../analysis'
 import { Anchor, ObserverViewController } from './ObserverViewController'
+import { setBackgroundGlare } from './utils'
 
 /**
  * 页面
@@ -175,9 +176,14 @@ export class WCPage extends LitElement {
   }
 
   /** 点击树的 item */
-  onClickTreeItem(params: Parameters<Exclude<TitleTreeComponent['onClickItem'], undefined>>[0]) {
+  async onClickTreeItem(
+    params: Parameters<Exclude<TitleTreeComponent['onClickItem'], undefined>>[0],
+  ) {
     const container = getScrollElement(params.target)
-    scrollSmoothTo({ target: params.target, container })
+    const target = getLastOffspring(params.target)
+
+    scrollSmoothTo({ target, container })
+    setBackgroundGlare({ target })
   }
 
   /** 点击树的 item icon */

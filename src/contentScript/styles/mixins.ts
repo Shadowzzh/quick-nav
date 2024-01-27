@@ -1,5 +1,7 @@
+import { syncStorage } from '@/utils/storage'
 import { DEFAULT_CONFIG } from '../../defaultConfig'
 import { cssRule } from '../../utils/cssRule'
+import { APP_THEME } from '../constant'
 
 export const defaultThemeLight = {
   color: '#3b3b3b',
@@ -39,6 +41,21 @@ export const defaultThemeDark = {
   scrollBarBackground: '#6d6d6e',
   colorDisabled: '#6E7073',
   danger: '#bb3d3e',
+}
+
+/** 获取主题色配置 */
+export const getThemeColorOption = async () => {
+  const theme = (await syncStorage.get('theme')) ?? APP_THEME.DARK
+
+  if (theme === APP_THEME.LIGHT) {
+    return defaultThemeLight
+  }
+
+  if (theme === APP_THEME.DARK) {
+    return defaultThemeDark
+  }
+
+  return defaultThemeDark
 }
 
 cssRule.add(

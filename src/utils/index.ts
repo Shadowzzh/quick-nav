@@ -1,3 +1,6 @@
+import { getOffsetTopElement } from '@/contentScript/analysis'
+import { GET_SCROLL_MARGIN } from '@/contentScript/constant'
+
 export const $: (query: string, target?: HTMLElement) => HTMLElement[] = (
   query: string,
   target = document.body.parentElement!,
@@ -72,12 +75,13 @@ export function scrollSmoothTo(prop: ScrollSmoothToProps) {
 
   if (asserts.isHTMLElement(target)) {
     if (asserts.isHTMLElement(container)) {
-      target = target.getBoundingClientRect().top - container.getBoundingClientRect().top
+      target = getOffsetTopElement(target) - getOffsetTopElement(container)
     } else {
-      target = target.getBoundingClientRect().top
+      target = getOffsetTopElement(target)
     }
   }
   if (typeof target !== 'number') return
+  target = target - GET_SCROLL_MARGIN()
 
   // 当前滚动高度
   let scrollTop = asserts.isHTMLElement(container) ? container.scrollTop : container.screenY
