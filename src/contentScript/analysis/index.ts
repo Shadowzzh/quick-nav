@@ -8,9 +8,16 @@ import type { TitleTree, TitleTreeData } from '../interface'
 /** 获取元素的最后一个子元素 */
 export const getLastOffspring = (element: HTMLElement) => {
   let current = element
-  while (current.lastElementChild) {
+
+  // 过滤出有内容的元素
+  const hasContentElement = (element: HTMLElement | undefined) => {
+    return element && element.offsetTop && element.innerText.trim() !== ''
+  }
+
+  while (hasContentElement(current.lastElementChild as HTMLElement)) {
     current = current.lastElementChild as HTMLElement
   }
+
   return current
 }
 
@@ -99,7 +106,7 @@ export const getOffsetTopElement = (element: HTMLElement) => {
   let actualTop = element.offsetTop
   let current = element.offsetParent as HTMLElement | null
 
-  while (current !== null) {
+  while (current !== null && current.offsetTop) {
     actualTop += current.offsetTop
     current = current.offsetParent as HTMLElement | null
   }
