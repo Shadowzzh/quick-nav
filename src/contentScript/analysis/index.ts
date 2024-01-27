@@ -106,7 +106,7 @@ export const getOffsetTopElement = (element: HTMLElement) => {
   let actualTop = element.offsetTop
   let current = element.offsetParent as HTMLElement | null
 
-  while (current !== null && current.offsetTop) {
+  while (current !== null && typeof current.offsetTop === 'number') {
     actualTop += current.offsetTop
     current = current.offsetParent as HTMLElement | null
   }
@@ -135,6 +135,12 @@ function getWeightByElement(tag: HTMLElement | undefined) {
   if (!tag) return -1
   const tagName = tag.tagName.toLowerCase() as keyof typeof TITLE_TAG_WEIGHT
   return TITLE_TAG_WEIGHT[tagName]
+}
+
+/** 判断元素是否是文章标签*/
+export const hasArticleTag = (element: HTMLElement) => {
+  const articleTags = Object.keys(CONTENT_TAG_WEIGHT)
+  return articleTags.includes(element.tagName.toLowerCase())
 }
 
 /** 提取文章内容 */
