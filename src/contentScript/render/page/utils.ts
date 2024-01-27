@@ -27,7 +27,7 @@ class ClareBg {
       width: `${width}px`,
       height: `${height}px`,
       display: `block`,
-      zIndex: '-1',
+      zIndex: '1',
       borderRadius: '4px',
     })
 
@@ -87,7 +87,7 @@ export const setBackgroundGlare = async (params: {
   const endStyle = {
     transform: 'scale(1.05, 1.5)',
     backgroundColor: themeColorOption.selectedBackground,
-    opacity: 1,
+    opacity: 0.7,
   }
 
   glareSet.add(target)
