@@ -93,7 +93,7 @@ export class WCScroll extends LitElement {
       }
 
       .ps__thumb-x {
-        background-color: #bbb;
+        background-color: var(--theme-scrollBar-background);
         border-radius: 6px;
         transition:
           background-color 0.2s linear,

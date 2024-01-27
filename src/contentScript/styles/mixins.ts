@@ -38,7 +38,7 @@ export const defaultThemeDark = {
   itemHoverBackground: '#383e4a',
   invertIcon: '#ddd',
   icon: '#ccc',
-  scrollBarBackground: '#6d6d6e',
+  scrollBarBackground: '#777',
   colorDisabled: '#6E7073',
   danger: '#bb3d3e',
 }
@@ -104,7 +104,7 @@ cssRule.add(
     --theme-selectedColor:${defaultThemeDark.selectedColor};
     --theme-selectedBackground:${defaultThemeDark.selectedBackground};
     --theme-item-hover-background: ${defaultThemeDark.itemHoverBackground};
-    --theme-scrollBar-background: ${defaultThemeLight.scrollBarBackground};
+    --theme-scrollBar-background: ${defaultThemeDark.scrollBarBackground};
     --theme-background-disabled: ${defaultThemeDark.backgroundDisabled};
     --theme-color-disabled: ${defaultThemeDark.colorDisabled};
     --theme-danger: ${defaultThemeDark.danger};
