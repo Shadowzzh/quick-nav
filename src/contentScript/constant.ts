@@ -10,7 +10,7 @@ export const BASE_WEIGHTS: number[] = [
 ]
 
 /** 滚动的边距  */
-export const GET_SCROLL_MARGIN = () => window.innerHeight / 2
+export const GET_SCROLL_MARGIN = () => window.innerHeight / 4
 
 /** 不同标签的权重 */
 export const CONTENT_TAG_WEIGHT = Object.freeze({
