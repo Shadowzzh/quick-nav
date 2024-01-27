@@ -319,7 +319,7 @@ export class ResizeController implements ReactiveController {
   /** 根据方向设置样式 */
   private setStyleByDirection(handler: HTMLElement, direction: Direction) {
     handler.style.position = 'absolute'
-    handler.style.zIndex = '2'
+    handler.style.zIndex = '11'
     handler.style.display = 'block'
     handler.style.userSelect = 'none'
 
