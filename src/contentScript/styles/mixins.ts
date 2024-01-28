@@ -3,6 +3,9 @@ import { DEFAULT_CONFIG } from '../../defaultConfig'
 import { cssRule } from '../../utils/cssRule'
 import { APP_THEME } from '../constant'
 
+export const animationEaseOutQuart = 'cubic-bezier(0.165, 0.84, 0.44, 1)'
+export const animationEaseOutCirc = 'cubic-bezier(0.165, 0.84, 0.44, 1)'
+
 export const defaultThemeLight = {
   color: '#3b3b3b',
   primary: '#536EDC',
@@ -61,8 +64,8 @@ export const getThemeColorOption = async () => {
 cssRule.add(
   ':root',
   `
-    --animation-ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
-    --animation-ease-out-circ: cubic-bezier(0.165, 0.84, 0.44, 1);
+    --animation-ease-out-quart: ${animationEaseOutQuart};
+    --animation-ease-out-circ: ${animationEaseOutCirc};
   `,
 )
 cssRule.add(

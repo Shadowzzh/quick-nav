@@ -8,55 +8,42 @@ import { observerNode } from './utils'
 /** page页面 */
 let Page: WCPage | undefined = undefined
 
-// TODO 递归获取 shadowRoot 中的 Dom
-/** 获取 Page 中的 NavigatorPanel */
-function getNavigatorPanel() {
-  if (!Page) return
+const animateOption = [
+  { opacity: 0, transform: 'scale(0.8)' },
+  { opacity: 1, transform: 'scale(1)' },
+]
 
-  const shadowRoot = Page.shadowRoot
-  const navigatorPanel = shadowRoot
-    ?.querySelector('wc-navigator-panel')
-    ?.shadowRoot?.querySelector('.quick-nav') as HTMLElement
+// 动画时长
+const animateDuration = 1000
 
-  return navigatorPanel
-}
+// const navigatorPanelAnimate = new EhAnimate({
+//   keyframes: animateOption,
+//   options: {
+//     duration: animateDuration,
+//     // easing: animationEaseOutQuart,
+//     easing: 'ease',
+//   },
+// })
 
 /** 渲染树 */
-export async function renderTree(content: HTMLElement, titleTree?: TitleTree) {
-  if (!titleTree || Page) return
-
+export async function renderTree(content: HTMLElement, titleTree: TitleTree) {
   const theme: QN.Theme = (await syncStorage.get('theme')) ?? 'dark'
 
-  Page = new WCPage({ rootTree: titleTree, content })
-  Page.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, theme)
-
-  document.body.appendChild(Page)
+  // 如果已经存在渲染树，则不再创建
+  if (!Page) {
+    Page = new WCPage({ rootTree: titleTree, content })
+    Page.setAttribute(`data-${DEFAULT_CONFIG.THEME_NAME}`, theme)
+    document.body.appendChild(Page)
+  }
 }
 
 /** 移除渲染树 */
-export const removeRenderTree = (() => {
-  let timer: number | undefined = undefined
+export const removeRenderTree = async () => {
+  App.setIsOpen(false)
+  observerNode.disconnect()
 
-  return function () {
-    App.isOpen && clearTimeout(timer)
-    App.setIsOpen(false)
-    observerNode.disconnect()
-    if (!Page) return
-
-    const navigatorPanel = getNavigatorPanel()
-    if (!navigatorPanel) return
-
-    // navigatorPanel.style.transition = `
-    //   opacity 0.25s var(--animation-ease-out-circ),
-    //   transform 0.25s var(--animation-ease-out-circ)`
-    // navigatorPanel.style.transformOrigin = 'top right'
-    // navigatorPanel.style.opacity = '0'
-    // navigatorPanel.style.transform = 'scale(0.5)'
-
-    // timer = setTimeout(() => {
-    Page?.remove()
-    // }, 300) as unknown as number
-
+  if (App.isOpen === false && Page) {
+    Page.remove()
     Page = undefined
   }
-})()
+}
