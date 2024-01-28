@@ -175,7 +175,7 @@ export class WCPage extends LitElement {
       scrollElement.scrollTop + scrollElement.offsetHeight >= titleOffset.top + titleOffset.height
     // 如果不在视图下方，则滚动到视图下方
     if (isViewBottom === false) {
-      const target = titleOffset.top + titleOffset.height - scrollElement.offsetHeight / 50
+      const target = titleOffset.top + titleOffset.height - scrollElement.offsetHeight + 10
       scrollSmoothTo({ container: scrollElement, target })
     }
   }
