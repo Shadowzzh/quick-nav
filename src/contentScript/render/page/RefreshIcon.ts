@@ -5,6 +5,7 @@ import type { TitleTreeData } from '@/contentScript/interface'
 import type { Tree } from '@/utils/models'
 
 import { extractContent, generatorTitleTree } from '@/contentScript/analysis'
+import { App } from '@/contentScript/launch'
 
 @customElement('wc-page-refresh-icon')
 export class WCPageRefreshIcon extends LitElement {
@@ -21,15 +22,8 @@ export class WCPageRefreshIcon extends LitElement {
 
   /** 刷新 */
   onRefresh() {
-    if (!this.rootTree) return
-
-    const content = extractContent()
-    if (!content) return console.warn('未找到文章内容')
-
-    const TitleTree = generatorTitleTree(content)
-    if (!TitleTree) return
-
-    this.onClickRefresh({ TitleTree })
+    const TitleTree = App.refresh()
+    TitleTree && this.onClickRefresh({ TitleTree })
   }
 
   render() {

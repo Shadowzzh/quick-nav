@@ -1,4 +1,4 @@
-import { LitElement, html, css, TemplateResult } from 'lit'
+import { LitElement, html, css, TemplateResult, PropertyValueMap } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
 import { Tree } from '@/utils/models'
@@ -23,9 +23,10 @@ export class TitleTreeComponent extends LitElement {
 
   /** 标题树 */
   static TreeMap: Map<string, TitleTree> = new Map()
-
   /** 当前被激活的子节点 */
   static ChildActiveMap: Set<TitleTree> = new Set()
+  /** 标题树 */
+  static elementMap: Map<HTMLElement, TitleTree> = new Map()
 
   /** 清空 Map 数据 */
   static clearMap() {

@@ -10,6 +10,7 @@ import type { TitleTreeData } from '../../interface'
 import '../Icons'
 import './TitleItemArrowIcon'
 import { WCTitleItemStyle } from './styles'
+import { TitleTreeComponent } from '.'
 
 export interface WCTitleItemOptions {}
 
@@ -66,6 +67,8 @@ export class WCTitleItem extends LitElement {
       this.node.data.TitleItem = this
       // 更新 opacity
       this.opacity = 1 - this.node.depth * 0.15
+
+      TitleTreeComponent.elementMap.set(this.node.data.element, this.node)
     }
   }
 
@@ -178,10 +181,10 @@ export class WCTitleItem extends LitElement {
 
   render() {
     if (!this.node?.data?.element) return
-    const { isDisplay, element } = this.node.data
+    const { isDisplay, element, isDestroyed } = this.node.data
 
     // 不显示本组件
-    if (isDisplay === false) return null
+    if (isDisplay === false || isDestroyed === true) return null
 
     const isChildren = this.node.children.length > 0
 

@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit'
 import { customElement, property } from 'lit/decorators.js'
 
 import { removeRenderTree } from '..'
+import { App } from '@/contentScript/launch'
 
 @customElement('wc-page-close-icon')
 export class WCPageCloseIcon extends LitElement {
@@ -17,7 +18,7 @@ export class WCPageCloseIcon extends LitElement {
 
   /** 关闭 */
   onClose() {
-    removeRenderTree()
+    App.close()
   }
 
   render() {

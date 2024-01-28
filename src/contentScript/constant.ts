@@ -25,6 +25,7 @@ export const CONTENT_TAG_WEIGHT = Object.freeze({
   article: [3000],
   '.article': [3000],
   '#article': [3000],
+  '#center_col': [3000],// 谷歌搜索
   '.content': [3000],
   '.Topstory-container': [3000], // 知乎
   sidebar: LowestWeights,

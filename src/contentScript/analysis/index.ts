@@ -5,6 +5,21 @@ import { Tree } from '../../utils/models/Tree'
 import { CONTENT_TAG_WEIGHT, MAX_TAG_DEPTH, TITLE_TAG_WEIGHT } from '../constant'
 import type { TitleTree, TitleTreeData } from '../interface'
 
+/** 遍历元素的子元素 */
+export const eachHTMLElement = (
+  element: HTMLElement,
+  callback: (element: HTMLElement) => boolean | void,
+) => {
+  const children = element.children
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i] as HTMLElement
+    const result = callback(child)
+
+    if (result === true) return
+    eachHTMLElement(child, callback)
+  }
+}
+
 /** 获取元素的最后一个子元素 */
 export const getLastOffspring = (element: HTMLElement) => {
   let current = element
@@ -138,9 +153,25 @@ function getWeightByElement(tag: HTMLElement | undefined) {
 }
 
 /** 判断元素是否是文章标签*/
-export const hasArticleTag = (element: HTMLElement) => {
-  const articleTags = Object.keys(CONTENT_TAG_WEIGHT)
-  return articleTags.includes(element.tagName.toLowerCase())
+export const hasArticleTag = (element: HTMLElement, isDeep: boolean = false) => {
+  if (isDeep) {
+    let result = false
+
+    eachHTMLElement(element, (element) => {
+      if (isArticleTag(element)) {
+        result = true
+        return true
+      }
+    })
+    return result
+  } else {
+    return isArticleTag(element)
+  }
+
+  function isArticleTag(element: HTMLElement) {
+    const articleTags = Object.keys(CONTENT_TAG_WEIGHT)
+    return articleTags.includes(element.tagName.toLowerCase())
+  }
 }
 
 /** 提取文章内容 */

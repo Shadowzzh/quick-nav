@@ -12,6 +12,8 @@ export type TitleTreeData = {
   isActive: boolean
   /** 子元素是否为活动状态 */
   childActive: boolean
+  /** 是否被销毁 */
+  isDestroyed?: boolean
 }
 
 /** 标题 Tree */

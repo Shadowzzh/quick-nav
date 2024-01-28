@@ -75,6 +75,7 @@ export function scrollSmoothTo(prop: ScrollSmoothToProps) {
 
   if (asserts.isHTMLElement(target)) {
     if (asserts.isHTMLElement(container)) {
+      // 获取目标元素相对于容器的偏移量
       target = getOffsetTopElement(target) - getOffsetTopElement(container)
     } else {
       target = getOffsetTopElement(target)

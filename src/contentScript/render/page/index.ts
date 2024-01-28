@@ -23,6 +23,7 @@ import { scrollSmoothTo } from '@/utils'
 import { getLastOffspring, getScrollElement } from '../../analysis'
 import { Anchor, ObserverViewController } from './ObserverViewController'
 import { setBackgroundGlare } from './utils'
+import { App, observerNode } from '@/contentScript/launch'
 
 /**
  * 页面
@@ -106,6 +107,16 @@ export class WCPage extends LitElement {
   }
 
   disconnectedCallback(): void {}
+
+  protected firstUpdated() {
+    observerNode.listener({
+      target: getScrollElement(this.content),
+      onAddNode: (addedNodes) => {
+        const TitleTree = App.refresh()
+        TitleTree && this.onClickRefresh({ TitleTree })
+      },
+    })
+  }
 
   /** 当前节点在视图中出现 */
   onNodeInView({ anchor }: { anchor: Anchor }) {

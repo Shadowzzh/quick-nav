@@ -20,4 +20,5 @@ export const DEFAULT_TREE_CONFIG = Object.freeze({
   isDisplay: true,
   childActive: false,
   isActive: false,
+  isDestroyed: false,
 })
