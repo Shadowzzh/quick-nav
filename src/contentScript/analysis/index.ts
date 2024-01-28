@@ -5,6 +5,40 @@ import { Tree } from '../../utils/models/Tree'
 import { CONTENT_TAG_WEIGHT, MAX_TAG_DEPTH, TITLE_TAG_WEIGHT } from '../constant'
 import type { TitleTree, TitleTreeData } from '../interface'
 
+/** 深度获取选择器选中的 HTMLElement */
+export const querySelectorDeep = (
+  selector: string,
+  root: Document | Element | ShadowRoot = document,
+): Element | null => {
+  // 如果当前节点匹配，返回这个节点
+  if (root instanceof Element && root.matches(selector)) {
+    return root
+  }
+
+  // 如果是 Document 或 ShadowRoot，获取其子节点
+  let children: HTMLCollection
+  if (root instanceof Document || root instanceof ShadowRoot) {
+    children = root.children
+  } else {
+    // 对于 Element 节点，获取其 shadowRoot 的子节点（如果存在）
+    children = root.shadowRoot ? root.shadowRoot.children : root.children
+  }
+
+  // 遍历子节点
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i]
+
+    // 递归搜索子节点
+    const result = querySelectorDeep(selector, child)
+    if (result) {
+      return result
+    }
+  }
+
+  // 如果没有找到匹配的元素，则返回 null
+  return null
+}
+
 /** 遍历元素的子元素 */
 export const eachHTMLElement = (
   element: HTMLElement,

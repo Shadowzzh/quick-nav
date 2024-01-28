@@ -1,6 +1,3 @@
-import { getOffsetTopElement } from '@/contentScript/analysis'
-import { GET_SCROLL_MARGIN } from '@/contentScript/constant'
-
 export const $: (query: string, target?: HTMLElement) => HTMLElement[] = (
   query: string,
   target = document.body.parentElement!,
