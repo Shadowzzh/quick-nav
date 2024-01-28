@@ -1,6 +1,8 @@
 import { getOffsetTopElement, getScrollElement } from '@/contentScript/analysis'
 import { getThemeColorOption } from '@/contentScript/styles/mixins'
 import { mergeStyle } from '../../analysis/index'
+import { GET_SCROLL_MARGIN } from '@/contentScript/constant'
+import { scrollSmoothTo } from '@/utils'
 
 class ClareBg {
   container: HTMLElement
@@ -102,4 +104,17 @@ export const setBackgroundGlare = async (params: {
 
   glareSet.delete(target)
   GlareBg.destroy()
+}
+
+/**
+ * 平滑的滚动到页面位置
+ **/
+export const scrollSmoothToByPage = (params: {
+  /** 滚动到的目标 */
+  target: HTMLElement
+  /** 在哪个容器中滚动 */
+  container?: HTMLElement | Window
+}) => {
+  const targetTop = getOffsetTopElement(params.target) - GET_SCROLL_MARGIN()
+  scrollSmoothTo({ target: targetTop, container: params.container })
 }

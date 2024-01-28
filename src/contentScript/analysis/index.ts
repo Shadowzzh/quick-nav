@@ -117,11 +117,13 @@ export const getScrollTopElement = (element: HTMLElement | Window) => {
 }
 
 /** 获取元素的 offsetTop */
-export const getOffsetTopElement = (element: HTMLElement) => {
+export const getOffsetTopElement = (element: HTMLElement, container?: HTMLElement) => {
   let actualTop = element.offsetTop
   let current = element.offsetParent as HTMLElement | null
 
   while (current !== null && typeof current.offsetTop === 'number') {
+    if (container && current === container) break
+
     actualTop += current.offsetTop
     current = current.offsetParent as HTMLElement | null
   }

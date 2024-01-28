@@ -65,24 +65,16 @@ export const getTranslateByElement = (el: HTMLElement) => {
 
 interface ScrollSmoothToProps {
   /** 滚动到的目标 */
-  target: number | HTMLElement
+  target: number
   /** 在哪个容器中滚动 */
   container?: HTMLElement | Window
 }
+
 /** 平滑的滚动到页面位置 */
 export function scrollSmoothTo(prop: ScrollSmoothToProps) {
   let { target, container = window } = prop
 
-  if (asserts.isHTMLElement(target)) {
-    if (asserts.isHTMLElement(container)) {
-      // 获取目标元素相对于容器的偏移量
-      target = getOffsetTopElement(target) - getOffsetTopElement(container)
-    } else {
-      target = getOffsetTopElement(target)
-    }
-  }
   if (typeof target !== 'number') return
-  target = target - GET_SCROLL_MARGIN()
 
   // 当前滚动高度
   let scrollTop = asserts.isHTMLElement(container) ? container.scrollTop : container.screenY

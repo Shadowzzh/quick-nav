@@ -22,7 +22,7 @@ import { asserts, scrollSmoothTo } from '@/utils'
 
 import { eachHTMLElement, getLastOffspring, getScrollElement } from '../../analysis'
 import { Anchor, ObserverViewController } from './ObserverViewController'
-import { setBackgroundGlare } from './utils'
+import { scrollSmoothToByPage, setBackgroundGlare } from './utils'
 import { App } from '@/contentScript/launch'
 import { observerNode } from '../utils'
 
@@ -175,7 +175,7 @@ export class WCPage extends LitElement {
       scrollElement.scrollTop + scrollElement.offsetHeight >= titleOffset.top + titleOffset.height
     // 如果不在视图下方，则滚动到视图下方
     if (isViewBottom === false) {
-      const target = titleOffset.top + titleOffset.height - scrollElement.offsetHeight
+      const target = titleOffset.top + titleOffset.height - scrollElement.offsetHeight / 50
       scrollSmoothTo({ container: scrollElement, target })
     }
   }
@@ -210,7 +210,7 @@ export class WCPage extends LitElement {
     const container = getScrollElement(params.target)
     const target = getLastOffspring(params.target)
 
-    scrollSmoothTo({ target, container })
+    scrollSmoothToByPage({ target, container })
     setBackgroundGlare({ target })
   }
 
