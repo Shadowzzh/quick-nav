@@ -2,7 +2,8 @@ import { DEFAULT_CONFIG } from '../../defaultConfig'
 import { syncStorage } from '../../utils/storage'
 import { QN, TitleTree } from '../interface'
 import { WCPage } from './page'
-import { App, observerNode } from '../launch'
+import { App } from '../launch'
+import { observerNode } from './utils'
 
 /** page页面 */
 let Page: WCPage | undefined = undefined

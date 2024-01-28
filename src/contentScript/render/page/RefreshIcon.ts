@@ -22,7 +22,7 @@ export class WCPageRefreshIcon extends LitElement {
 
   /** 刷新 */
   onRefresh() {
-    const TitleTree = App.refresh()
+    const { TitleTree } = App.refresh()
     TitleTree && this.onClickRefresh({ TitleTree })
   }
 

@@ -18,12 +18,13 @@ import './closeIcon'
 import { TitleTreeComponent } from '../../components/TitleTree'
 
 import { Tree } from '@/utils/models'
-import { scrollSmoothTo } from '@/utils'
+import { asserts, scrollSmoothTo } from '@/utils'
 
-import { getLastOffspring, getScrollElement } from '../../analysis'
+import { eachHTMLElement, getLastOffspring, getScrollElement } from '../../analysis'
 import { Anchor, ObserverViewController } from './ObserverViewController'
 import { setBackgroundGlare } from './utils'
-import { App, observerNode } from '@/contentScript/launch'
+import { App } from '@/contentScript/launch'
+import { observerNode } from '../utils'
 
 /**
  * 页面
@@ -108,12 +109,28 @@ export class WCPage extends LitElement {
 
   disconnectedCallback(): void {}
 
+  /** 第一次更新 */
   protected firstUpdated() {
     observerNode.listener({
       target: getScrollElement(this.content),
+      // 增加节点时，需要重新初始化
       onAddNode: (addedNodes) => {
-        const TitleTree = App.refresh()
+        const { TitleTree } = App.refresh()
         TitleTree && this.onClickRefresh({ TitleTree })
+      },
+      // 删除节点时，需要将对应的节点标记为已销毁
+      onRemoveNode: (removedNodes) => {
+        removedNodes.forEach((node) => {
+          if (asserts.isHTMLElement(node) === false) return
+
+          eachHTMLElement(node, (element) => {
+            const targetNode = TitleTreeComponent.elementMap.get(element)
+            if (!targetNode?.data) return
+
+            targetNode.data.isDestroyed = true
+            targetNode.data.TitleItem?.requestUpdate()
+          })
+        })
       },
     })
   }
